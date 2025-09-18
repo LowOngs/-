@@ -1,0 +1,217 @@
+/* [1/5] ───── Core variables & brand icons ───────────────────────── */
+:root{
+  --pc-accent: #111;
+  --pc-divider: rgba(0,0,0,.08);
+  --glow: rgba(255,165,60,.14);
+  --glow-bg: rgba(255,165,60,.08);
+  --deal-red: #ff4d4f;
+  --brand-rabbit-url: url('/assets/brand/rabbit.png');
+}
+
+/* Brand rabbit before main category (PC2) */
+.box-category-2depth nav > ul > li > a::before{
+  content:""; display:inline-block; vertical-align:-0.12em;
+  width:1.1em; height:1.1em; margin-right:.35em;
+  background-image:var(--brand-rabbit-url);
+  background-size:contain; background-repeat:no-repeat;
+}
+
+/* Brand rabbit before main category (PC1) */
+@media (max-width:1060px){
+  .box-category nav > ul > li > a::before{
+    content:""; display:inline-block; vertical-align:-0.12em;
+    width:1.1em; height:1.1em; margin-right:.35em;
+    background-image:var(--brand-rabbit-url);
+    background-size:contain; background-repeat:no-repeat;
+  }
+  .pc1-blog-title-row .brand-rabbit{
+    width:1.25em; height:1.25em; object-fit:contain; border-radius:8px;
+  }
+}
+/* Desktop blog title (if used) */
+@media (min-width:1061px){
+  .pc1-blog-title-row .brand-rabbit{ width:24px; height:24px; object-fit:contain; border-radius:8px; }
+}
+
+/* Utility */
+.pc1-divider{ height:1px; background:var(--pc-divider); margin:12px 0; }
+.pc1-spacer-12{ height:12px; }
+
+/* [2/5] ───── PC1 Sidebar head + Notice + Ads/Deals + Category(accordion) ─ */
+@media (max-width:1060px){
+  .pc1-only{ display:block; }
+
+  /* Sidebar head */
+  .pc1-sb-head{ padding:12px 14px; background:#fff; border-bottom:1px solid var(--pc-divider); }
+  .pc1-translate .title-sidebar{ margin-bottom:6px; }
+  .pc1-translate-ui{ display:flex; gap:6px; align-items:center; }
+  .pc1-translate-ui select{ flex:1 1 auto; padding:6px 8px; border:1px solid rgba(0,0,0,.15); border-radius:6px; }
+  .pc1-translate-ui button, .pc1-search-btn, .pc1-join-btn{
+    padding:6px 10px; border-radius:8px; border:1px solid rgba(0,0,0,.15); background:#f7f7f7;
+  }
+  .pc1-blog-title-row{ display:flex; align-items:center; gap:8px; }
+  .pc1-blog-title{ font-size:20px; font-weight:800; line-height:1.2; margin-right:auto; }
+  .pc1-search-wrap{ display:flex; gap:6px }
+  .pc1-search{ flex:1 1 auto; height:36px; padding:0 10px; border:1px solid rgba(0,0,0,.2); border-radius:8px; }
+
+  /* Notice ticker (text flow) */
+  .pc1-notice-ticker{ overflow:hidden; height:24px; }
+  .pc1-ticker-track{ white-space:nowrap; will-change:transform; animation: pc1-marquee 16s linear infinite; }
+  @keyframes pc1-marquee{ 0%{ transform:translateX(0);} 100%{ transform:translateX(-50%);} }
+
+  /* Ads + affiliate slots (3) */
+  .pc1-ads-section .pc1-aff-title{ font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:6px;}
+  .pc1-gift{ filter: drop-shadow(0 1px 0 rgba(0,0,0,.15)); }
+  .pc1-aff-slots{ display:grid; gap:8px; }
+  .pc1-aff-slot{ min-height:38px; border:1px dashed rgba(0,0,0,.15); border-radius:8px; background:#fff; }
+
+  /* Category accordion & subtle glow (mobile only) */
+  .box-category-2depth nav ul, .box-category nav ul{ list-style:none; margin:0; padding:0; }
+  .box-category-2depth nav li, .box-category nav li{ position:relative; }
+  .box-category-2depth nav a, .box-category nav a{
+    display:block; padding:8px 10px; border-radius:8px; text-decoration:none; color:inherit;
+  }
+  .box-category-2depth nav ul ul, .box-category nav ul ul{ display:none; margin:6px 0 6px 12px; }
+  .box-category-2depth nav li.pc-acc-open > ul,
+  .box-category nav li.pc-acc-open > ul{ display:block; }
+  .box-category-2depth nav .pc-acc-caret,
+  .box-category nav .pc-acc-caret{
+    position:absolute; right:8px; top:50%; width:8px; height:8px;
+    transform:translateY(-50%) rotate(0deg); transition:transform .18s ease;
+    border-right:2px solid currentColor; border-bottom:2px solid currentColor;
+  }
+  .box-category-2depth nav li.pc-acc-open > .pc-acc-toggle .pc-acc-caret,
+  .box-category nav li.pc-acc-open > .pc-acc-toggle .pc-acc-caret{ transform:translateY(-50%) rotate(45deg); }
+  .box-category-2depth nav a.pc-glow,
+  .box-category nav a.pc-glow{
+    box-shadow:0 0 0 8px var(--glow); background:var(--glow-bg); outline:none;
+  }
+}
+
+/* [3/5] ───── PC1 Sticky footer carousel + D-badge + disclosure marquee ─── */
+@media (max-width:1060px){
+  /* Sticky footer shell (shows on upward scroll per JS) */
+  .pc1-sticky-footer{ position:fixed; left:0; right:0; bottom:0; z-index:50;
+    background:#fff; border-top:1px solid var(--pc-divider);
+    height:72px; padding-top:18px; display:flex; align-items:flex-end; }
+  .pc1-scroll{ position:relative; margin:0 36px; overflow:hidden; border-radius:10px; }
+  .pc1-track{ display:flex; gap:1px; will-change:transform; }
+  .pc1-item{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:10px; background:#f6f6f6;
+    position:relative; text-decoration:none; color:inherit;
+  }
+  .pc1-item img{ width:100%; height:100%; object-fit:contain; padding:0; margin:0; }
+
+  /* Arrows: 5mm ≈ 18.89px → 18px(절삭) */
+  .pc1-arrow{ position:absolute; top:0; bottom:0; width:18px; height:18px; margin:auto 0; background:#fff; }
+  .pc1-arrow.left{ left:8px; border-radius:8px; }
+  .pc1-arrow.right{ right:8px; border-radius:8px; }
+  .pc1-arrow.left::before, .pc1-arrow.right::before{
+    content:""; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:0; height:0; border-style:solid;
+  }
+  .pc1-arrow.left::before{ border-width:6px 9px 6px 0; border-color:transparent #000 transparent transparent; }
+  .pc1-arrow.right::before{ border-width:6px 0 6px 9px; border-color:transparent transparent transparent #000; }
+
+  /* D badge (deal only) + shake: total 0.3s in a 3s cycle */
+  .pc1-item.has-deal{ animation:none !important; }
+  .pc1-deal-badge{
+    position:absolute; top:-4px; right:-4px; font-size:10px; line-height:1;
+    padding:2px 4px; border-radius:8px; background:var(--deal-red); color:#fff;
+    will-change:transform;
+  }
+  @keyframes pc1-dshake{
+    0%, 89.9% { transform: rotate(0deg); }
+    90%       { transform: rotate(10deg); }
+    95%       { transform: rotate(-10deg); }
+    100%      { transform: rotate(0deg); }
+  }
+  /* footer가 보일 때만 실행 */
+  .pc1-sticky-footer.show .pc1-item.has-deal .pc1-deal-badge{
+    animation: pc1-dshake 3s ease-in-out infinite;
+  }
+
+  /* Disclosure marquee (slow loop + manual scroll) */
+  .pc1-aff-disclosure{ position:absolute; top:4px; left:8px; right:8px; }
+  .pc1-aff-viewport{
+    overflow-x:auto; white-space:nowrap; -webkit-overflow-scrolling:touch;
+    border-radius:8px; padding:2px 6px; background:rgba(0,0,0,.03);
+    color:rgba(0,0,0,.75); font-size:11px; line-height:1.2;
+  }
+  .pc1-aff-viewport::-webkit-scrollbar{ display:none; }
+  .pc1-aff-track{ display:inline-block; padding-right:24px; }
+}
+
+/* [4/5] ───── PC2 Footer partners (원형 유지) + badges + policy ────────── */
+/* 푸터 컨테이너 */
+.wrap-right .pc2-footer{ padding:12px 0 8px; border-top:1px solid var(--pc-divider); }
+
+/* 11열 고정, 간격 0, 개당 20mm≈75px */
+.wrap-right .pc2-footer-partners{
+  display:grid !important;
+  grid-template-columns: repeat(11, 75px);
+  gap:0;
+  align-items:center;
+}
+
+/* 파트너 버튼(로고+단축이름) */
+.wrap-right .pc2-partner{
+  position:relative; display:inline-flex; align-items:center; justify-content:flex-start;
+  height:30px; padding:0 8px; border-radius:6px; text-decoration:none; color:inherit;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; background:rgba(0,0,0,.03);
+}
+.wrap-right .pc2-partner:focus-visible{ outline:2px solid #4C9AFF; outline-offset:2px; }
+.wrap-right .pc2-partner .pc2-logo{ height:18px; width:auto; object-fit:contain; margin-right:6px; }
+.wrap-right .pc2-partner .pc2-label{ font-size:12px; line-height:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* Deal 배지(문구: Deal) */
+.wrap-right .pc2-deal-badge{
+  position:absolute; top:-8px; right:-6px; transform: rotate(10deg);
+  font-size:10px; padding:2px 6px; border-radius:10px;
+  background:var(--deal-red); color:#fff;
+  animation: pc2-deal-glow 3s ease-in-out infinite;
+}
+@keyframes pc2-deal-glow{
+  0%,100%{ box-shadow:0 0 0 0 rgba(255,77,79,0); }
+  50%    { box-shadow:0 0 8px 2px rgba(255,77,79,.35); }
+}
+
+/* 정책 문구 */
+.wrap-right .pc2-footer-policy{ margin-top:8px; font-size:12px; color:rgba(0,0,0,.65); }
+
+/* (참고) PC2 카테고리 하이라이트 서브항목 */
+.pc2-categories .pc2-cat-main{ list-style:none; padding:0; margin:0; }
+.pc2-categories .pc2-cat-main li{ position:relative; }
+.pc2-categories .pc2-cat-main a{ display:block; padding:6px 6px; border-radius:6px; }
+.pc2-categories .pc2-cat-main li.pc2-open > ul{ display:block !important; }
+.pc2-categories .pc2-cat-main ul{ display:none; padding-left:12px; margin:6px 0; }
+.pc2-categories .pc2-cat-main ul a:hover{
+  box-shadow:0 0 0 6px rgba(212, 175, 55, .10);
+  background:rgba(212, 175, 55, .06);
+}
+
+/* [5/5] ───── Accessibility & motion preferences / misc overrides ─────── */
+@media (prefers-reduced-motion: reduce){
+  /* 카테고리 caret 전환 최소화 */
+  .box-category-2depth nav .pc-acc-caret,
+  .box-category nav .pc-acc-caret{ transition:none; }
+
+  /* 공지/마키/캐러셀 자동 스크롤 정지 */
+  .pc1-ticker-track{ animation:none !important; }
+  /* 사용자 지시로 Deal 모션은 유지 가능하지만, 필요시 아래 주석 해제 */
+  /* .wrap-right .pc2-deal-badge{ animation:none !important; } */
+}
+
+/* 작은 화면에서 캐러셀/고지문 충돌 방지 */
+@media (max-width:360px){
+  .pc1-sticky-footer{ height:76px; padding-top:20px; }
+  .pc1-aff-viewport{ font-size:10px; }
+}
+
+/* Divider color on dark backgrounds (옵션) */
+@media (prefers-color-scheme: dark){
+  .pc1-divider{ background:rgba(255,255,255,.12); }
+  .pc1-aff-viewport{ background:rgba(255,255,255,.06); color:rgba(255,255,255,.85); }
+  .wrap-right .pc2-partner{ background:rgba(255,255,255,.06); }
+}
+`0
