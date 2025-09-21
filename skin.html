@@ -1,0 +1,92 @@
+<html><head><link rel='stylesheet' href='style.css'></head><body><main><article class='post'><h1>샘플</h1></article></main>
+<footer id="pc1-footer" class="pc1-footer pc1-only" role="contentinfo">
+  <div class="pc1-footer-inner">
+    <button class="pc1-foot-arrow left" aria-label="Prev"></button>
+    <div class="pc1-foot-track-wrap" aria-live="polite">
+      <div class="pc1-foot-track">
+        <a class="pc1-foot-btn" href="#" data-partner="1" style="width:8.5mm;height:8.5mm" aria-label="Partner 1"><img src="pc1_partner_01.png" alt="Partner 1"></a>
+        <a class="pc1-foot-btn" href="#" data-partner="2" style="width:8.5mm;height:8.5mm" aria-label="Partner 2"><img src="pc1_partner_02.png" alt="Partner 2"></a>
+        <a class="pc1-foot-btn" href="#" data-partner="3" style="width:8.5mm;height:8.5mm" aria-label="Partner 3"><img src="pc1_partner_03.png" alt="Partner 3"></a>
+        <a class="pc1-foot-btn" href="#" data-partner="4" style="width:8.5mm;height:8.5mm" aria-label="Partner 4"><img src="pc1_partner_04.png" alt="Partner 4"></a>
+        <a class="pc1-foot-btn" href="#" data-partner="5" style="width:8.5mm;height:8.5mm" aria-label="Partner 5"><img src="pc1_partner_05.png" alt="Partner 5"></a>
+        <a class="pc1-foot-btn" href="#" data-partner="6" style="width:8.5mm;height:8.5mm" aria-label="Partner 6"><img src="pc1_partner_06.png" alt="Partner 6"></a>
+        <a class="pc1-foot-btn" href="#" data-partner="7" style="width:8.5mm;height:8.5mm" aria-label="Partner 7"><img src="pc1_partner_07.png" alt="Partner 7"></a>
+        <a class="pc1-foot-btn" href="#" data-partner="8" style="width:8.5mm;height:8.5mm" aria-label="Partner 8"><img src="pc1_partner_08.png" alt="Partner 8"></a>
+        <a class="pc1-foot-btn" href="#" data-partner="9" style="width:8.5mm;height:8.5mm" aria-label="Partner 9"><img src="pc1_partner_09.png" alt="Partner 9"></a>
+        <a class="pc1-foot-btn" href="#" data-partner="10" style="width:8.5mm;height:8.5mm" aria-label="Partner 10"><img src="pc1_partner_10.png" alt="Partner 10"></a>
+        <a class="pc1-foot-btn" href="#" data-partner="11" style="width:8.5mm;height:8.5mm" aria-label="Partner 11"><img src="pc1_partner_11.png" alt="Partner 11"></a>
+      </div>
+      <div class="pc1-foot-focus"></div>
+    </div>
+    <button class="pc1-foot-arrow right" aria-label="Next"></button>
+  </div>
+  <p class="foot-disclosure">제휴링크 이용은 모두 무료입니다. 일부 링크 이용시 운영자는 제휴사로부터 소정의 수수료를 받습니다</p>
+</footer>
+
+
+<script>
+(function(){
+  var footer = document.getElementById('pc1-footer');
+  if(!footer) return;
+  var wrap = footer.querySelector('.pc1-foot-track-wrap');
+  var track = footer.querySelector('.pc1-foot-track');
+
+  function setX(x){ track.style.transform = 'translate3d('+x+'px,0,0)'; }
+  function getItemW(){ var n=track.querySelector('.pc1-foot-btn'); return n ? n.getBoundingClientRect().width + 10 : 40; } // gap=10
+
+  var pos={x:0,start:0,drag:false};
+  function onDown(e){ pos.drag=true; pos.start=(e.touches?e.touches[0].clientX:e.clientX) - pos.x; }
+  function onMove(e){ if(!pos.drag) return; var cx=(e.touches?e.touches[0].clientX:e.clientX); pos.x = cx - pos.start; setX(pos.x); if(e.cancelable) e.preventDefault(); }
+  function onUp(){ if(!pos.drag) return; pos.drag=false; snap(); }
+
+  function snap(){
+    var bounds = wrap.getBoundingClientRect();
+    var center = bounds.left + bounds.width/2;
+    var items = track.querySelectorAll('.pc1-foot-btn');
+    var closest=null,cd=1e9;
+    items.forEach(function(it){
+      var r=it.getBoundingClientRect();
+      var mid=r.left+r.width/2;
+      var d=Math.abs(mid-center);
+      if(d<cd){cd=d;closest=it;}
+    });
+    if(!closest) return;
+    var r=closest.getBoundingClientRect();
+    var shift = center - (r.left + r.width/2);
+    pos.x += shift; setX(pos.x);
+    // Balloon 0.2s later for 1s
+    setTimeout(function(){
+      if(!closest.querySelector('.balloon')){
+        var tip=document.createElement('div'); tip.className='balloon'; tip.textContent=(closest.getAttribute('aria-label')||'Partner');
+        closest.appendChild(tip);
+      }
+      closest.classList.add('show-balloon');
+      setTimeout(function(){ closest.classList.remove('show-balloon'); }, 1000);
+    }, 200);
+  }
+
+  wrap.addEventListener('mousedown', onDown);
+  wrap.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', onUp);
+  wrap.addEventListener('touchstart', onDown, {passive:true});
+  wrap.addEventListener('touchmove', onMove, {passive:false});
+  wrap.addEventListener('touchend', onUp);
+
+  footer.querySelector('.pc1-foot-arrow.left').addEventListener('click', function(){ pos.x += getItemW(); setX(pos.x); snap(); });
+  footer.querySelector('.pc1-foot-arrow.right').addEventListener('click', function(){ pos.x -= getItemW(); setX(pos.x); snap(); });
+
+  // Hide on scroll down, show on scroll up
+  var lastY=window.scrollY;
+  window.addEventListener('scroll', function(){
+    var y=window.scrollY;
+    document.body.classList.toggle('scrolling-down', y>lastY);
+    document.body.classList.toggle('scrolling-up', y<=lastY);
+    lastY=y;
+  }, {passive:true});
+
+  // Initial snap
+  setTimeout(snap, 80);
+})();
+</script>
+
+</body></html>

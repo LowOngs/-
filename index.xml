@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TEMPLATE><SKIN version='1.0.0'><FILES>
+<FILE>pc1_partner_01.png</FILE>
+<FILE>pc1_partner_02.png</FILE>
+<FILE>pc1_partner_03.png</FILE>
+<FILE>pc1_partner_04.png</FILE>
+<FILE>pc1_partner_05.png</FILE>
+<FILE>pc1_partner_06.png</FILE>
+<FILE>pc1_partner_07.png</FILE>
+<FILE>pc1_partner_08.png</FILE>
+<FILE>pc1_partner_09.png</FILE>
+<FILE>pc1_partner_10.png</FILE>
+<FILE>pc1_partner_11.png</FILE>
+<FILE>pc2_partner_01.png</FILE>
+<FILE>pc2_partner_02.png</FILE>
+<FILE>pc2_partner_03.png</FILE>
+<FILE>pc2_partner_04.png</FILE>
+<FILE>pc2_partner_05.png</FILE>
+<FILE>pc2_partner_06.png</FILE>
+<FILE>pc2_partner_07.png</FILE>
+<FILE>pc2_partner_08.png</FILE>
+<FILE>pc2_partner_09.png</FILE>
+<FILE>pc2_partner_10.png</FILE>
+<FILE>pc2_partner_11.png</FILE>
+<FILE>skin.html</FILE>
+<FILE>style.css</FILE>
+</FILES></SKIN></TEMPLATE>
