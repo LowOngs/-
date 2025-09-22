@@ -1,0 +1,68 @@
+<!-- index.xml (Odyssey Custom v1.0.0 · 단일 레벨 업로드 대응 · 평면 경로)
+     - Tistory는 폴더 업로드 미지원 → 모든 리소스는 루트(같은 레벨)로 업로드
+     - skin.html / style.css / 이미지 파일 일괄 등록
+     - 스킨명은 버전 포함(캐시/구분 용이)
+-->
+<skin>
+  <information>
+    <name>오딧세이 커스텀 v1.0.0</name>
+    <version>1.0.0</version>
+    <date>2025-09-22</date>
+    <author>
+      <name>Ongdalsaem Knowledge Archive</name>
+      <homepage>https://tistory.com</homepage>
+    </author>
+    <description>지식과 커머스가 공존하는 곳 — Odyssey Custom 스킨(PC2/PC1 통합, i18n/SEO/파트너 파이프라인/캐시무력화 적용)</description>
+  </information>
+
+  <!-- 스킨 진입 파일 -->
+  <files>
+    <file>skin.html</file>
+    <file>style.css</file>
+
+    <!-- 파비콘/대표 이미지 -->
+    <file>favicon-32.png</file>
+    <file>favicon-192.png</file>
+    <file>apple-touch-icon.png</file>
+    <file>hero_cover.png</file>
+    <file>rabbit.svg</file>
+
+    <!-- PC2 파트너 버튼 (2.5:1, 높이 8mm 고정 / 12개) -->
+    <file>coupang_pc2_2.5x1.png</file>
+    <file>gmarket_pc2_2.5x1.png</file>
+    <file>11st_pc2_2.5x1.png</file>
+    <file>musinsa_pc2_2.5x1.png</file>
+    <file>amazon_pc2_2.5x1.png</file>
+    <file>ebay_pc2_2.5x1.png</file>
+    <file>aliexpress_pc2_2.5x1.png</file>
+    <file>otto_pc2_2.5x1.png</file>
+    <file>allegro_pc2_2.5x1.png</file>
+    <file>shopee_pc2_2.5x1.png</file>
+    <file>lazada_pc2_2.5x1.png</file>
+    <file>auction_pc2_2.5x1.png</file>
+
+    <!-- PC1 파트너 버튼 (정사각 1:1, 8.5mm, 간격 1px / 12개) -->
+    <file>coupang_pc1_1x1.png</file>
+    <file>gmarket_pc1_1x1.png</file>
+    <file>11st_pc1_1x1.png</file>
+    <file>musinsa_pc1_1x1.png</file>
+    <file>amazon_pc1_1x1.png</file>
+    <file>ebay_pc1_1x1.png</file>
+    <file>aliexpress_pc1_1x1.png</file>
+    <file>otto_pc1_1x1.png</file>
+    <file>allegro_pc1_1x1.png</file>
+    <file>shopee_pc1_1x1.png</file>
+    <file>lazada_pc1_1x1.png</file>
+    <file>auction_pc1_1x1.png</file>
+  </files>
+
+  <!-- 메타(선택): 스킨 식별 태그 -->
+  <tags>
+    <tag>Odyssey</tag>
+    <tag>Custom</tag>
+    <tag>SEO</tag>
+    <tag>i18n</tag>
+    <tag>Affiliate</tag>
+  </tags>
+</skin>
+```0
