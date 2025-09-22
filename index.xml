@@ -1,8 +1,4 @@
-<!-- index.xml (Odyssey Custom v1.2 · 단일 레벨 업로드 대응 · 평면 경로)
-     - Tistory 폴더 업로드 미지원 → 모든 리소스는 루트(같은 레벨)로 업로드
-     - skin.html / style.css / 이미지 파일 일괄 등록
-     - 스킨명은 버전 포함(캐시/구분 용이)
--->
+<!-- index.xml (Odyssey Custom v1.2 · 단일 레벨 업로드 대응 · 평면 경로) -->
 <skin>
   <information>
     <name>오딧세이 커스텀 v1.2</name>
@@ -15,19 +11,16 @@
     <description>지식과 커머스가 공존하는 곳 — Odyssey Custom 스킨(PC2/PC1 통합, i18n/SEO/파트너 파이프라인/강력 캐시 무력화, 301+404 UX 가드, 접근성 보강)</description>
   </information>
 
-  <!-- 스킨 엔트리 -->
   <files>
     <file>skin.html</file>
     <file>style.css</file>
 
-    <!-- 파비콘/대표 이미지 -->
     <file>favicon-32.png</file>
     <file>favicon-192.png</file>
     <file>apple-touch-icon.png</file>
     <file>hero_cover.png</file>
     <file>rabbit.svg</file>
 
-    <!-- PC2 파트너 버튼 (2.5:1, 높이 8mm 고정 / 12개) -->
     <file>coupang_pc2_2.5x1.png</file>
     <file>gmarket_pc2_2.5x1.png</file>
     <file>11st_pc2_2.5x1.png</file>
@@ -41,7 +34,6 @@
     <file>lazada_pc2_2.5x1.png</file>
     <file>auction_pc2_2.5x1.png</file>
 
-    <!-- PC1 파트너 버튼 (정사각 1:1, 8.5mm, 간격 1px / 12개) -->
     <file>coupang_pc1_1x1.png</file>
     <file>gmarket_pc1_1x1.png</file>
     <file>11st_pc1_1x1.png</file>
@@ -56,9 +48,7 @@
     <file>auction_pc1_1x1.png</file>
   </files>
 
-  <!-- 사용자 설정 변수(티스토리 스킨 편집기 노출용) -->
   <variables>
-    <!-- 기본 정보/SEO -->
     <variable name="site_title_ko"  label="블로그 제목(한국어)"   type="text"   default="옹달샘 지식 아카이브"/>
     <variable name="site_title_en"  label="Blog Title (EN)"       type="text"   default="Ongdalsaem Knowledge Archive"/>
     <variable name="site_desc_ko"   label="블로그 소개(한국어)"    type="text"   default="지식과 커머스가 공존하는 곳"/>
@@ -68,13 +58,9 @@
       <option value="en">English</option>
     </variable>
 
-    <!-- AdSense 자동 로딩 -->
     <variable name="adsense_publisher_id" label="Google AdSense Publisher ID (ca-pub-…)" type="text" default=""/>
 
-    <!-- 파트너 공통(활성/비활성, 트래킹/딜URL) -->
-    <!-- 값이 비어있으면 자동 비활성/회색 처리, deal_url이 있으면 Deal/D 마킹 활성 -->
     <group name="partners" label="파트너 설정">
-      <!-- Coupang -->
       <variable name="coupang_enabled" label="쿠팡 활성화" type="checkbox" default="true"/>
       <variable name="coupang_tracking" label="쿠팡 트래킹 링크" type="text" default=""/>
       <variable name="coupang_deal_url" label="쿠팡 특가(딜) URL" type="text" default=""/>
@@ -82,67 +68,55 @@
       <variable name="coupang_secret_key" label="쿠팡 Secret Key (선택)" type="password" default=""/>
       <variable name="coupang_subid" label="쿠팡 subId (선택)" type="text" default=""/>
 
-      <!-- Gmarket -->
       <variable name="gmarket_enabled" label="지마켓 활성화" type="checkbox" default="true"/>
       <variable name="gmarket_tracking" label="지마켓 트래킹 링크" type="text" default=""/>
       <variable name="gmarket_deal_url" label="지마켓 특가(딜) URL" type="text" default=""/>
       <variable name="gmarket_affiliate_id" label="지마켓 Affiliate ID (선택)" type="text" default=""/>
 
-      <!-- 11st -->
       <variable name="11st_enabled" label="11번가 활성화" type="checkbox" default="true"/>
       <variable name="11st_tracking" label="11번가 트래킹 링크" type="text" default=""/>
       <variable name="11st_deal_url" label="11번가 특가(딜) URL" type="text" default=""/>
 
-      <!-- MUSINSA -->
       <variable name="musinsa_enabled" label="무신사 활성화" type="checkbox" default="true"/>
       <variable name="musinsa_tracking" label="무신사 트래킹 링크" type="text" default=""/>
       <variable name="musinsa_deal_url" label="무신사 특가(딜) URL" type="text" default=""/>
 
-      <!-- Amazon -->
       <variable name="amazon_enabled" label="Amazon 활성화" type="checkbox" default="true"/>
       <variable name="amazon_tracking" label="Amazon Associate Link" type="text" default=""/>
       <variable name="amazon_deal_url" label="Amazon 특가(딜) URL" type="text" default=""/>
       <variable name="amazon_paapi_key" label="PA-API Public Key (선택)" type="text" default=""/>
       <variable name="amazon_paapi_secret" label="PA-API Secret Key (선택)" type="password" default=""/>
 
-      <!-- eBay -->
       <variable name="ebay_enabled" label="eBay 활성화" type="checkbox" default="true"/>
       <variable name="ebay_tracking" label="eBay EPN 링크" type="text" default=""/>
       <variable name="ebay_deal_url" label="eBay 특가(딜) URL" type="text" default=""/>
 
-      <!-- AliExpress -->
       <variable name="aliexpress_enabled" label="AliExpress 활성화" type="checkbox" default="true"/>
       <variable name="aliexpress_tracking" label="AliExpress 트래킹 링크" type="text" default=""/>
       <variable name="aliexpress_deal_url" label="AliExpress 특가(딜) URL" type="text" default=""/>
 
-      <!-- OTTO -->
       <variable name="otto_enabled" label="OTTO 활성화" type="checkbox" default="true"/>
       <variable name="otto_tracking" label="OTTO 트래킹 링크" type="text" default=""/>
       <variable name="otto_deal_url" label="OTTO 특가(딜) URL" type="text" default=""/>
 
-      <!-- Allegro -->
       <variable name="allegro_enabled" label="Allegro 활성화" type="checkbox" default="true"/>
       <variable name="allegro_tracking" label="Allegro 트래킹 링크" type="text" default=""/>
       <variable name="allegro_deal_url" label="Allegro 특가(딜) URL" type="text" default=""/>
 
-      <!-- Shopee -->
       <variable name="shopee_enabled" label="Shopee 활성화" type="checkbox" default="true"/>
       <variable name="shopee_tracking" label="Shopee 트래킹 링크" type="text" default=""/>
       <variable name="shopee_deal_url" label="Shopee 특가(딜) URL" type="text" default=""/>
 
-      <!-- Lazada -->
       <variable name="lazada_enabled" label="Lazada 활성화" type="checkbox" default="true"/>
       <variable name="lazada_tracking" label="Lazada 트래킹 링크" type="text" default=""/>
       <variable name="lazada_deal_url" label="Lazada 특가(딜) URL" type="text" default=""/>
 
-      <!-- Auction (비활성 후보: 12번 슬롯 유지용) -->
       <variable name="auction_enabled" label="옥션 활성화" type="checkbox" default="true"/>
       <variable name="auction_tracking" label="옥션 트래킹 링크" type="text" default=""/>
       <variable name="auction_deal_url" label="옥션 특가(딜) URL" type="text" default=""/>
       <variable name="auction_affiliate_id" label="옥션 Affiliate ID (선택)" type="text" default=""/>
     </group>
 
-    <!-- 고지/카피라이팅 문구(필요시 수정 가능) -->
     <variable name="disclosure_text" label="제휴 고지 문구" type="text"
               default="제휴링크 이용은 모두 무료입니다. 일부 링크 이용 시 운영자는 제휴사로부터 소정의 수수료를 받습니다."/>
     <variable name="copyright_text" label="카피라이트 문구" type="text"
@@ -151,14 +125,6 @@
               default="Kakao 기본 제공 문구"/>
   </variables>
 
-  <!-- (선택) 미리보기 이미지가 있으면 추가
-  <preview>
-    <image>preview_pc2.png</image>
-    <image>preview_pc1.png</image>
-  </preview>
-  -->
-
-  <!-- 태그 -->
   <tags>
     <tag>Odyssey</tag>
     <tag>Custom</tag>
