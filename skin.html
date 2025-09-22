@@ -1,18 +1,18 @@
-<!-- skin.html (Odyssey Custom v1.0.0 · PC2/PC1 통합 · 평면 경로 버전) -->
+<!-- skin.html (Odyssey Custom v1.2 · PC2/PC1 통합 · 평면 경로 버전) -->
 <!DOCTYPE html>
 <html lang="ko" data-skin="odyssey-custom" data-mode="pc2">
 <head>
   <!-- HEAD SNIPPET (SEO/OG/i18n/캐시무력화/버전 네이밍) -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>오딧세이 커스텀 v1.0.0</title>
+  <title>오딧세이 커스텀 v1.2</title>
   <meta name="description" content="지식과 커머스가 공존하는 곳, 옹달샘 지식 아카이브 / Where Knowledge and Commerce Coexist – Ongdalsaem Knowledge Archive">
   <link rel="icon" href="favicon-32.png" sizes="32x32">
   <link rel="icon" href="favicon-192.png" sizes="192x192">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="오딧세이 커스텀 v1.0.0">
+  <meta property="og:title" content="오딧세이 커스텀 v1.2">
   <meta property="og:description" content="지식과 커머스가 공존하는 곳, 옹달샘 지식 아카이브">
   <meta property="og:type" content="website">
   <meta property="og:image" content="hero_cover.png">
@@ -25,7 +25,6 @@
 
   <!-- 강력 캐시 무력화(리소스 쿼리 버전) -->
   <link rel="preload" href="style.css?v=2025-09-22" as="style">
-
   <link rel="stylesheet" href="style.css?v=2025-09-22">
 </head>
 <body class="pc2">
@@ -287,7 +286,6 @@
         <hr class="divider">
         <nav class="m-categories" id="mCategoryNav">
           <!-- PC2와 동일한 데이터 구조 -->
-          <!-- 필요시 트리 추가 -->
         </nav>
 
         <div class="spacer triple"></div>
@@ -380,7 +378,7 @@
   (function notice(){
     const track = S.qs('#noticeTrack'); const mtrack = S.qs('#mNoticeTrack');
     const key = 'noticeText';
-    const initText = S.store.getItem(key) || '공지: 새 스킨 v1.0.0 적용 완료 · i18n/SEO/파트너 연동 활성화';
+    const initText = S.store.getItem(key) || '공지: 새 스킨 v1.2 적용 완료 · i18n/SEO/파트너 연동 활성화';
     function fill(trackEl){
       if(!trackEl) return;
       trackEl.innerHTML = '';
