@@ -1,0 +1,582 @@
+<!-- skin.html (Odyssey Custom v1.0.0 · PC2/PC1 통합 · 평면 경로 버전) -->
+<!DOCTYPE html>
+<html lang="ko" data-skin="odyssey-custom" data-mode="pc2">
+<head>
+  <!-- HEAD SNIPPET (SEO/OG/i18n/캐시무력화/버전 네이밍) -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>오딧세이 커스텀 v1.0.0</title>
+  <meta name="description" content="지식과 커머스가 공존하는 곳, 옹달샘 지식 아카이브 / Where Knowledge and Commerce Coexist – Ongdalsaem Knowledge Archive">
+  <link rel="icon" href="favicon-32.png" sizes="32x32">
+  <link rel="icon" href="favicon-192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="오딧세이 커스텀 v1.0.0">
+  <meta property="og:description" content="지식과 커머스가 공존하는 곳, 옹달샘 지식 아카이브">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="hero_cover.png">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="옹달샘 지식 아카이브">
+
+  <!-- i18n 힌트 -->
+  <link rel="alternate" hreflang="ko" href="/">
+  <link rel="alternate" hreflang="en" href="/?lang=en">
+
+  <!-- 강력 캐시 무력화(리소스 쿼리 버전) -->
+  <link rel="preload" href="style.css?v=2025-09-22" as="style">
+
+  <link rel="stylesheet" href="style.css?v=2025-09-22">
+</head>
+<body class="pc2">
+  <a class="skip-link" href="#content">본문 바로가기</a>
+
+  <div id="app" class="layout layout-pc2">
+    <!-- ====== PC2 HEADER ====== -->
+    <header id="header" class="header header-pc2 is-sticky">
+      <div class="header-inner">
+        <div class="brand-left">
+          <!-- 대문 이미지: 업로드만 하면 적용되도록 background-image는 CSS(.hero-cover)에서 hero_cover.png 사용 -->
+          <a href="/" class="hero-link" aria-label="블로그 홈으로 이동">
+            <div class="hero-cover" title="블로그 홈 이동"
+                 data-tooltip="블로그 홈 이동" data-tooltip-timeout="1000"></div>
+          </a>
+          <div class="blog-meta">
+            <h1 class="blog-title" id="blogTitle">옹달샘 지식 아카이브</h1>
+            <p class="blog-desc" id="blogDesc">지식과 커머스가 공존하는 곳, 옹달샘 지식 아카이브</p>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <!-- 검색 -->
+          <form class="search" action="/search" role="search">
+            <input name="q" type="search" placeholder="검색…" aria-label="검색">
+            <button type="submit" class="btn btn-search">Go</button>
+          </form>
+
+          <!-- 가입/관리 버튼: 로그인 상태에 따라 토글 -->
+          <div class="auth-actions">
+            <a id="btnJoin" class="btn btn-join" href="/register">가입</a>
+            <a id="btnAdmin" class="btn btn-admin" href="/admin" hidden>관리</a>
+          </div>
+
+          <!-- 번역 위젯 -->
+          <div id="translateMount" class="translate-mount"></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap wrap-pc2">
+      <!-- ====== PC2 SIDEBAR ====== -->
+      <aside id="sidebar" class="sidebar sidebar-pc2" data-scroll="independent">
+        <!-- 공지 1층 -->
+        <section class="box notice-top">
+          <div class="notice-title"><span>🍀</span><strong>공지사항</strong><span>🍀</span></div>
+          <div class="notice-marquee" id="noticeMarquee" tabindex="0" aria-label="공지 텍스트 수평 스크롤">
+            <div class="marquee-track" id="noticeTrack"></div>
+          </div>
+        </section>
+
+        <!-- 공지 2층(운영자) -->
+        <section class="box notice-edit" data-admin-only hidden>
+          <textarea id="noticeInput" placeholder="공지 텍스트를 입력하세요"></textarea>
+          <button id="noticeSave" class="btn btn-primary">확인</button>
+        </section>
+
+        <hr class="divider">
+
+        <!-- 카테고리 -->
+        <nav class="box categories" id="categoryNav">
+          <div class="box-title">카테고리 <span class="hint">▼</span></div>
+          <ul class="cat-root">
+            <li class="cat main">
+              <button class="cat-toggle" data-cat="it">
+                <img class="rabbit" src="rabbit.svg" alt="" aria-hidden="true">
+                IT/디지털
+              </button>
+              <ul class="cat-children">
+                <li><a href="/category/it/news">최신IT뉴스</a></li>
+                <li><a href="/category/it/ai">AI&미래기술</a></li>
+                <li><a href="/category/it/review">앱&제품 리뷰</a></li>
+              </ul>
+            </li>
+
+            <li class="cat main">
+              <button class="cat-toggle" data-cat="trend">
+                <img class="rabbit" src="rabbit.svg" alt="" aria-hidden="true">
+                시사/트렌드
+              </button>
+              <ul class="cat-children">
+                <li><a href="/category/trend/politics">사회정치</a></li>
+                <li><a href="/category/trend/global">글로벌이슈</a></li>
+                <li><a href="/category/trend/life">라이프트렌드</a></li>
+              </ul>
+            </li>
+            <!-- … 필요 카테고리 추가 … -->
+          </ul>
+        </nav>
+
+        <!-- 아코디언 확장 대비 3줄 공간 -->
+        <div class="spacer triple"></div>
+        <hr class="divider fixed">
+
+        <!-- 특가정보 3슬롯 -->
+        <section class="box deals" id="dealsBox">
+          <div class="box-title">
+            <span class="gift">🎁</span>
+            <strong>특가정보 안내</strong>
+            <span class="gift">🎁</span>
+          </div>
+
+          <div class="deal-slots">
+            <div class="deal-slot" data-slot="1"></div>
+            <div class="deal-slot" data-slot="2"></div>
+            <div class="deal-slot" data-slot="3"></div>
+          </div>
+        </section>
+
+        <hr class="divider">
+        <!-- 애드센스 #1 -->
+        <section class="box ads" data-ads-slot="sidebar-1">
+          <div class="ads-placeholder">Adsense Slot #1</div>
+        </section>
+
+        <hr class="divider">
+        <!-- 방문자 집계 -->
+        <section class="box visitors">
+          <div class="row"><div class="label">DAILY</div><div id="visDaily" class="metric">0</div></div>
+          <div class="row"><div class="label">MONTHLY</div><div id="visMonthly" class="metric level-0">0</div></div>
+        </section>
+
+        <hr class="divider">
+        <!-- 애드센스 #2 -->
+        <section class="box ads" data-ads-slot="sidebar-2">
+          <div class="ads-placeholder">Adsense Slot #2</div>
+        </section>
+
+        <hr class="divider">
+        <!-- 운영자 구역 -->
+        <section class="box admin" data-admin-only hidden>
+          <div class="box-title">🍀제휴 방문 집계🍀</div>
+          <ul class="partners-counter">
+            <li data-partner="coupang"><button class="txt-btn">쿠팡</button><span class="count" id="cnt-coupang">0</span></li>
+            <li data-partner="gmarket"><button class="txt-btn">지마켓</button><span class="count" id="cnt-gmarket">0</span></li>
+            <li data-partner="11st"><button class="txt-btn">11번가</button><span class="count" id="cnt-11st">0</span></li>
+            <li data-partner="musinsa"><button class="txt-btn">무신사</button><span class="count" id="cnt-musinsa">0</span></li>
+            <li data-partner="amazon"><button class="txt-btn">아마존</button><span class="count" id="cnt-amazon">0</span></li>
+            <li data-partner="ebay"><button class="txt-btn">이베이</button><span class="count" id="cnt-ebay">0</span></li>
+            <li data-partner="aliexpress"><button class="txt-btn">알리익스프레스</button><span class="count" id="cnt-aliexpress">0</span></li>
+            <li data-partner="otto"><button class="txt-btn">OTTO</button><span class="count" id="cnt-otto">0</span></li>
+            <li data-partner="allegro"><button class="txt-btn">Allegro</button><span class="count" id="cnt-allegro">0</span></li>
+            <li data-partner="shopee"><button class="txt-btn">Shopee</button><span class="count" id="cnt-shopee">0</span></li>
+            <li data-partner="lazada"><button class="txt-btn">Lazada</button><span class="count" id="cnt-lazada">0</span></li>
+            <li data-partner="auction"><button class="txt-btn">옥션</button><span class="count" id="cnt-auction">0</span></li>
+          </ul>
+
+          <hr class="divider">
+          <div class="box-title">🍀파트너스 코드 관리🍀</div>
+          <div class="partner-accordion">
+            <details>
+              <summary>쿠팡 <button class="apply" data-apply="coupang">적용</button></summary>
+              <label>Access Key <input id="p-coupang-ak"></label>
+              <label>Secret Key <input id="p-coupang-sk" type="password"></label>
+              <label>SubId (선택) <input id="p-coupang-sub"></label>
+            </details>
+            <details>
+              <summary>지마켓 <button class="apply" data-apply="gmarket">적용</button></summary>
+              <label>Tracking Link <input id="p-gmarket-link"></label>
+              <label>Affiliate ID <input id="p-gmarket-id"></label>
+            </details>
+            <!-- … 다른 파트너 동일 패턴 … -->
+            <details>
+              <summary>옥션 <button class="apply" data-apply="auction">적용</button></summary>
+              <label>Tracking Link <input id="p-auction-link"></label>
+              <label>Affiliate ID <input id="p-auction-id"></label>
+            </details>
+          </div>
+        </section>
+      </aside>
+
+      <!-- ====== PC2 CONTENT ====== -->
+      <main id="content" class="content content-pc2">
+        <article class="post">
+          <h2 class="post-title" data-i18n="post.title">포스트 제목</h2>
+          <div class="post-body">
+            <div id="postBody"></div>
+          </div>
+        </article>
+
+        <!-- 하단 고정 내비 -->
+        <nav class="reading-nav" aria-label="관련 글 내비게이션">
+          <button class="arrow prev" id="navPrev" data-label="관련 이전글" aria-label="관련 이전글">
+            <span class="arrow-shape"></span><span class="arrow-text">관련 이전글</span>
+          </button>
+          <button class="arrow next" id="navNext" data-label="관련 최신글" aria-label="관련 최신글">
+            <span class="arrow-shape"></span><span class="arrow-text">관련 최신글</span>
+          </button>
+        </nav>
+      </main>
+    </div>
+
+    <!-- ====== PC2 FOOTER (2.5:1 · 12개) ====== -->
+    <footer id="footer" class="footer footer-pc2 is-fixed">
+      <div class="partners-row">
+        <a class="pbtn" data-partner="coupang"    href="#" role="link" aria-disabled="true"><img src="coupang_pc2_2.5x1.png" alt="Coupang"></a>
+        <a class="pbtn" data-partner="gmarket"    href="#" role="link" aria-disabled="true"><img src="gmarket_pc2_2.5x1.png" alt="Gmarket"></a>
+        <a class="pbtn" data-partner="11st"       href="#" role="link" aria-disabled="true"><img src="11st_pc2_2.5x1.png" alt="11st"></a>
+        <a class="pbtn" data-partner="musinsa"    href="#" role="link" aria-disabled="true"><img src="musinsa_pc2_2.5x1.png" alt="MUSINSA"></a>
+        <a class="pbtn" data-partner="amazon"     href="#" role="link" aria-disabled="true"><img src="amazon_pc2_2.5x1.png" alt="Amazon"></a>
+        <a class="pbtn" data-partner="ebay"       href="#" role="link" aria-disabled="true"><img src="ebay_pc2_2.5x1.png" alt="eBay"></a>
+        <a class="pbtn" data-partner="aliexpress" href="#" role="link" aria-disabled="true"><img src="aliexpress_pc2_2.5x1.png" alt="AliExpress"></a>
+        <a class="pbtn" data-partner="otto"       href="#" role="link" aria-disabled="true"><img src="otto_pc2_2.5x1.png" alt="OTTO"></a>
+        <a class="pbtn" data-partner="allegro"    href="#" role="link" aria-disabled="true"><img src="allegro_pc2_2.5x1.png" alt="Allegro"></a>
+        <a class="pbtn" data-partner="shopee"     href="#" role="link" aria-disabled="true"><img src="shopee_pc2_2.5x1.png" alt="Shopee"></a>
+        <a class="pbtn" data-partner="lazada"     href="#" role="link" aria-disabled="true"><img src="lazada_pc2_2.5x1.png" alt="Lazada"></a>
+        <a class="pbtn" data-partner="auction"    href="#" role="link" aria-disabled="true"><img src="auction_pc2_2.5x1.png" alt="Auction"></a>
+      </div>
+
+      <div class="legal">
+        <p class="disclosure">제휴링크 이용은 모두 무료입니다. 일부 링크 이용 시 운영자는 제휴사로부터 소정의 수수료를 받습니다.</p>
+        <p class="copy">© 2025 옹달샘 지식 아카이브 · Where Knowledge and Commerce Coexist — <span class="kakao">Kakao 기본 제공 문구</span></p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ====== MOBILE (PC1) LAYOUT ====== -->
+  <section id="m-app" class="layout layout-pc1" data-mode="pc1">
+    <!-- 모바일 헤더 -->
+    <header class="m-header">
+      <button class="m-nav m-prev" id="mPrev" aria-label="이전글">
+        <span class="tri"></span><span class="m-label">이전글</span>
+      </button>
+
+      <div class="m-brand">
+        <img class="rabbit" src="rabbit.svg" alt="" aria-hidden="true">
+        <div class="m-title">옹달샘 지식 아카이브</div>
+      </div>
+
+      <button class="m-nav m-next" id="mNext" aria-label="최신글">
+        <span class="tri"></span><span class="m-label">최신글</span>
+      </button>
+    </header>
+
+    <div class="m-wrap">
+      <!-- PC1 사이드바 -->
+      <aside class="m-sidebar is-open" id="mSidebar">
+        <div id="translateMountMobile" class="translate-mount"></div>
+        <div class="m-blogmeta">
+          <div class="name">옹달샘 지식 아카이브</div>
+          <div class="actions">
+            <a id="mJoin" class="btn btn-join" href="/register">가입</a>
+            <a id="mAdmin" class="btn btn-admin" href="/admin" hidden>관리</a>
+          </div>
+        </div>
+
+        <section class="m-notice-top">
+          <div class="notice-title"><span>🍀</span><strong>공지사항</strong><span>🍀</span></div>
+          <div class="notice-marquee" id="mNoticeMarquee" tabindex="0">
+            <div class="marquee-track" id="mNoticeTrack"></div>
+          </div>
+        </section>
+
+        <section class="m-notice-edit" data-admin-only hidden>
+          <textarea id="mNoticeInput" placeholder="공지 텍스트를 입력하세요"></textarea>
+          <button id="mNoticeSave" class="btn btn-primary">확인</button>
+        </section>
+
+        <hr class="divider">
+        <nav class="m-categories" id="mCategoryNav">
+          <!-- PC2와 동일한 데이터 구조 -->
+          <!-- 필요시 트리 추가 -->
+        </nav>
+
+        <div class="spacer triple"></div>
+        <hr class="divider fixed">
+
+        <div class="m-ads" data-ads-slot="m-sidebar-1"><div class="ads-placeholder">Adsense(M) #1</div></div>
+        <hr class="divider">
+        <div class="m-deals" id="mDealsBox">
+          <div class="deal-slot" data-slot="1"></div>
+          <div class="deal-slot" data-slot="2"></div>
+          <div class="deal-slot" data-slot="3"></div>
+        </div>
+        <hr class="divider">
+        <div class="m-ads" data-ads-slot="m-sidebar-2"><div class="ads-placeholder">Adsense(M) #2</div></div>
+
+        <hr class="divider">
+        <section class="m-visitors">
+          <div class="row"><div class="label">DAILY</div><div id="mVisDaily" class="metric">0</div></div>
+          <div class="row"><div class="label">MONTHLY</div><div id="mVisMonthly" class="metric level-0">0</div></div>
+        </section>
+
+        <hr class="divider">
+        <section class="m-admin" data-admin-only hidden>
+          <div class="box-title">🍀제휴 방문 집계🍀</div>
+          <ul class="partners-counter">
+            <!-- 필요시 집계 슬롯 동일 구성 -->
+          </ul>
+        </section>
+      </aside>
+
+      <!-- 콘텐츠 -->
+      <main class="m-content" id="mContent">
+        <article class="post">
+          <h2 class="post-title">포스트 제목</h2>
+          <div class="post-body" id="mPostBody"></div>
+        </article>
+      </main>
+    </div>
+
+    <!-- PC1 푸터: 가로 스크롤 박스 -->
+    <footer class="m-footer">
+      <div class="hbox">
+        <button class="hnav left" id="hLeft" aria-label="왼쪽으로 이동"></button>
+        <div class="hstrip" id="hStrip" role="listbox" aria-label="파트너">
+          <a class="hsbtn" data-partner="coupang"    role="option" aria-selected="false"><img src="coupang_pc1_1x1.png" alt="Coupang"></a>
+          <a class="hsbtn" data-partner="gmarket"    role="option" aria-selected="false"><img src="gmarket_pc1_1x1.png" alt="Gmarket"></a>
+          <a class="hsbtn" data-partner="11st"       role="option" aria-selected="false"><img src="11st_pc1_1x1.png" alt="11st"></a>
+          <a class="hsbtn" data-partner="musinsa"    role="option" aria-selected="false"><img src="musinsa_pc1_1x1.png" alt="MUSINSA"></a>
+          <a class="hsbtn" data-partner="amazon"     role="option" aria-selected="false"><img src="amazon_pc1_1x1.png" alt="Amazon"></a>
+          <a class="hsbtn" data-partner="ebay"       role="option" aria-selected="false"><img src="ebay_pc1_1x1.png" alt="eBay"></a>
+          <a class="hsbtn" data-partner="aliexpress" role="option" aria-selected="false"><img src="aliexpress_pc1_1x1.png" alt="AliExpress"></a>
+          <a class="hsbtn" data-partner="otto"       role="option" aria-selected="false"><img src="otto_pc1_1x1.png" alt="OTTO"></a>
+          <a class="hsbtn" data-partner="allegro"    role="option" aria-selected="false"><img src="allegro_pc1_1x1.png" alt="Allegro"></a>
+          <a class="hsbtn" data-partner="shopee"     role="option" aria-selected="false"><img src="shopee_pc1_1x1.png" alt="Shopee"></a>
+          <a class="hsbtn" data-partner="lazada"     role="option" aria-selected="false"><img src="lazada_pc1_1x1.png" alt="Lazada"></a>
+          <a class="hsbtn" data-partner="auction"    role="option" aria-selected="false"><img src="auction_pc1_1x1.png" alt="Auction"></a>
+        </div>
+        <button class="hnav right" id="hRight" aria-label="오른쪽으로 이동"></button>
+      </div>
+
+      <div class="m-legal">
+        <p class="disclosure">제휴링크 이용은 모두 무료입니다. 일부 링크 이용 시 운영자는 제휴사로부터 소정의 수수료를 받습니다.</p>
+      </div>
+    </footer>
+  </section>
+
+  <!-- ====== 공통 스크립트 ====== -->
+  <script>
+  /* ====== 유틸 & 상태 ====== */
+  const S = {
+    isAdmin: false,
+    locale: navigator.language || 'ko',
+    store: window.localStorage,
+    qs: sel => document.querySelector(sel),
+    qsa: sel => [...document.querySelectorAll(sel)],
+    on: (el, ev, fn) => el && el.addEventListener(ev, fn),
+    addcls: (el,c)=>el&&el.classList.add(c),
+    rmcls: (el,c)=>el&&el.classList.remove(c),
+    toggleHidden:(el, show)=>{ if(!el) return; el.hidden = !show; }
+  };
+
+  /* 가입/관리 버튼 토글 */
+  (function authToggle(){
+    const showAdmin = S.isAdmin === true;
+    ['#btnAdmin','#mAdmin'].forEach(sel=>S.toggleHidden(S.qs(sel), showAdmin));
+    ['#btnJoin','#mJoin'].forEach(sel=>S.toggleHidden(S.qs(sel), !showAdmin));
+  })();
+
+  /* 공지 마퀴 & 운영자 입력 */
+  (function notice(){
+    const track = S.qs('#noticeTrack'); const mtrack = S.qs('#mNoticeTrack');
+    const key = 'noticeText';
+    const initText = S.store.getItem(key) || '공지: 새 스킨 v1.0.0 적용 완료 · i18n/SEO/파트너 연동 활성화';
+    function fill(trackEl){
+      if(!trackEl) return;
+      trackEl.innerHTML = '';
+      const span = document.createElement('span');
+      span.className = 'marquee-item';
+      span.textContent = initText;
+      trackEl.appendChild(span);
+    }
+    fill(track); fill(mtrack);
+
+    if(S.isAdmin){
+      ['#noticeInput','#mNoticeInput'].forEach(sel=>{
+        const ta = S.qs(sel); if(ta) ta.value = initText;
+      });
+      S.qsa('[data-admin-only]').forEach(el=>el.hidden=false);
+      function save(sel){
+        const ta = S.qs(sel);
+        if(ta && ta.value.trim()){
+          S.store.setItem(key, ta.value.trim());
+          fill(track); fill(mtrack);
+        }
+      }
+      S.on(S.qs('#noticeSave'),'click',()=>save('#noticeInput'));
+      S.on(S.qs('#mNoticeSave'),'click',()=>save('#mNoticeInput'));
+    }
+
+    // 스와이프/드래그시 스크롤 정지 → 손 떼면 재개(간단 모드)
+    S.qsa('.notice-marquee').forEach(box=>{
+      let dragging=false;
+      S.on(box,'pointerdown',()=>dragging=true);
+      S.on(window,'pointerup',()=>dragging=false);
+      let t=0; (function loop(){
+        if(!dragging) box.scrollLeft = (box.scrollLeft+1) % (box.scrollWidth);
+        t=requestAnimationFrame(loop);
+      })();
+    });
+  })();
+
+  /* 카테고리 아코디언(자동닫힘 2초), 후광 */
+  (function cats(){
+    let closeTimer=null;
+    S.qsa('.cat-toggle').forEach(btn=>{
+      S.on(btn,'mouseenter',()=>S.addcls(btn,'halo-main'));
+      S.on(btn,'mouseleave',()=>S.rmcls(btn,'halo-main'));
+      S.on(btn,'click',()=>{
+        const li=btn.closest('.cat');
+        li.classList.toggle('open');
+      });
+    });
+    S.qsa('.cat-children a').forEach(a=>{
+      S.on(a,'mouseenter',()=>S.addcls(a,'halo-sub'));
+      S.on(a,'mouseleave',()=>S.rmcls(a,'halo-sub'));
+    });
+    S.on(document,'click',e=>{
+      if(!e.target.closest('.categories')){
+        clearTimeout(closeTimer);
+        closeTimer=setTimeout(()=>S.qsa('.cat.open').forEach(li=>li.classList.remove('open')), 2000);
+      }
+    });
+  })();
+
+  /* 특가 파이프라인: 3슬롯 라운드로빈(파트너 최대 5키워드/메시지) */
+  const Deals = (function(){
+    const SLOT_MAX = 3;
+    const perPartnerLimit = 5;
+    const slots = S.qsa('.deal-slot, .m-deals .deal-slot');
+    const partnerData = JSON.parse(S.store.getItem('partnerDeals')||'[]'); // [{partner:'coupang', items:['양말','넥타이'...]}]
+
+    function layout(){
+      if(!slots.length || !partnerData.length) return;
+      let i=0;
+      partnerData.forEach((p,idx)=>{
+        const items = (p.items||[]).slice(0,perPartnerLimit);
+        const msg = `${p.partner}: ${items.join(', ')}`;
+        const slot = slots[i % SLOT_MAX];
+        const a = document.createElement('a');
+        a.href = '#'; a.className='deal-link';
+        a.textContent = msg;
+        a.dataset.partner = p.partner;
+        S.on(a,'click', (ev)=>{
+          ev.preventDefault();
+          goPartner(p.partner, /*preferDeal=*/true);
+        });
+        slot.appendChild(a);
+        i++;
+      });
+    }
+    return { layout };
+  })();
+  Deals.layout();
+
+  /* 파트너 링크 빌더 */
+  const Partner = (function(){
+    const key = 'partnerConfig';
+    const conf = JSON.parse(S.store.getItem(key) || '{}');
+    function buildUrl(name, preferDeal=false){
+      const p = conf[name]; if(!p) return '#';
+      if(preferDeal && p.dealUrl) return p.dealUrl;
+      return p.tracking || '#';
+    }
+    function activateButtons(){
+      S.qsa('.pbtn, .hsbtn').forEach(btn=>{
+        const name = btn.dataset.partner;
+        const url = buildUrl(name,false);
+        if(url && url !== '#'){
+          btn.setAttribute('href', url);
+          btn.setAttribute('aria-disabled','false');
+          btn.classList.remove('disabled');
+        }else{
+          btn.setAttribute('href', '#');
+          btn.setAttribute('aria-disabled','true');
+          btn.classList.add('disabled');
+        }
+      });
+    }
+    return { buildUrl, activateButtons, conf, key };
+  })();
+  Partner.activateButtons();
+
+  function goPartner(name, preferDeal){
+    const url = Partner.buildUrl(name, preferDeal);
+    const cntKey = 'cnt-'+name; const cur = +S.store.getItem(cntKey)||0;
+    S.store.setItem(cntKey, cur+1);
+    window.location.href = url;
+  }
+
+  /* Deal / D 마킹 */
+  (function markDeals(){
+    S.qsa('.pbtn').forEach(btn=>{
+      const name = btn.dataset.partner;
+      if(Partner.conf[name]?.dealUrl) btn.classList.add('deal-on');
+    });
+    S.qsa('.hsbtn').forEach(btn=>{
+      const name = btn.dataset.partner;
+      if(Partner.conf[name]?.dealUrl) btn.classList.add('d-on');
+    });
+  })();
+
+  /* 방문자 집계 색상 단계 */
+  (function visitorPaint(){
+    function level(v){
+      if(v<=10000) return 0;
+      if(v<=100000) return 1;
+      if(v<=500000) return 2;
+      if(v<=1000000) return 3;
+      if(v<=5000000) return 4;
+      return 5;
+    }
+    const m = +S.store.getItem('visMonthly')||0;
+    const el = S.qs('#visMonthly') || S.qs('#mVisMonthly');
+    if(el){ el.textContent = m; el.className = 'metric level-'+level(m); }
+  })();
+
+  /* PC2 하단 화살표: 스크롤 감지시 초록 라벨 잠깐 보임, 1.5s 후 사라짐 */
+  (function readingNav(){
+    const prev=S.qs('#navPrev'), next=S.qs('#navNext');
+    if(!prev||!next) return;
+    let timer;
+    function show(){
+      prev.classList.add('hint'); next.classList.add('hint');
+      clearTimeout(timer);
+      timer=setTimeout(()=>{prev.classList.remove('hint'); next.classList.remove('hint');}, 1500);
+    }
+    S.on(window,'scroll',show);
+    S.on(prev,'click',()=>{ window.location.href='/category/related?dir=prev'; });
+    S.on(next,'click',()=>{ window.location.href='/category/related?dir=next'; });
+  })();
+
+  /* PC1 헤더 좌/우 삼각 내비(터치 순간 초록) */
+  (function mobileNav(){
+    const p=S.qs('#mPrev'), n=S.qs('#mNext');
+    if(!p||!n) return;
+    function flash(btn){ btn.classList.add('active'); setTimeout(()=>btn.classList.remove('active'),300); }
+    S.on(p,'click',()=>{ flash(p); window.location.href='/category/related?dir=prev'; });
+    S.on(n,'click',()=>{ flash(n); window.location.href='/category/related?dir=next'; });
+  })();
+
+  /* 301 소프트 리다이렉션(매핑 존재시) */
+  (function softRedirect(){
+    const map = JSON.parse(S.store.getItem('redirectMap')||'{}');
+    const cur = location.pathname;
+    if(map[cur]) location.replace(map[cur]);
+  })();
+  </script>
+
+  <!-- ====== AdSense/Analytics Hooks ====== -->
+  <script>
+  (function adsAuto(){
+    const pubId = (JSON.parse(localStorage.getItem('adsConfig')||'{}').publisherId)||'';
+    if(!pubId) return;
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(pubId)}`;
+    s.crossOrigin = 'anonymous';
+    document.head.appendChild(s);
+  })();
+  </script>
+</body>
+</html>
