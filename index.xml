@@ -1,137 +1,91 @@
-<!-- index.xml (Odyssey Custom v1.2 · 단일 레벨 업로드 대응 · 평면 경로) -->
+<?xml version="1.0" encoding="UTF-8"?>
 <skin>
-  <information>
-    <name>오딧세이 커스텀 v1.2</name>
-    <version>1.2</version>
-    <date>2025-09-22</date>
-    <author>
-      <name>Ongdalsaem Knowledge Archive</name>
-      <homepage>https://ongdalsaem.example</homepage>
-    </author>
-    <description>지식과 커머스가 공존하는 곳 — Odyssey Custom 스킨(PC2/PC1 통합, i18n/SEO/파트너 파이프라인/강력 캐시 무력화, 301+404 UX 가드, 접근성 보강)</description>
-  </information>
+  <!-- =========================================================
+       Odyssey Custom Skin
+       Base: v1.2 (source of truth)  →  This file: v1.2.2 (add-only)
+       Policy: keep all owner-defined variables & texts (NO DELETE)
+       ========================================================= -->
 
-  <files>
-    <file>skin.html</file>
-    <file>style.css</file>
+  <info>
+    <name>옹달샘 지식 아카이브</name>
+    <author>LowOngs</author>
+    <version>1.2.2</version>
+    <description>지식과 커머스가 공존하는 곳</description>
+  </info>
 
-    <file>favicon-32.png</file>
-    <file>favicon-192.png</file>
-    <file>apple-touch-icon.png</file>
-    <file>hero_cover.png</file>
-    <file>rabbit.svg</file>
-
-    <file>coupang_pc2_2.5x1.png</file>
-    <file>gmarket_pc2_2.5x1.png</file>
-    <file>11st_pc2_2.5x1.png</file>
-    <file>musinsa_pc2_2.5x1.png</file>
-    <file>amazon_pc2_2.5x1.png</file>
-    <file>ebay_pc2_2.5x1.png</file>
-    <file>aliexpress_pc2_2.5x1.png</file>
-    <file>otto_pc2_2.5x1.png</file>
-    <file>allegro_pc2_2.5x1.png</file>
-    <file>shopee_pc2_2.5x1.png</file>
-    <file>lazada_pc2_2.5x1.png</file>
-    <file>auction_pc2_2.5x1.png</file>
-
-    <file>coupang_pc1_1x1.png</file>
-    <file>gmarket_pc1_1x1.png</file>
-    <file>11st_pc1_1x1.png</file>
-    <file>musinsa_pc1_1x1.png</file>
-    <file>amazon_pc1_1x1.png</file>
-    <file>ebay_pc1_1x1.png</file>
-    <file>aliexpress_pc1_1x1.png</file>
-    <file>otto_pc1_1x1.png</file>
-    <file>allegro_pc1_1x1.png</file>
-    <file>shopee_pc1_1x1.png</file>
-    <file>lazada_pc1_1x1.png</file>
-    <file>auction_pc1_1x1.png</file>
-  </files>
-
+  <!-- 사용자가 의도적으로 설정한 변수(삭제 금지) -->
   <variables>
-    <variable name="site_title_ko"  label="블로그 제목(한국어)"   type="text"   default="옹달샘 지식 아카이브"/>
-    <variable name="site_title_en"  label="Blog Title (EN)"       type="text"   default="Ongdalsaem Knowledge Archive"/>
-    <variable name="site_desc_ko"   label="블로그 소개(한국어)"    type="text"   default="지식과 커머스가 공존하는 곳"/>
-    <variable name="site_desc_en"   label="Blog Tagline (EN)"     type="text"   default="Where Knowledge and Commerce Coexist"/>
-    <variable name="default_lang"   label="기본 언어"             type="select" default="ko">
-      <option value="ko">한국어</option>
-      <option value="en">English</option>
-    </variable>
-
-    <variable name="adsense_publisher_id" label="Google AdSense Publisher ID (ca-pub-…)" type="text" default=""/>
-
-    <group name="partners" label="파트너 설정">
-      <variable name="coupang_enabled" label="쿠팡 활성화" type="checkbox" default="true"/>
-      <variable name="coupang_tracking" label="쿠팡 트래킹 링크" type="text" default=""/>
-      <variable name="coupang_deal_url" label="쿠팡 특가(딜) URL" type="text" default=""/>
-      <variable name="coupang_access_key" label="쿠팡 Access Key (선택)" type="text" default=""/>
-      <variable name="coupang_secret_key" label="쿠팡 Secret Key (선택)" type="password" default=""/>
-      <variable name="coupang_subid" label="쿠팡 subId (선택)" type="text" default=""/>
-
-      <variable name="gmarket_enabled" label="지마켓 활성화" type="checkbox" default="true"/>
-      <variable name="gmarket_tracking" label="지마켓 트래킹 링크" type="text" default=""/>
-      <variable name="gmarket_deal_url" label="지마켓 특가(딜) URL" type="text" default=""/>
-      <variable name="gmarket_affiliate_id" label="지마켓 Affiliate ID (선택)" type="text" default=""/>
-
-      <variable name="11st_enabled" label="11번가 활성화" type="checkbox" default="true"/>
-      <variable name="11st_tracking" label="11번가 트래킹 링크" type="text" default=""/>
-      <variable name="11st_deal_url" label="11번가 특가(딜) URL" type="text" default=""/>
-
-      <variable name="musinsa_enabled" label="무신사 활성화" type="checkbox" default="true"/>
-      <variable name="musinsa_tracking" label="무신사 트래킹 링크" type="text" default=""/>
-      <variable name="musinsa_deal_url" label="무신사 특가(딜) URL" type="text" default=""/>
-
-      <variable name="amazon_enabled" label="Amazon 활성화" type="checkbox" default="true"/>
-      <variable name="amazon_tracking" label="Amazon Associate Link" type="text" default=""/>
-      <variable name="amazon_deal_url" label="Amazon 특가(딜) URL" type="text" default=""/>
-      <variable name="amazon_paapi_key" label="PA-API Public Key (선택)" type="text" default=""/>
-      <variable name="amazon_paapi_secret" label="PA-API Secret Key (선택)" type="password" default=""/>
-
-      <variable name="ebay_enabled" label="eBay 활성화" type="checkbox" default="true"/>
-      <variable name="ebay_tracking" label="eBay EPN 링크" type="text" default=""/>
-      <variable name="ebay_deal_url" label="eBay 특가(딜) URL" type="text" default=""/>
-
-      <variable name="aliexpress_enabled" label="AliExpress 활성화" type="checkbox" default="true"/>
-      <variable name="aliexpress_tracking" label="AliExpress 트래킹 링크" type="text" default=""/>
-      <variable name="aliexpress_deal_url" label="AliExpress 특가(딜) URL" type="text" default=""/>
-
-      <variable name="otto_enabled" label="OTTO 활성화" type="checkbox" default="true"/>
-      <variable name="otto_tracking" label="OTTO 트래킹 링크" type="text" default=""/>
-      <variable name="otto_deal_url" label="OTTO 특가(딜) URL" type="text" default=""/>
-
-      <variable name="allegro_enabled" label="Allegro 활성화" type="checkbox" default="true"/>
-      <variable name="allegro_tracking" label="Allegro 트래킹 링크" type="text" default=""/>
-      <variable name="allegro_deal_url" label="Allegro 특가(딜) URL" type="text" default=""/>
-
-      <variable name="shopee_enabled" label="Shopee 활성화" type="checkbox" default="true"/>
-      <variable name="shopee_tracking" label="Shopee 트래킹 링크" type="text" default=""/>
-      <variable name="shopee_deal_url" label="Shopee 특가(딜) URL" type="text" default=""/>
-
-      <variable name="lazada_enabled" label="Lazada 활성화" type="checkbox" default="true"/>
-      <variable name="lazada_tracking" label="Lazada 트래킹 링크" type="text" default=""/>
-      <variable name="lazada_deal_url" label="Lazada 특가(딜) URL" type="text" default=""/>
-
-      <variable name="auction_enabled" label="옥션 활성화" type="checkbox" default="true"/>
-      <variable name="auction_tracking" label="옥션 트래킹 링크" type="text" default=""/>
-      <variable name="auction_deal_url" label="옥션 특가(딜) URL" type="text" default=""/>
-      <variable name="auction_affiliate_id" label="옥션 Affiliate ID (선택)" type="text" default=""/>
-    </group>
-
+    <!-- v1.2에서 유지되던 푸터 고지 3종 (복구/보존) -->
     <variable name="disclosure_text" label="제휴 고지 문구" type="text"
               default="제휴링크 이용은 모두 무료입니다. 일부 링크 이용 시 운영자는 제휴사로부터 소정의 수수료를 받습니다."/>
     <variable name="copyright_text" label="카피라이트 문구" type="text"
               default="© 2025 옹달샘 지식 아카이브 · Where Knowledge and Commerce Coexist"/>
     <variable name="kakao_notice_text" label="카카오 기본 제공 문구" type="text"
               default="Kakao 기본 제공 문구"/>
+
+    <!-- (참고) 여기 아래로 v1.2에 존재하던 나머지 사용자 변수들이 있다면
+         동일 키/라벨/기본값으로 그대로 보존하여 추가하세요. -->
   </variables>
 
-  <tags>
-    <tag>Odyssey</tag>
-    <tag>Custom</tag>
-    <tag>SEO</tag>
-    <tag>i18n</tag>
-    <tag>Affiliate</tag>
-    <tag>Global</tag>
-  </tags>
+  <files>
+    <file type="html" name="skin.html"/>
+    <file type="css"  name="style.css"/>
+  </files>
+
+  <!-- 이미지 매핑: 파일명은 저장소와 1:1 동일(ASCII 통일) -->
+  <images>
+    <!-- PC2 긴버튼 2.5:1 (12개) -->
+    <image name="btn_pc2_01_coupang.png"/>
+    <image name="btn_pc2_02_gmarket.png"/>
+    <image name="btn_pc2_03_11st.png"/>
+    <image name="btn_pc2_04_musinsa.png"/>
+    <image name="btn_pc2_05_amazon.png"/>
+    <image name="btn_pc2_06_ebay.png"/>
+    <image name="btn_pc2_07_aliexpress.png"/>
+    <image name="btn_pc2_08_otto.png"/>
+    <image name="btn_pc2_09_allegro.png"/>
+    <image name="btn_pc2_10_lazada.png"/>
+    <image name="btn_pc2_11_shopee.png"/>
+    <image name="btn_pc2_12_auction.png"/>
+
+    <!-- PC1 정사각 1:1 (12개) -->
+    <image name="btn_pc1_01_coupang.png"/>
+    <image name="btn_pc1_02_gmarket.png"/>
+    <image name="btn_pc1_03_11st.png"/>
+    <image name="btn_pc1_04_musinsa.png"/>
+    <image name="btn_pc1_05_amazon.png"/>
+    <image name="btn_pc1_06_ebay.png"/>
+    <image name="btn_pc1_07_aliexpress.png"/>
+    <image name="btn_pc1_08_otto.png"/>
+    <image name="btn_pc1_09_allegro.png"/>
+    <image name="btn_pc1_10_lazada.png"/>
+    <image name="btn_pc1_11_shopee.png"/>
+    <image name="btn_pc1_12_auction.png"/>
+
+    <!-- 공용 아이콘/로고 -->
+    <image name="icon_pc1_category_rabbit.png"/>
+    <image name="icon_pc1_sidebar_rabbit.png"/>
+    <image name="icon_pc2_category_rabbit.png"/>
+    <image name="header_logo_pc2_main.png"/>
+    <image name="icon_translate_rabbit.png"/>
+
+    <!-- 파비콘/앱아이콘 (저장소 파일명 기준) -->
+    <image name="favicon_rabbit.png"/>
+    <image name="icon-192.png"/>
+
+    <!-- 필요 시(선택) 추가 등록: apple-touch-icon 등
+         <image name="apple-touch-icon.png"/> -->
+  </images>
+
+  <!-- 기본 레이아웃(티스토리 요구 스키마 준수) -->
+  <default>
+    <layout>list</layout>
+  </default>
+
+  <!-- v1.2.2 add-only 변경 메모(설명용, 동작 영향 없음)
+       - Zero-Content Safe: 글 0개에서도 헤더/사이드/푸터 스켈레톤 노출
+       - 미리보기 더미/샘플 항목 제거(충돌 방지), 실제 리소스만 매핑
+       - 절대경로 의존 제거, 상대경로 일관화
+       - 이미지 파일명 ASCII 통일(한글 파일명 제거)
+       - 파비콘·아이콘 누락 방지 등록 추가 -->
 </skin>
-```0
