@@ -2,469 +2,361 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- Tistory Odyssey Custom v1.2.2 (Base: v1.2 + additive patches only) -->
-  <title>옹달샘 지식 아카이브</title>
-
-  <!-- Favicon / PWA basic (상대경로, 단일 업로드 규칙) -->
-  <link rel="icon" href="favicon.ico?v=122" />
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=122" />
-
-  <!-- Skin Styles -->
+  <title>옹달샘 지식 아카이브 · Where Knowledge and Commerce Coexist</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <!-- 파비콘/아이콘 -->
+  <link rel="icon" href="favicon_rabbit.png?v=122">
+  <link rel="apple-touch-icon" href="icon-192.png?v=122" />
+  <!-- 스타일 -->
   <link rel="stylesheet" href="style.css?v=122" />
+  <!-- 티스토리 변수 주입을 위한 메타 (필수 아님 / 가이드용) -->
+  <meta name="theme-color" content="#111" />
 </head>
-<body class="tg-odyssey tg-v122">
+<body class="pc2"> <!-- pc1/pc2 전환: body class 로 제어 -->
 
-  <!-- =========================================================
-       HEADER : PC2 고정, PC1 비고정(본문과 함께 스크롤)
-       - PC2: 대문 원형 이미지(토끼/절구/별/달) 클릭 시 홈 이동(현재 탭)
-       - PC1: 중앙 헤더에 이전/다음 화살표 + 토끼 아이콘 + 블로그명
-     ========================================================= -->
-  <header id="site-header" class="site-header">
+  <!-- 접근성 스킵링크 -->
+  <a class="skip" href="#main">본문으로</a>
+  <a class="skip" href="#sidebar">사이드바로</a>
+
+  <!-- 헤더 : PC2 고정, PC1 비고정(스크롤) -->
+  <header id="site-header" class="header">
     <div class="header-inner">
-      <!-- PC2: 왼쪽 대문 아이콘 (원형) -->
-      <a class="hero-link" href="/" aria-label="홈으로 이동">
-        <img class="hero-cover" src="hero_cover.png?v=122" alt="블로그 대문" />
+      <!-- PC2 대문 이미지(클릭=홈), 호버=말풍선 -->
+      <a class="hero-link" href="/" title="블로그 홈으로 이동">
+        <img class="hero-image" src="header_logo_pc2_main.png?v=122" alt="블로그 대문" />
+        <span class="hero-tooltip">블로그 홈 이동</span>
       </a>
 
-      <!-- 블로그 타이틀/설명 -->
+      <!-- 블로그 타이틀/설명 (PC1에서는 타이틀 앞에 토끼 아이콘) -->
       <div class="brand">
-        <!-- PC1 헤더: 토끼 아이콘 + 블로그명 -->
-        <span class="brand-logo-pc1">
-          <img src="icon_pc1_sidebar_rabbit.png?v=122" alt="토끼" class="rabbit-icon-pc1" />
-        </span>
-        <h1 class="brand-title">옹달샘 지식 아카이브</h1>
+        <img class="brand-icon pc1-only" src="icon_pc1_sidebar_rabbit.png?v=122" alt="" aria-hidden="true" />
+        <h1 class="brand-name">옹달샘 지식 아카이브</h1>
         <p class="brand-desc">지식과 커머스가 공존하는 곳</p>
       </div>
 
-      <!-- 가입 / 관리 버튼: 로그인 상태에 따라 토글 -->
-      <div class="auth-actions">
-        <!-- 비로그인: 가입버튼 -->
-        <a class="btn join-btn only-guest" href="/join" data-role="join">가입</a>
-        <!-- 운영자 로그인: 관리버튼(가입버튼 위치 대체) -->
-        <a class="btn manage-btn only-admin" href="/manage" data-role="admin">관리</a>
+      <!-- 가입/관리 버튼: 로그인 운영자면 ‘관리’ 노출, 아니면 ‘가입’ -->
+      <div class="header-cta">
+        <!-- 운영자 모드일 때 -->
+        <a class="btn admin-only" href="/admin" data-role="admin">관리</a>
+        <!-- 비로그인/일반일 때 -->
+        <a class="btn guest-only" href="/signup" data-role="guest">가입</a>
       </div>
 
-      <!-- 헤더 검색(PC2 우측 정렬) -->
-      <div class="header-search">
-        <form action="/search" method="get" role="search">
-          <input type="text" name="q" placeholder="검색어를 입력하세요" />
-          <button type="submit" class="btn">검색</button>
-        </form>
-      </div>
+      <!-- 상단 검색 -->
+      <form class="search" action="/search" method="get" role="search">
+        <input type="search" name="q" placeholder="검색…" />
+        <button type="submit" class="btn">검색</button>
+      </form>
     </div>
-
-    <!-- PC1 전용: 헤더 양끝 이전/다음 화살표(터치 반응 초록색) -->
-    <nav class="mobile-quick-nav only-pc1">
-      <a class="nav-prev" href="/archive" data-nav="prev" aria-label="이전 글">
-        <span class="tri"></span><span class="nav-label">이전글</span>
-      </a>
-      <div class="nav-center">
-        <img src="icon_pc1_category_rabbit.png?v=122" alt="토끼" class="nav-rabbit" />
-        <span class="nav-blogtitle">옹달샘 지식 아카이브</span>
-      </div>
-      <a class="nav-next" href="/archive" data-nav="next" aria-label="최신 글">
-        <span class="nav-label">최신글</span><span class="tri"></span>
-      </a>
-    </nav>
   </header>
 
-  <!-- =========================================================
-       LAYOUT
-       - PC2: 좌(본문) + 중(사이드) + 우(여백) 구조, 사이드 독립스크롤
-       - PC1: 본문과 함께 스크롤, 반응형 고정 푸터
-     ========================================================= -->
-  <main id="site-main" class="site-main">
-    <div class="layout-grid">
-
-      <!-- ===================== CONTENT ====================== -->
-      <section id="content" class="content">
-
-        <!-- Zero-Content Safe : 글 0개여도 스켈레톤 출력 -->
-        <article class="post-skeleton" data-zero-safe>
-          <h2 class="skeleton-title">게시된 글이 없습니다</h2>
-          <p class="skeleton-desc">
-            첫 포스트를 작성하면 최신 글이 이 영역에 표시됩니다.
-          </p>
-        </article>
-
-        <!-- 실제 글 루프 (티스토리 치환자/구조 영역) -->
-        <!--
-        <s_list>
-          <article class="post">
-            <h2 class="post-title"><a href="<s_link_url>"><s_title></a></h2>
-            <div class="post-meta"><s_date></div>
-            <div class="post-excerpt"><s_summary></div>
-          </article>
-        </s_list>
-
-        <s_article_rep>
-          <article class="post-article">
-            <h1 class="post-title"><s_article_title></h1>
-            <div class="post-meta">
-              <span class="date"><s_article_date></span>
-              <span class="category"><s_article_category></span>
-            </div>
-            <div class="post-body">
-              <s_article_content>
-            </div>
-
-            <!-- PC2 본문 하단 좌/우 호버 화살표(스크롤 감응 표시 후 1.5s 유지) -->
-            <div class="pc2-article-arrows only-pc2" data-beacon>
-              <a class="arrow prev" href="<s_article_prev_link>" aria-label="관련 이전글">
-                <span class="arrow-shape"></span><span class="arrow-text">이전글</span>
-              </a>
-              <a class="arrow next" href="<s_article_next_link>" aria-label="관련 최신글">
-                <span class="arrow-text">최신글</span><span class="arrow-shape"></span>
-              </a>
-            </div>
-
-            <!-- 댓글 영역 + 번역 트리거 -->
-            <section class="comments">
-              <h3 class="c-title">댓글</h3>
-              <!-- 예시 루프 -->
-              <!--
-              <s_rp>
-                <div class="comment">
-                  <div class="c-meta">
-                    <span class="c-author"><s_rp_name></span>
-                    <span class="c-date"><s_rp_date></span>
-                    <button class="c-translate" data-role="translate">번역</button>
-                  </div>
-                  <div class="c-body"><s_rp_content></div>
-                </div>
-              </s_rp>
-              -->
-            </section>
-          </article>
-        </s_article_rep>
-        -->
-
-      </section>
-
-      <!-- ===================== SIDEBAR ====================== -->
-      <aside id="sidebar" class="sidebar only-pc2" data-independent-scroll>
-        <!-- 공지 섹션 -->
-        <section class="card notice">
-          <h3 class="card-title">🍀 공지사항 🍀</h3>
-          <div class="notice-edit only-admin">
-            <textarea placeholder="공지 텍스트를 입력하세요"></textarea>
-            <button class="btn confirm">확정</button>
-          </div>
-          <div class="notice-marquee" data-dragpause>
-            <!-- 좌우 스크롤/드래그 가능한 실행 텍스트 -->
-            <div class="marquee-track">중요 공지 내용이 이 영역에 좌우 스크롤로 표시됩니다.</div>
-          </div>
-        </section>
-
-        <!-- 카테고리(아코디언, 메인 호버 후광/하부 금색 호버) -->
-        <section class="card categories">
-          <h3 class="card-title">
-            <img src="icon_pc2_category_rabbit.png?v=122" alt="토끼" class="rabbit-icon" />
-            카테고리
-          </h3>
-          <nav class="cat-tree" data-accordion data-room="3">
-            <!-- 실제 트리 출력은 티스토리 치환자에 연결 -->
-            <!--
-            <s_category>
-              ...
-            </s_category>
-            -->
-          </nav>
-        </section>
-
-        <!-- 특가 정보(스크롤창, 3슬롯, API키/파트너 링크 매핑) -->
-        <section class="card deals" id="deals">
-          <h3 class="card-title">🎁 특가 정보 안내 🎁</h3>
-          <div class="deal-slots">
-            <div class="slot" data-slot="1"></div>
-            <div class="slot" data-slot="2"></div>
-            <div class="slot" data-slot="3"></div>
-          </div>
-        </section>
-
-        <!-- Ads (허가 후 자동 송출 2곳) -->
-        <section class="card ads">
-          <h3 class="card-title">ads google</h3>
-          <div class="adsense-slot" id="ads-1"><!-- AdSense snippet 자리 --></div>
-        </section>
-
-        <section class="card ads">
-          <h3 class="card-title">ads google</h3>
-          <div class="adsense-slot" id="ads-2"><!-- AdSense snippet 자리 --></div>
-        </section>
-
-        <!-- 방문자 통계(일간/월간, 월간 색상 등급/점멸 규칙) -->
-        <section class="card visitors">
-          <h3 class="card-title">방문자 집계</h3>
-          <div class="v-stats">
-            <div class="row"><span class="label">DAILY</span><span class="val" id="v-daily">0</span></div>
-            <div class="row">
-              <span class="label">MONTHLY</span><span class="val graded" id="v-monthly" data-grade="0">0</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- 운영자 구역(제휴 방문 집계 / 파트너스 코드 관리) -->
-        <section class="card admin only-admin">
-          <h3 class="card-title">🍀 제휴 방문 집계 🍀</h3>
-          <ul class="partners-counter">
-            <li data-partner="coupang"><button class="txtbtn">Coupang</button><span class="num">0</span></li>
-            <li data-partner="gmarket"><button class="txtbtn">Gmarket</button><span class="num">0</span></li>
-            <li data-partner="11st"><button class="txtbtn">11st</button><span class="num">0</span></li>
-            <li data-partner="musinsa"><button class="txtbtn">MUSINSA</button><span class="num">0</span></li>
-            <li data-partner="amazon"><button class="txtbtn">Amazon</button><span class="num">0</span></li>
-            <li data-partner="ebay"><button class="txtbtn">eBay</button><span class="num">0</span></li>
-            <li data-partner="aliexpress"><button class="txtbtn">AliExpress</button><span class="num">0</span></li>
-            <li data-partner="otto"><button class="txtbtn">OTTO</button><span class="num">0</span></li>
-            <li data-partner="allegro"><button class="txtbtn">Allegro</button><span class="num">0</span></li>
-            <li data-partner="lazada"><button class="txtbtn">Lazada</button><span class="num">0</span></li>
-            <li data-partner="shopee"><button class="txtbtn">Shopee</button><span class="num">0</span></li>
-            <li data-partner="auction"><button class="txtbtn">AUCTION</button><span class="num">0</span></li>
-          </ul>
-
-          <h3 class="card-title">🍀 파트너스 코드 관리 🍀</h3>
-          <ul class="partners-keys" data-accordion data-autoclose="3s">
-            <!-- 11개 + (옵션) AUCTION -->
-            <!-- 예시(한 항목) -->
-            <li class="key-item" data-k="coupang">
-              <button class="key-head">Coupang <span class="apply">적용</span></button>
-              <div class="key-body">
-                <label>Partner ID <input type="text" data-field="pid"></label>
-                <label>Affiliate Link <input type="text" data-field="link"></label>
-                <label>API Key <input type="text" data-field="api"></label>
-              </div>
-            </li>
-            <!-- 동일 패턴으로 파트너 12개 항목 반복 -->
-          </ul>
-        </section>
-      </aside>
-
-    </div>
-  </main>
-
-  <!-- =========================================================
-       FOOTER
-       - PC2: 고정 푸터, 2.5:1 버튼 12개(좌→우 1열, 줄바꿈 없음)
-       - PC1: 반응형 고정 푸터(아래 스크롤시 숨김 / 위 스크롤시 노출)
-     ========================================================= -->
-  <footer id="site-footer" class="site-footer">
-    <!-- PC2: 2.5:1 긴 버튼 12개 (높이 8mm 고정, 폭 가변 / 1px 간격) -->
-    <div class="partners-row only-pc2">
-      <a class="pbtn" data-p="coupang" href="#" target="_self">
-        <img src="btn_pc2_01_coupang.png?v=122" alt="Coupang" />
-        <span class="deal-mark" aria-hidden="true"></span>
-      </a>
-      <a class="pbtn" data-p="gmarket" href="#" target="_self">
-        <img src="btn_pc2_02_gmarket.png?v=122" alt="Gmarket" />
-        <span class="deal-mark" aria-hidden="true"></span>
-      </a>
-      <a class="pbtn" data-p="11st" href="#" target="_self">
-        <img src="btn_pc2_03_11st.png?v=122" alt="11st" />
-        <span class="deal-mark" aria-hidden="true"></span>
-      </a>
-      <a class="pbtn" data-p="musinsa" href="#" target="_self">
-        <img src="btn_pc2_04_musinsa.png?v=122" alt="MUSINSA" />
-        <span class="deal-mark" aria-hidden="true"></span>
-      </a>
-      <a class="pbtn" data-p="amazon" href="#" target="_self">
-        <img src="btn_pc2_05_amazon.png?v=122" alt="Amazon" />
-        <span class="deal-mark" aria-hidden="true"></span>
-      </a>
-      <a class="pbtn" data-p="ebay" href="#" target="_self">
-        <img src="btn_pc2_06_ebay.png?v=122" alt="eBay" />
-        <span class="deal-mark" aria-hidden="true"></span>
-      </a>
-      <a class="pbtn" data-p="aliexpress" href="#" target="_self">
-        <img src="btn_pc2_07_aliexpress.png?v=122" alt="AliExpress" />
-        <span class="deal-mark" aria-hidden="true"></span>
-      </a>
-      <a class="pbtn" data-p="otto" href="#" target="_self">
-        <img src="btn_pc2_08_otto.png?v=122" alt="OTTO" />
-        <span class="deal-mark" aria-hidden="true"></span>
-      </a>
-      <a class="pbtn" data-p="allegro" href="#" target="_self">
-        <img src="btn_pc2_09_allegro.png?v=122" alt="Allegro" />
-        <span class="deal-mark" aria-hidden="true"></span>
-      </a>
-      <a class="pbtn" data-p="lazada" href="#" target="_self">
-        <img src="btn_pc2_10_lazada.png?v=122" alt="Lazada" />
-        <span class="deal-mark" aria-hidden="true"></span>
-      </a>
-      <a class="pbtn" data-p="shopee" href="#" target="_self">
-        <img src="btn_pc2_11_shopee.png?v=122" alt="Shopee" />
-        <span class="deal-mark" aria-hidden="true"></span>
-      </a>
-      <a class="pbtn" data-p="auction" href="#" target="_self">
-        <img src="btn_pc2_12_auction.png?v=122" alt="AUCTION" />
-        <span class="deal-mark" aria-hidden="true"></span>
-      </a>
-    </div>
-
-    <!-- PC1: 정사각 1:1 버튼 캐러셀(무한 회전/드래그) -->
-    <div class="partners-carousel only-pc1" data-loop>
-      <button class="car-nav prev" aria-label="이전"><span class="tri"></span></button>
-      <div class="car-viewport">
-        <div class="car-track">
-          <a class="cbtn" data-p="coupang" href="#"><img src="btn_pc1_01_coupang.png?v=122" alt="Coupang" /><span class="d-mark">D</span></a>
-          <a class="cbtn" data-p="gmarket" href="#"><img src="btn_pc1_02_gmarket.png?v=122" alt="Gmarket" /><span class="d-mark">D</span></a>
-          <a class="cbtn" data-p="11st" href="#"><img src="btn_pc1_03_11st.png?v=122" alt="11st" /><span class="d-mark">D</span></a>
-          <a class="cbtn" data-p="musinsa" href="#"><img src="btn_pc1_04_musinsa.png?v=122" alt="MUSINSA" /><span class="d-mark">D</span></a>
-          <a class="cbtn" data-p="amazon" href="#"><img src="btn_pc1_05_amazon.png?v=122" alt="Amazon" /><span class="d-mark">D</span></a>
-          <a class="cbtn" data-p="ebay" href="#"><img src="btn_pc1_06_ebay.png?v=122" alt="eBay" /><span class="d-mark">D</span></a>
-          <a class="cbtn" data-p="aliexpress" href="#"><img src="btn_pc1_07_aliexpress.png?v=122" alt="AliExpress" /><span class="d-mark">D</span></a>
-          <a class="cbtn" data-p="otto" href="#"><img src="btn_pc1_08_otto.png?v=122" alt="OTTO" /><span class="d-mark">D</span></a>
-          <a class="cbtn" data-p="allegro" href="#"><img src="btn_pc1_09_allegro.png?v=122" alt="Allegro" /><span class="d-mark">D</span></a>
-          <a class="cbtn" data-p="lazada" href="#"><img src="btn_pc1_10_lazada.png?v=122" alt="Lazada" /><span class="d-mark">D</span></a>
-          <a class="cbtn" data-p="shopee" href="#"><img src="btn_pc1_11_shopee.png?v=122" alt="Shopee" /><span class="d-mark">D</span></a>
-          <a class="cbtn" data-p="auction" href="#"><img src="btn_pc1_12_auction.png?v=122" alt="AUCTION" /><span class="d-mark">D</span></a>
+  <!-- 본문/사이드/푸터 3단 스켈레톤 -->
+  <div id="layout">
+    <!-- 사이드바 (pc2 독립 스크롤) -->
+    <aside id="sidebar" class="sidebar">
+      <!-- 번역 위젯(공용) -->
+      <div class="card translate-widget">
+        <div id="translate-orb" title="번역">
+          <img src="icon_translate_rabbit.png?v=122" alt="Translate" />
         </div>
       </div>
-      <button class="car-nav next" aria-label="다음"><span class="tri"></span></button>
+
+      <!-- 공지 -->
+      <section class="card notice">
+        <h2>공지사항</h2>
+        <div class="notice-ticker" tabindex="0" aria-label="공지 텍스트 스크롤">
+          공지 내용 스크롤 출력… <button class="notice-confirm admin-only" type="button">확인</button>
+        </div>
+      </section>
+
+      <hr class="divider" aria-hidden="true"/>
+
+      <!-- 카테고리 (아코디언/호버 후광) -->
+      <section class="card categories">
+        <h2>
+          <img class="cat-icon pc2-only" src="icon_pc2_category_rabbit.png?v=122" alt="" aria-hidden="true" />
+          카테고리
+        </h2>
+
+        <ul class="cat-root">
+          <li class="cat-item">
+            <button class="cat-head" type="button">
+              <img src="icon_pc1_category_rabbit.png?v=122" alt="" aria-hidden="true" />
+              IT/디지털
+            </button>
+            <ul class="cat-sub">
+              <li><a href="/category/it-news">최신 IT뉴스</a></li>
+              <li><a href="/category/ai-future">AI &amp; 미래기술</a></li>
+              <li><a href="/category/app-review">앱 &amp; 제품 리뷰</a></li>
+            </ul>
+          </li>
+
+          <li class="cat-item">
+            <button class="cat-head" type="button">
+              <img src="icon_pc1_category_rabbit.png?v=122" alt="" aria-hidden="true" />
+              시사/트렌드
+            </button>
+            <ul class="cat-sub">
+              <li><a href="/category/social">사회정치</a></li>
+              <li><a href="/category/global-issue">글로벌이슈</a></li>
+              <li><a href="/category/life-trend">라이프 트렌드</a></li>
+            </ul>
+          </li>
+        </ul>
+
+        <!-- 아코디언 확장 대비 3줄 공간 확보 -->
+        <div class="cat-reserve-3lines" aria-hidden="true"></div>
+        <hr class="divider" aria-hidden="true"/>
+      </section>
+
+      <!-- 특가 정보(슬롯 3) + Deal/D 마커 -->
+      <section class="card deals">
+        <h2>
+          <span class="gift-left" aria-hidden="true">🎁</span>
+          특가 안내
+          <span class="gift-right" aria-hidden="true">🎁</span>
+        </h2>
+        <ol class="deal-slots">
+          <li class="slot slot-1">쿠팡 특가 상품</li>
+          <li class="slot slot-2">아마존 특가 상품</li>
+          <li class="slot slot-3">무신사 특가 상품</li>
+        </ol>
+      </section>
+
+      <hr class="divider" aria-hidden="true"/>
+
+      <!-- 애드센스 #1 -->
+      <section class="card ads">
+        <h2 class="sr-only">Ads Google</h2>
+        <div class="adsense-snippet" data-slot="sidebar-1"></div>
+      </section>
+
+      <!-- 애드센스 #2 -->
+      <section class="card ads">
+        <h2 class="sr-only">Ads Google</h2>
+        <div class="adsense-snippet" data-slot="sidebar-2"></div>
+      </section>
+
+      <!-- 방문자 통계(일/월 2층) -->
+      <section class="card visits">
+        <h2>Visitor</h2>
+        <div class="visit-row">
+          <span>Daily:</span> <strong id="visit-daily">0</strong>
+        </div>
+        <div class="visit-row">
+          <span>Monthly:</span> <strong id="visit-monthly" class="visit-monthly">0</strong>
+        </div>
+      </section>
+
+      <hr class="divider" aria-hidden="true"/>
+
+      <!-- 운영자 구역 (로그인시에만) -->
+      <section class="card admin-only">
+        <h2>❀ 제휴 방문 집계 ❀</h2>
+        <ul class="aff-visits">
+          <li>coupang <b>0</b></li>
+          <li>gmarket <b>0</b></li>
+          <li>11st <b>0</b></li>
+          <li>musinsa <b>0</b></li>
+          <li>amazon <b>0</b></li>
+          <li>ebay <b>0</b></li>
+          <li>aliexpress <b>0</b></li>
+          <li>otto <b>0</b></li>
+          <li>allegro <b>0</b></li>
+          <li>lazada <b>0</b></li>
+          <li>shopee <b>0</b></li>
+          <li>auction <b>0</b></li>
+        </ul>
+
+        <hr class="divider" aria-hidden="true"/>
+        <h3>❀ 파트너스 코드 관리 ❀</h3>
+
+        <!-- 메인 카테고리 12개(아코디언) : 각 내부에 ID/딥링크/API 입력창 -->
+        <ul class="partners-admin">
+          <!-- 예시 하나(12개 동일 구조) -->
+          <li class="p-item">
+            <button class="p-head" type="button">1. Coupang <span class="p-apply">적용</span></button>
+            <div class="p-body">
+              <label>Partner ID <input type="text" data-key="coupang_id"/></label>
+              <label>DeepLink/Tracking <input type="url" data-key="coupang_url"/></label>
+              <label>API Key <input type="text" data-key="coupang_api"/></label>
+            </div>
+          </li>
+          <!-- …2~12 반복… -->
+        </ul>
+      </section>
+    </aside>
+
+    <!-- 메인 -->
+    <main id="main" class="main">
+      <!-- 0글 방지용 스켈레톤(게시글 없을 때도 뼈대 유지) -->
+      <article class="post-skeleton">
+        <h2 class="post-title">게시된 글이 없습니다</h2>
+        <p class="post-explain">첫 글 작성 전이라도 레이아웃은 유지됩니다.</p>
+      </article>
+
+      <!-- 본문 하단 내비(PC2): 스크롤 감지 시 라인화살표 + 텍스트 -->
+      <nav class="reading-nav pc2-only" aria-label="글 이동">
+        <a class="nav-prev" href="/category/related-prev" data-role="prev">
+          <span class="arrow-line"></span><span class="nav-text">이전글</span>
+        </a>
+        <a class="nav-next" href="/category/related-next" data-role="next">
+          <span class="arrow-line"></span><span class="nav-text">최신글</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+
+  <!-- 고정 푸터 -->
+  <footer id="site-footer" class="footer">
+    <!-- PC2: 2.5:1 풀 네이밍 버튼 12개 한 줄, 줄바꿈 없음 -->
+    <div class="partners pc2-only" role="list" aria-label="파트너 바로가기">
+      <a role="listitem" class="partner" data-key="coupang" href="#" rel="sponsored">
+        <img src="btn_pc2_01_coupang.png?v=122" alt="Coupang" />
+      </a>
+      <a role="listitem" class="partner" data-key="gmarket" href="#" rel="sponsored">
+        <img src="btn_pc2_02_gmarket.png?v=122" alt="Gmarket" />
+      </a>
+      <a role="listitem" class="partner" data-key="11st" href="#" rel="sponsored">
+        <img src="btn_pc2_03_11st.png?v=122" alt="11st" />
+      </a>
+      <a role="listitem" class="partner" data-key="musinsa" href="#" rel="sponsored">
+        <img src="btn_pc2_04_musinsa.png?v=122" alt="MUSINSA" />
+      </a>
+      <a role="listitem" class="partner" data-key="amazon" href="#" rel="sponsored">
+        <img src="btn_pc2_05_amazon.png?v=122" alt="Amazon" />
+      </a>
+      <a role="listitem" class="partner" data-key="ebay" href="#" rel="sponsored">
+        <img src="btn_pc2_06_ebay.png?v=122" alt="eBay" />
+      </a>
+      <a role="listitem" class="partner" data-key="aliexpress" href="#" rel="sponsored">
+        <img src="btn_pc2_07_aliexpress.png?v=122" alt="AliExpress" />
+      </a>
+      <a role="listitem" class="partner" data-key="otto" href="#" rel="sponsored">
+        <img src="btn_pc2_08_otto.png?v=122" alt="OTTO" />
+      </a>
+      <a role="listitem" class="partner" data-key="allegro" href="#" rel="sponsored">
+        <img src="btn_pc2_09_allegro.png?v=122" alt="Allegro" />
+      </a>
+      <a role="listitem" class="partner" data-key="lazada" href="#" rel="sponsored">
+        <img src="btn_pc2_10_lazada.png?v=122" alt="Lazada" />
+      </a>
+      <a role="listitem" class="partner" data-key="shopee" href="#" rel="sponsored">
+        <img src="btn_pc2_11_shopee.png?v=122" alt="Shopee" />
+      </a>
+      <a role="listitem" class="partner" data-key="auction" href="#" rel="sponsored">
+        <img src="btn_pc2_12_auction.png?v=122" alt="Auction" />
+      </a>
     </div>
 
-    <!-- 고지/카피라이트/카카오 (v1.2 원본 변수 보존 출력) -->
-    <div class="footer-legal">
-      <div class="footer-line disclosure">${disclosure_text}</div>
-      <div class="footer-line">
-        <span class="copyright">${copyright_text}</span>
-        <span class="kakao">${kakao_notice_text}</span>
+    <!-- PC1: 반응형 고정 푸터(스크롤 다운 숨김/업 노출) + 횡스크롤 박스 -->
+    <div class="partners-scroller pc1-only" aria-label="파트너 슬라이더">
+      <button class="scroll-btn prev" aria-label="이전">◀</button>
+      <div class="track" role="list">
+        <a role="listitem" class="p" data-key="coupang" href="#"><img src="btn_pc1_01_coupang.png?v=122" alt="Coupang" /></a>
+        <a role="listitem" class="p" data-key="gmarket" href="#"><img src="btn_pc1_02_gmarket.png?v=122" alt="Gmarket" /></a>
+        <a role="listitem" class="p" data-key="11st" href="#"><img src="btn_pc1_03_11st.png?v=122" alt="11st" /></a>
+        <a role="listitem" class="p" data-key="musinsa" href="#"><img src="btn_pc1_04_musinsa.png?v=122" alt="MUSINSA" /></a>
+        <a role="listitem" class="p" data-key="amazon" href="#"><img src="btn_pc1_05_amazon.png?v=122" alt="Amazon" /></a>
+        <a role="listitem" class="p" data-key="ebay" href="#"><img src="btn_pc1_06_ebay.png?v=122" alt="eBay" /></a>
+        <a role="listitem" class="p" data-key="aliexpress" href="#"><img src="btn_pc1_07_aliexpress.png?v=122" alt="AliExpress" /></a>
+        <a role="listitem" class="p" data-key="otto" href="#"><img src="btn_pc1_08_otto.png?v=122" alt="OTTO" /></a>
+        <a role="listitem" class="p" data-key="allegro" href="#"><img src="btn_pc1_09_allegro.png?v=122" alt="Allegro" /></a>
+        <a role="listitem" class="p" data-key="lazada" href="#"><img src="btn_pc1_10_lazada.png?v=122" alt="Lazada" /></a>
+        <a role="listitem" class="p" data-key="shopee" href="#"><img src="btn_pc1_11_shopee.png?v=122" alt="Shopee" /></a>
+        <a role="listitem" class="p" data-key="auction" href="#"><img src="btn_pc1_12_auction.png?v=122" alt="Auction" /></a>
       </div>
+      <button class="scroll-btn next" aria-label="다음">▶</button>
+      <div class="focus-line" aria-hidden="true"></div>
+    </div>
+
+    <!-- 고지/카피/카카오 문구(변수 사용) -->
+    <div class="footer-notices">
+      <p class="disclosure">${disclosure_text}</p>
+      <p class="copyright">${copyright_text}</p>
+      <p class="kakao">${kakao_notice_text}</p>
     </div>
   </footer>
 
-  <!-- =========================================================
-       번역 in-app : 토끼 원형 아이콘(10mm), 호출 시 댓글 옆 스냅/배너 펼침
-     ========================================================= -->
-  <div id="translate-orb" class="translate-orb" role="button" aria-label="번역">
-    <img src="icon_translate_rabbit.png?v=122" alt="번역" />
-  </div>
-  <div id="translate-banner" class="translate-banner" hidden>
-    <div class="tb-head">
-      <strong>댓글 번역</strong>
-      <button class="tb-close" aria-label="닫기">×</button>
-    </div>
-    <div class="tb-body">
-      <div class="tb-engines">
-        <button data-eng="google">Google</button>
-        <button data-eng="papago">Papago</button>
-        <button data-eng="deepl">DeepL</button>
-      </div>
-      <div class="tb-result" aria-live="polite">여기에 번역 결과가 표시됩니다.</div>
-      <div class="tb-actions">
-        <button class="tb-retrans">즉시 번역</button>
-        <button class="tb-reselect">번역기 다시 선택</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- =========================================================
-       Scripts (필수 로직만, 외부 의존성 없음 / 상대경로 유지)
-     ========================================================= -->
+  <!-- 스크립트: 최소한의 동작만(티스토리 호환 고려 / 외부의존 X) -->
   <script>
-  (function(){
-    // 로그인/운영자 토글(샘플: 실제 로그인 상태 치환자에 맞춰 클래스 토글)
-    const isAdmin = false; // 서버 치환자 연결 지점
-    document.querySelectorAll('.only-admin').forEach(n => n.style.display = isAdmin ? '' : 'none');
-    document.querySelectorAll('.only-guest').forEach(n => n.style.display = isAdmin ? 'none' : '');
+    (function(){
+      var isPC2 = document.body.classList.contains('pc2');
 
-    // Zero-Content Safe: 글 존재시 스켈레톤 숨김 (치환자에 맞춰 제어)
-    const hasPosts = false; // 서버 치환자 연결 지점
-    if (hasPosts) {
-      document.querySelectorAll('[data-zero-safe]').forEach(n => n.remove());
-    }
+      // 헤더: PC2 고정, PC1 비고정은 CSS로 처리
 
-    // PC2 본문 하단 화살표: 스크롤 감지 표시(1.5s)
-    let scrollTimer;
-    const beacon = document.querySelector('.pc2-article-arrows[data-beacon]');
-    if (beacon) {
-      window.addEventListener('scroll', function(){
-        beacon.classList.add('show');
-        clearTimeout(scrollTimer);
-        scrollTimer = setTimeout(()=>beacon.classList.remove('show'), 1500);
-      }, {passive:true});
-    }
+      // 공지 스크롤 시 마우스/터치 중지
+      var nt = document.querySelector('.notice-ticker');
+      if (nt) {
+        let stop = false;
+        nt.addEventListener('pointerdown', function(){ stop = true; });
+        nt.addEventListener('pointerup', function(){ stop = false; });
+      }
 
-    // 사이드 독립 스크롤(PC2)
-    const sidebar = document.querySelector('.sidebar.only-pc2');
-    if (sidebar) sidebar.setAttribute('tabindex', '-1');
-
-    // 방문자 월간 등급 색/점멸
-    const vMonthly = document.getElementById('v-monthly');
-    if (vMonthly) {
-      const val = parseInt(vMonthly.textContent.replace(/[^0-9]/g,'')) || 0;
-      let grade = 0;
-      if (val <= 10000) grade = 1;        // 남색
-      else if (val <= 100000) grade = 2;  // 녹색
-      else if (val <= 500000) grade = 3;  // 금색
-      else if (val <= 1000000) grade = 4; // 주황
-      else grade = 5;                      // 빨강 + 점멸
-      vMonthly.dataset.grade = String(grade);
-    }
-
-    // 파트너 버튼 링크/Deal 표시: 관리자 설정값에 따라
-    const linkMap = {
-      coupang:   '#',
-      gmarket:   '#',
-      '11st':    '#',
-      musinsa:   '#',
-      amazon:    '#',
-      ebay:      '#',
-      aliexpress:'#',
-      otto:      '#',
-      allegro:   '#',
-      lazada:    '#',
-      shopee:    '#',
-      auction:   '#'
-    };
-    document.querySelectorAll('.partners-row .pbtn').forEach(a=>{
-      const key = a.dataset.p;
-      const href = linkMap[key] || '#';
-      a.setAttribute('href', href);
-      // Deal 활성 예시(키 값/특가창 상태에 연동)
-      const hasDeal = false; // 서버 연동 포인트
-      if (!hasDeal) a.classList.remove('has-deal'); else a.classList.add('has-deal');
-    });
-    // PC1 캐러셀 D 마크(배터리 고려: 3초에 좌우 10도 2왕복)
-    document.querySelectorAll('.partners-carousel .cbtn').forEach(a=>{
-      const hasDeal = false;
-      const d = a.querySelector('.d-mark');
-      if (d) d.style.visibility = hasDeal ? 'visible' : 'hidden';
-    });
-
-    // 댓글 번역 in-app: 토끼 오브젝트
-    const orb = document.getElementById('translate-orb');
-    const banner = document.getElementById('translate-banner');
-    const closeBtn = banner ? banner.querySelector('.tb-close') : null;
-    if (orb && banner) {
-      // 첫 호출 시 현재 클릭 댓글 옆으로 스냅
-      document.addEventListener('click', function(e){
-        const btn = e.target.closest('.c-translate');
-        if (btn) {
-          const rect = btn.getBoundingClientRect();
-          orb.style.left = (rect.right + 8 + window.scrollX) + 'px';
-          orb.style.top  = (rect.top   - 4 + window.scrollY) + 'px';
-          banner.hidden = false;
-        }
+      // 카테고리 아코디언(2초 유지, 외부 클릭/미선택 시 자동 닫힘)
+      document.querySelectorAll('.cat-head').forEach(function(btn){
+        var timer;
+        btn.addEventListener('click', function(){
+          var item = btn.closest('.cat-item');
+          var open = item.classList.toggle('open');
+          clearTimeout(timer);
+          if(open){
+            timer = setTimeout(function(){ item.classList.remove('open'); }, 2000);
+          }
+        });
       });
-      // 배너 닫기
-      if (closeBtn) closeBtn.addEventListener('click', ()=> banner.hidden = true);
-      // 엔진 선택/즉시 번역 더미 훅(실제 번역은 외부앱 연동 또는 새창 이동 정책)
-      banner.addEventListener('click', function(e){
-        const eng = e.target.getAttribute('data-eng');
-        if (eng) {
-          document.querySelector('.tb-result').textContent = eng + ' 번역 준비됨(샘플)';
-        }
-        if (e.target.classList.contains('tb-retrans')) {
-          document.querySelector('.tb-result').textContent += ' → 즉시 번역 실행(샘플)';
-        }
-      });
-    }
 
-  })();
+      // 방문자 월간 색상(샘플)
+      var m = document.getElementById('visit-monthly');
+      if (m) {
+        var val = parseInt(m.textContent,10)||0;
+        var cls = 'v-navy';
+        if (val > 100000) cls='v-orange';
+        if (val > 500000) cls='v-red';
+        m.classList.add(cls);
+      }
+
+      // 파트너 버튼 링크: 운영자 설정값 적용(키가 없으면 비활성)
+      document.querySelectorAll('[data-key]').forEach(function(a){
+        var key = a.getAttribute('data-key');
+        // 실제에선 티스토리 변수/쿠키/스토리지에서 읽어와 적용
+        var url = ''; // TODO: 운영자 입력값 주입
+        if(url){ a.setAttribute('href', url); a.classList.add('active'); }
+        else   { a.setAttribute('href', '#'); a.classList.add('inactive'); a.setAttribute('aria-disabled','true');}
+      });
+
+      // PC2 읽기 네비 : 스크롤 감지하여 호버상태처럼 1.5s 표시
+      if (isPC2) {
+        var navPrev = document.querySelector('.reading-nav .nav-prev');
+        var navNext = document.querySelector('.reading-nav .nav-next');
+        var hideTimer;
+        var onScroll = function(){
+          [navPrev, navNext].forEach(function(el){ el && el.classList.add('show'); });
+          clearTimeout(hideTimer);
+          hideTimer = setTimeout(function(){
+            [navPrev, navNext].forEach(function(el){ el && el.classList.remove('show'); });
+          }, 1500);
+        };
+        window.addEventListener('scroll', onScroll, {passive:true});
+      }
+
+      // 번역 오브(이동형 in-app 창)
+      var orb = document.getElementById('translate-orb');
+      if (orb) {
+        let opened = false;
+        orb.addEventListener('click', function(ev){
+          opened = !opened;
+          orb.classList.toggle('open', opened);
+          // 댓글 옆 즉시 번역/재번역 UI는 실제 댓글 DOM에서 주입 (여기선 최소 마커)
+        });
+      }
+
+      // Ads: 허가 시 자동 로드(비동기 자리표시자)
+      document.querySelectorAll('.adsense-snippet').forEach(function(box){
+        // 실제 애드센스 승인 후 스니펫 삽입 지점
+        box.textContent = 'Google Ad (auto when approved)';
+      });
+    })();
   </script>
-
 </body>
 </html>
