@@ -1,13 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
-<skin version="2.0">
+<?xml version="1.0" encoding="UTF-8"?>
+<skin>
+  <!-- Odyssey Custom Skin – index.xml -->
+  <!-- Version: v1.2.2 (from v1.2 + additive patches) -->
   <info>
-    <name>오딧세이 커스텀 v1.2.2 (Ongdalsaem)</name>
-    <author>Ongs</author>
-    <description>Where Knowledge and Commerce Coexist — v1.2 기반, 0글 안정화/이미지매핑정합성/상대경로/캐시무력화 추가</description>
+    <name>옹달샘 지식 아카이브</name>
+    <author>LowOngs</author>
     <version>1.2.2</version>
+    <description>지식과 커머스가 공존하는 곳</description>
   </info>
 
-  <!-- ===== 변수: v1.2의 세밀 설정 보존 (삭제 금지) ===== -->
+  <files>
+    <file type="html" name="skin.html"/>
+    <file type="css"  name="style.css"/>
+  </files>
+
+  <!-- ===== variables: keep v1.2 fine-grained texts (삭제 금지) ===== -->
   <variables>
     <variable name="disclosure_text" label="제휴 고지 문구" type="text"
               default="제휴링크 이용은 모두 무료입니다. 일부 링크 이용 시 운영자는 제휴사로부터 소정의 수수료를 받습니다."/>
@@ -16,58 +23,47 @@
     <variable name="kakao_notice_text" label="카카오 기본 제공 문구" type="text"
               default="Kakao 기본 제공 문구"/>
   </variables>
+  <!-- ===== /variables ===== -->
 
-  <!-- ===== 파일 매핑: 깃허브 업로드 파일명과 1:1 ===== -->
-  <files>
-    <!-- 파비콘/아이콘 -->
-    <file>favicon_rabbit.png</file>
-    <file>icon-192.png</file>
+  <images>
+    <!-- PC2 2.5:1 -->
+    <image name="btn_pc2_01_coupang.png"/>
+    <image name="btn_pc2_02_gmarket.png"/>
+    <image name="btn_pc2_03_11st.png"/>
+    <image name="btn_pc2_04_musinsa.png"/>
+    <image name="btn_pc2_05_amazon.png"/>
+    <image name="btn_pc2_06_ebay.png"/>
+    <image name="btn_pc2_07_aliexpress.png"/>
+    <image name="btn_pc2_08_otto.png"/>
+    <image name="btn_pc2_09_allegro.png"/>
+    <image name="btn_pc2_10_lazada.png"/>
+    <image name="btn_pc2_11_shopee.png"/>
+    <image name="btn_pc2_12_auction.png"/>
 
-    <!-- 헤더 대문 -->
-    <file>header_logo_pc2_main.png</file>
+    <!-- PC1 1:1 -->
+    <image name="btn_pc1_01_coupang.png"/>
+    <image name="btn_pc1_02_gmarket.png"/>
+    <image name="btn_pc1_03_11st.png"/>
+    <image name="btn_pc1_04_musinsa.png"/>
+    <image name="btn_pc1_05_amazon.png"/>
+    <image name="btn_pc1_06_ebay.png"/>
+    <image name="btn_pc1_07_aliexpress.png"/>
+    <image name="btn_pc1_08_otto.png"/>
+    <image name="btn_pc1_09_allegro.png"/>
+    <image name="btn_pc1_10_lazada.png"/>
+    <image name="btn_pc1_11_shopee.png"/>
+    <image name="btn_pc1_12_auction.png"/>
 
-    <!-- 토끼 아이콘 -->
-    <file>icon_pc1_category_rabbit.png</file>
-    <file>icon_pc1_sidebar_rabbit.png</file>
-    <file>icon_pc2_category_rabbit.png</file>
-    <file>icon_translate_rabbit.png</file>
+    <!-- Shared icons -->
+    <image name="icon_pc1_category_rabbit.png"/>
+    <image name="icon_pc1_sidebar_rabbit.png"/>
+    <image name="icon_pc2_category_rabbit.png"/>
+    <image name="header_logo_pc2_main.png"/>
+    <image name="icon_translate_rabbit.png"/>
+    <image name="favicon_rabbit.png"/>
+  </images>
 
-    <!-- PC2 버튼(2.5:1) -->
-    <file>btn_pc2_01_coupang.png</file>
-    <file>btn_pc2_02_gmarket.png</file>
-    <file>btn_pc2_03_11st.png</file>
-    <file>btn_pc2_04_musinsa.png</file>
-    <file>btn_pc2_05_amazon.png</file>
-    <file>btn_pc2_06_ebay.png</file>
-    <file>btn_pc2_07_aliexpress.png</file>
-    <file>btn_pc2_08_otto.png</file>
-    <file>btn_pc2_09_allegro.png</file>
-    <file>btn_pc2_10_lazada.png</file>
-    <file>btn_pc2_11_shopee.png</file>
-    <file>btn_pc2_12_auction.png</file>
-
-    <!-- PC1 버튼(정사각) -->
-    <file>btn_pc1_01_coupang.png</file>
-    <file>btn_pc1_02_gmarket.png</file>
-    <file>btn_pc1_03_11st.png</file>
-    <file>btn_pc1_04_musinsa.png</file>
-    <file>btn_pc1_05_amazon.png</file>
-    <file>btn_pc1_06_ebay.png</file>
-    <file>btn_pc1_07_aliexpress.png</file>
-    <file>btn_pc1_08_otto.png</file>
-    <file>btn_pc1_09_allegro.png</file>
-    <file>btn_pc1_10_lazada.png</file>
-    <file>btn_pc1_11_shopee.png</file>
-    <file>btn_pc1_12_auction.png</file>
-  </files>
-
-  <!-- ===== 진입점 ===== -->
-  <entry>
-    <file>skin.html</file>
-  </entry>
-
-  <!-- ===== 스타일 ===== -->
-  <stylesheet>
-    <file>style.css</file>
-  </stylesheet>
+  <default>
+    <layout>list</layout>
+  </default>
 </skin>
