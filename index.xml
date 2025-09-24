@@ -10,53 +10,47 @@
   </info>
 
   <files>
-    <file type="html" name="skin.html" />
-    <file type="css" name="style.css" />
+    <file type="html" name="skin.html"/>
+    <file type="css"  name="style.css"/>
   </files>
 
   <images>
-    <!-- PC2 긴버튼용 (2.5:1) -->
-    <image name="btn_pc2_01_coupang.png" />
-    <image name="btn_pc2_02_gmarket.png" />
-    <image name="btn_pc2_03_11st.png" />
-    <image name="btn_pc2_04_musinsa.png" />
-    <image name="btn_pc2_05_amazon.png" />
-    <image name="btn_pc2_06_ebay.png" />
-    <image name="btn_pc2_07_aliexpress.png" />
-    <image name="btn_pc2_08_otto.png" />
-    <image name="btn_pc2_09_allegro.png" />
-    <image name="btn_pc2_10_lazada.png" />
-    <image name="btn_pc2_11_shopee.png" />
-    <image name="btn_pc2_12_auction.png" />
+    <!-- PC2 긴버튼(2.5:1) 12종 -->
+    <image name="btn_pc2_01_coupang.png"/>
+    <image name="btn_pc2_02_gmarket.png"/>
+    <image name="btn_pc2_03_11st.png"/>
+    <image name="btn_pc2_04_musinsa.png"/>
+    <image name="btn_pc2_05_amazon.png"/>
+    <image name="btn_pc2_06_ebay.png"/>
+    <image name="btn_pc2_07_aliexpress.png"/>
+    <image name="btn_pc2_08_otto.png"/>
+    <image name="btn_pc2_09_allegro.png"/>
+    <image name="btn_pc2_10_lazada.png"/>
+    <image name="btn_pc2_11_shopee.png"/>
+    <image name="btn_pc2_12_auction.png"/>
 
-    <!-- PC1 정사각형 버튼용 (1:1) -->
-    <image name="btn_pc1_01_coupang.png" />
-    <image name="btn_pc1_02_gmarket.png" />
-    <image name="btn_pc1_03_11st.png" />
-    <image name="btn_pc1_04_musinsa.png" />
-    <image name="btn_pc1_05_amazon.png" />
-    <image name="btn_pc1_06_ebay.png" />
-    <image name="btn_pc1_07_aliexpress.png" />
-    <image name="btn_pc1_08_otto.png" />
-    <image name="btn_pc1_09_allegro.png" />
-    <image name="btn_pc1_10_lazada.png" />
-    <image name="btn_pc1_11_shopee.png" />
-    <image name="btn_pc1_12_auction.png" />
+    <!-- PC1 정사각형(1:1) 12종 -->
+    <image name="btn_pc1_01_coupang.png"/>
+    <image name="btn_pc1_02_gmarket.png"/>
+    <image name="btn_pc1_03_11st.png"/>
+    <image name="btn_pc1_04_musinsa.png"/>
+    <image name="btn_pc1_05_amazon.png"/>
+    <image name="btn_pc1_06_ebay.png"/>
+    <image name="btn_pc1_07_aliexpress.png"/>
+    <image name="btn_pc1_08_otto.png"/>
+    <image name="btn_pc1_09_allegro.png"/>
+    <image name="btn_pc1_10_lazada.png"/>
+    <image name="btn_pc1_11_shopee.png"/>
+    <image name="btn_pc1_12_auction.png"/>
 
-    <!-- 토끼 아이콘 / 대문 / 번역 오브젝트 -->
-    <image name="icon_rabbit_category.png" />
-    <image name="icon_rabbit_sidebar.png" />
-    <image name="favicon_rabbit.png" />
-    <image name="hero_rabbit_moon.png" />
-    <image name="translate_orb.png" />
+    <!-- 토끼/대문/번역 오브젝트 & 파비콘 -->
+    <image name="rabbit_icon_category.png"/>
+    <image name="rabbit_icon_sidebar.png"/>
+    <image name="hero_cover.png"/>
+    <image name="translate_orb.png"/>
+    <image name="favicon.ico"/>
+    <image name="icon-192.png"/>
   </images>
-
-  <preview>
-    <main type="pc">preview_pc2_list.html</main>
-    <article type="pc">preview_pc2_article.html</article>
-    <main type="mobile">preview_mobile_list.html</main>
-    <article type="mobile">preview_mobile_article.html</article>
-  </preview>
 
   <default>
     <layout>list</layout>
