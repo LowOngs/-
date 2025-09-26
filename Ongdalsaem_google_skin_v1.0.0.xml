@@ -1,0 +1,339 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html>
+<html b:version='2' expr:class='data:blog.languageDirection'
+  xmlns='http://www.w3.org/1999/xhtml'
+  xmlns:b='http://www.google.com/2005/gml/b'
+  xmlns:data='http://www.google.com/2005/gml/data'
+  xmlns:expr='http://www.google.com/2005/gml/expr'>
+
+<head>
+  <meta content='IE=edge' http-equiv='X-UA-Compatible'/>
+  <meta content='width=device-width, initial-scale=1' name='viewport'/>
+  <b:include data='blog' name='all-head-content'/>
+  <title><data:blog.pageTitle/></title>
+
+  <!-- Basic JSON-LD at blog level (post-level LD can be added within Blog widget if needed) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "<data:blog.title/>",
+    "url": "<data:blog.homepageUrl.canonical/>"
+  }
+  </script>
+
+  <b:skin><![CDATA[
+    /* ====== Ongdalsaem Blogger Worker Template (Contempo base) ====== */
+    :root {
+      --sidebar-w: 300px;
+      --gap: 20px;
+      --border-main: #7cc8b2; /* 연한 청록 테두리 */
+      --paper-bg: #fbfbf7;    /* 아주 연한 아이보리 */
+      --accent: #16a34a;      /* 초록 포커스 */
+      --accent-amber: #f59e0b;
+      --text: #0f172a;
+      --muted: #64748b;
+      --footer-bg: #ffffff;
+      --footer-border: #e5e7eb;
+    }
+
+    html, body {margin:0; padding:0; color:var(--text);}
+    body {font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Apple SD Gothic Neo, Noto Sans KR, sans-serif;}
+
+    /* Header (fixed) */
+    #site-header {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: saturate(180%) blur(8px);
+      background: rgba(255,255,255,0.9);
+      border-bottom: 1px solid #eef2f7;
+    }
+    .header-inner {display:flex; align-items:center; gap:12px; padding:10px var(--gap);}
+    .brand {display:flex; align-items:center; gap:10px; font-weight:800;}
+    .brand a {color:inherit; text-decoration:none;}
+    .spacer {flex:1;}
+    .translate-dropdown {position:relative;}
+    .translate-toggle {border:1px solid #e5e7eb; background:#fff; border-radius:999px; padding:6px 10px; cursor:pointer;}
+    .translate-menu {position:absolute; right:0; top:42px; background:#fff; border:1px solid #e5e7eb; border-radius:12px;
+      box-shadow:0 10px 30px rgba(0,0,0,.08); display:none; min-width:180px; overflow:hidden;}
+    .translate-menu a {display:block; padding:10px 12px; color:#111; text-decoration:none;}
+    .translate-menu a:hover {background:#f8fafc;}
+    .cta {display:flex; gap:8px;}
+    .cta a {border:1px solid #e5e7eb; border-radius:10px; padding:6px 12px; text-decoration:none; color:#111; font-weight:600;}
+
+    /* Layout */
+    .layout {display:grid; gap:var(--gap); padding:var(--gap);}
+    main.article {background:var(--paper-bg); border:2px solid var(--border-main); border-radius:16px; padding:18px;}
+    aside.sidebar {background:#fff; border:1px solid #eceff3; border-radius:14px; padding:14px; overflow:auto; max-height:calc(100vh - 140px);}
+
+    /* PC2 (>=1061px) 2열 */
+    @media (min-width:1061px){
+      .layout {grid-template-columns: 1fr var(--sidebar-w); grid-template-areas:"main side";}
+      main.article {grid-area: main;}
+      aside.sidebar {grid-area: side;}
+      .mobile-only {display:none !important;}
+    }
+    /* PC1 (<=1060px) 1열 + 사이드바 드로어 */
+    @media (max-width:1060px){
+      .layout {grid-template-columns: 1fr;}
+      aside.sidebar {position: fixed; right:0; top:60px; width:min(92vw, 360px); height: calc(100dvh - 60px);
+        transform: translateX(100%); transition: transform .25s ease; box-shadow: -16px 0 30px rgba(0,0,0,.08);}
+      aside.sidebar.open {transform: translateX(0);}
+      .drawer-toggle {position: fixed; right: 10px; top: 10px; z-index: 60; border:1px solid #e5e7eb; background:#fff; border-radius:10px; padding:6px 10px;}
+      .desktop-only {display:none !important;}
+    }
+
+    /* Post nav arrows (본문 중앙 2/3 지점, 기본 숨김 → 근접/스크롤 시 노출) */
+    .nav-arrow {position: fixed; top: 33%; transform: translateY(-50%); width: 52px; height: 52px;
+      border-radius: 26px; display:flex; align-items:center; justify-content:center;
+      border:1px solid #dbe1e8; background:#fff; box-shadow:0 10px 25px rgba(0,0,0,.06);
+      opacity:0; pointer-events:none; transition: opacity .2s ease;}
+    .nav-arrow.show {opacity:1; pointer-events:auto;}
+    .nav-left {left: 10px;}
+    .nav-right {right: 10px;}
+    .nav-glyph {font-weight: 900; letter-spacing: -2px;}
+    .nav-arrow:hover .nav-glyph {text-shadow: 0 0 6px var(--accent);}
+    @keyframes side-signal-l {0%{text-shadow:none;} 50%{text-shadow:0 0 10px var(--accent);} 100%{text-shadow:none;}}
+    @keyframes side-signal-r {0%{text-shadow:none;} 50%{text-shadow:0 0 10px var(--accent);} 100%{text-shadow:none;}}
+
+    /* Sidebar blocks */
+    .block {margin: 10px 0; padding:10px;}
+    .block-title {font-weight:800; margin-bottom:6px; display:flex; align-items:center; gap:6px;}
+    .divider {height:1px; background:#edf2f7; margin:10px 0;}
+
+    /* Notice marquee */
+    .notice-wrap {display:flex; align-items:center; gap:10px;}
+    .marquee {overflow:hidden; white-space:nowrap; border:1px solid #e5e7eb; border-radius:10px; padding:6px 10px;}
+    .marquee .track {display:inline-block; will-change: transform; animation: m-scroll 24s linear infinite;}
+    .marquee:focus .track, .marquee:hover .track {animation-play-state: paused;}
+    @keyframes m-scroll { from{ transform:translateX(0); } to{ transform: translateX(-50%); } }
+
+    /* Category accordion */
+    .cat {margin:4px 0;}
+    .cat > button {width:100%; text-align:left; background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:10px; font-weight:700;}
+    .cat > button:hover {box-shadow:0 0 0 2px var(--accent-amber) inset;}
+    .cat-panel {display:none; padding:8px 10px;}
+    .cat.open .cat-panel {display:block;}
+    .cat-panel a {display:block; padding:6px 8px; text-decoration:none; color:#111;}
+    .cat-panel a.active {color:#b45309; font-weight:700;}
+
+    /* Footer (fixed reveal on scroll up, hide on scroll down) */
+    #site-footer {position: sticky; bottom: 0; z-index: 40; background: var(--footer-bg); border-top: 1px solid var(--footer-border);}
+    .footer-inner {padding:10px var(--gap);}
+    .aff-row {display:flex; flex-wrap:wrap; gap:8px; margin-bottom:6px;}
+    .aff-btn {display:inline-flex; align-items:center; justify-content:center; min-width:78px; height:40px;
+      padding:0 10px; border:1px solid #e5e7eb; border-radius:10px; background:#fff; color:#111; text-decoration:none; position:relative; font-weight:700;}
+    .aff-btn.disabled {filter:grayscale(1); opacity:.45; pointer-events:none;}
+    .badge {position:absolute; top:-6px; right:-6px; background:var(--accent); color:#fff; border-radius:999px; font-size:11px; padding:2px 6px;}
+
+    /* Mobile D wiggle */
+    @keyframes d-wiggle {0%,100%{transform:rotate(0)}25%{transform:rotate(10deg)}75%{transform:rotate(-10deg)}}
+    .badge-mobile {animation:d-wiggle .3s ease; animation-iteration-count:2}
+
+    .disclosure {font-size:12px; color:#555; line-height:1.5}
+
+    /* iOS bottom safe area */
+    @supports (padding: env(safe-area-inset-bottom)) {
+      .footer-inner {padding-bottom: calc(10px + env(safe-area-inset-bottom));}
+    }
+  ]]></b:skin>
+</head>
+
+<body>
+  <!-- Mobile drawer toggle -->
+  <button class='drawer-toggle mobile-only' aria-controls='sidebar' aria-expanded='false' onclick="(function(){var s=document.getElementById('sidebar'); s.classList.toggle('open');})()">☰</button>
+
+  <!-- Header -->
+  <header id='site-header' role='banner'>
+    <div class='header-inner'>
+      <div class='brand'>
+        <a expr:href='data:blog.homepageUrl'>🐇 <data:blog.title/></a>
+      </div>
+      <div class='spacer'></div>
+
+      <!-- Translate selector (Google/Papago/DeepL links) -->
+      <div class='translate-dropdown'>
+        <button class='translate-toggle' onclick="(function(t){var m=t.nextElementSibling; m.style.display = (m.style.display==='block'?'none':'block');})(this)">🌐 Translate</button>
+        <div class='translate-menu' onclick="event.stopPropagation()">
+          <a expr:href='&quot;https://translate.google.com/translate?hl=en&u=&quot; + data:blog.canonicalUrl' target='_blank' rel='noopener'>Google Translate</a>
+          <a expr:href='&quot;https://papago.naver.com/?sk=auto&amp;tk=en&amp;st=&quot; + data:blog.canonicalUrl' target='_blank' rel='noopener'>Papago</a>
+          <a expr:href='&quot;https://www.deepl.com/translator#auto/en/&quot; + data:blog.canonicalUrl' target='_blank' rel='noopener'>DeepL</a>
+        </div>
+      </div>
+
+      <!-- CTA (subscribe/login placeholders) -->
+      <div class='cta desktop-only'>
+        <a expr:href='data:blog.homepageUrl + &quot;?subscribe=1&quot;'>Subscribe</a>
+        <a expr:href='data:blog.homepageUrl + &quot;?login=1&quot;'>Login</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Layout -->
+  <div class='layout'>
+
+    <!-- Main -->
+    <main class='article' role='main'>
+      <!-- Post navigation arrows -->
+      <a class='nav-arrow nav-left' expr:href='data:blog.homepageUrl' aria-label='Previous posts'><span class='nav-glyph'>&laquo;</span></a>
+      <a class='nav-arrow nav-right' expr:href='data:blog.homepageUrl + &quot;search?updated-max=&quot; + data:blog.searchLabel' aria-label='Next posts'><span class='nav-glyph'>&raquo;</span></a>
+
+      <b:section id='main' class='main-section' showaddelement='no' maxwidgets='1'>
+        <b:widget id='Blog1' type='Blog' locked='true'>
+          <b:widget-settings>
+            <b:widget-setting name='displayImages'>true</b:widget-setting>
+            <b:widget-setting name='showShareButtons'>true</b:widget-setting>
+          </b:widget-settings>
+          <b:includable id='main'/>
+        </b:widget>
+      </b:section>
+    </main>
+
+    <!-- Sidebar -->
+    <aside id='sidebar' class='sidebar' role='complementary'>
+      <!-- 1층: 공지 -->
+      <div class='block'>
+        <div class='block-title'>🍀 공지사항 🍀</div>
+        <div class='notice-wrap'>
+          <div class='marquee' tabindex='0' aria-live='polite'><span id='notice-track' class='track'>공지 없음</span></div>
+          <button id='notice-apply' style='display:none;'>적용</button>
+        </div>
+      </div>
+      <div class='divider'></div>
+
+      <!-- 4층: 카테고리(Labels 위젯 이용) -->
+      <div class='block'>
+        <div class='block-title'>🐇 카테고리</div>
+        <b:section id='sidebar-labels' class='labels-section' showaddelement='yes' maxwidgets='1'>
+          <b:widget id='Label1' type='Label'/>
+        </b:section>
+      </div>
+
+      <div class='divider'></div>
+
+      <!-- 6~7층: 광고 자리 (Blogger 가젯/AdSense 위젯으로 대체 가능) -->
+      <div class='block desktop-only'>
+        <div class='block-title'>ads google</div>
+        <div id='ad-slot-1'> <!-- Ad code gadget here --> </div>
+      </div>
+
+      <!-- 8~11층: 제휴 특가 안내 -->
+      <div class='block'>
+        <div class='block-title'>🎁 제휴특가안내</div>
+        <div id='deal-line-1' class='marquee'><span class='track'></span></div>
+        <div id='deal-line-2' class='marquee'><span class='track'></span></div>
+        <div id='deal-line-3' class='marquee'><span class='track'></span></div>
+      </div>
+
+      <div class='divider'></div>
+
+      <!-- 13~15층: 방문자 집계(간단 표시) -->
+      <div class='block'>
+        <div class='block-title'>방문자</div>
+        <div id='visitors-daily'>일간: -</div>
+        <div id='visitors-monthly'>월간: -</div>
+      </div>
+
+      <div class='divider'></div>
+
+      <!-- 17~18층: 광고 2 -->
+      <div class='block desktop-only'>
+        <div class='block-title'>ads google</div>
+        <div id='ad-slot-2'> <!-- Ad code gadget here --> </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Footer -->
+  <footer id='site-footer' role='contentinfo'>
+    <div class='footer-inner'>
+      <div id='aff-row' class='aff-row' aria-label='Affiliate Partners'></div>
+      <div id='disclosure' class='disclosure'>제휴 고지 문구가 여기에 표시됩니다.</div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+  // ===== Config (replace with your JSON URL) =====
+  const AFF_CONFIG_URL = "https://example.com/affiliates.json"; // 외부 JSON (disclosure, partners[])
+  // Optional: Notice text (can also be served through another JSON)
+  const NOTICE_TEXT = "공지 예시 / 공지 두번째 항목 / 공지 세번째 항목";
+
+  // ===== Helpers =====
+  const isMobile = () => window.matchMedia('(max-width:1060px)').matches;
+
+  // Nav arrows show/hide on scroll/hover
+  (function navArrows(){
+    const L = document.querySelector('.nav-left');
+    const R = document.querySelector('.nav-right');
+    let hideTimer = null;
+    function show(){ L.classList.add('show'); R.classList.add('show');
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(()=>{ L.classList.remove('show'); R.classList.remove('show'); }, 1000);
+    }
+    window.addEventListener('scroll', show, {passive:true});
+    window.addEventListener('mousemove', (e)=>{
+      if(e.clientX < 120 || (window.innerWidth - e.clientX) < 120) show();
+    });
+  })();
+
+  // Translate dropdown close on outside click
+  document.addEventListener('click', function(e){
+    const menus = document.querySelectorAll('.translate-menu');
+    menus.forEach(m=> m.style.display='none');
+  });
+
+  // Notice marquee
+  (function notice(){
+    const el = document.getElementById('notice-track');
+    if(!el) return;
+    el.textContent = NOTICE_TEXT || "공지 없음";
+  })();
+
+  // Affiliate footer renderer + deal marquee lines
+  (async function affiliates(){
+    const row = document.getElementById('aff-row');
+    const disc = document.getElementById('disclosure');
+    const l1 = document.querySelector('#deal-line-1 .track');
+    const l2 = document.querySelector('#deal-line-2 .track');
+    const l3 = document.querySelector('#deal-line-3 .track');
+    try{
+      const res = await fetch(AFF_CONFIG_URL, {cache:"no-cache"});
+      const data = await res.json();
+      disc.textContent = data.disclosure || disc.textContent;
+      const partners = (data.partners||[]).slice(0, 12);
+      const dealTexts = [];
+      partners.forEach(p=>{
+        const a = document.createElement('a');
+        a.className = 'aff-btn';
+        if(!p.track){ a.classList.add('disabled'); a.href = '#'; a.textContent = p.label || p.key; }
+        else{
+          const hasDeal = p.deal && p.deal.active && p.deal.url;
+          a.href = hasDeal ? p.deal.url : p.track;
+          a.target = "_blank"; a.rel = "nofollow sponsored noopener";
+          a.textContent = p.label || p.key;
+          if(hasDeal){
+            const b = document.createElement('span');
+            b.className = 'badge';
+            b.textContent = isMobile() ? 'D' : 'Deal';
+            if(isMobile()) b.classList.add('badge-mobile');
+            a.appendChild(b);
+            if(p.deal.text) dealTexts.push(p.deal.text);
+          }
+        }
+        row.appendChild(a);
+      });
+      // Fill marquee lines (max 3)
+      const texts = dealTexts.slice(0,3);
+      [l1,l2,l3].forEach((line, i)=>{
+        if(!line) return;
+        if(texts[i]) line.textContent = texts[i];
+        else line.parentElement.style.display = 'none';
+      });
+    }catch(e){
+      console.error('Affiliates render failed', e);
+      disc.textContent = "Affiliate disclosure unavailable.";
+    }
+  })();
+  </script>
+</body>
+</html>
