@@ -1,0 +1,316 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html>
+<html b:version='2' expr:class='data:blog.languageDirection'
+  xmlns='http://www.w3.org/1999/xhtml'
+  xmlns:b='http://www.google.com/2005/gml/b'
+  xmlns:data='http://www.google.com/2005/gml/data'
+  xmlns:expr='http://www.google.com/2005/gml/expr'>
+
+<head>
+  <meta content='IE=edge' http-equiv='X-UA-Compatible'/>
+  <meta content='width=device-width, initial-scale=1' name='viewport'/>
+  <b:include data='blog' name='all-head-content'/>
+  <title><data:blog.pageTitle/></title>
+
+  <b:skin><![CDATA[
+    :root{
+      --hero-bg: url('');
+      --hero-bg-color:#3b0d12;
+      --paper:#ffffff;
+      --ink:#111827;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --gap:24px;
+      --sidebar-w:300px;
+      --accent:#ef4444;
+      --ok:#22c55e;
+      --radius:12px;
+      --max:1280px;
+    }
+
+    html,body{height:100%;margin:0;padding:0;color:var(--ink);background:#fff}
+    *{box-sizing:border-box}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;height:auto;display:block}
+
+    .viewport{display:grid;grid-template-rows:auto 1fr auto;min-height:100vh;max-width:var(--max);margin:0 auto}
+
+    .site-header{position:relative;border-bottom:1px solid var(--line)}
+    .hero{min-height:220px;background-color:var(--hero-bg-color);background-image:var(--hero-bg);
+          background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center}
+    .hero-title{font:800 clamp(24px,4vw,44px)/1.1 'Playfair Display', serif;color:#fff;text-align:center;
+      text-shadow:0 2px 12px rgba(0,0,0,.35);padding:40px 16px}
+    .search-bar{max-width:720px;margin:0 auto 24px;display:flex;gap:8px;padding:0 16px}
+    .search-bar input{flex:1 1 auto;height:44px;border-radius:10px;border:1px solid var(--line);padding:0 12px}
+    .search-bar button{height:44px;border-radius:10px;border:1px solid var(--line);background:#fff;padding:0 14px}
+
+    .site-main{overflow:hidden}
+    .content{display:flex;gap:var(--gap);padding:var(--gap);height:100%}
+    .sidebar{flex:0 0 var(--sidebar-w);min-width:var(--sidebar-w);background:var(--paper);
+      border:1px solid var(--line);border-radius:var(--radius);padding:14px;overflow:auto}
+    .main{flex:1 1 auto;min-width:0;background:var(--paper);border:1px solid var(--line);
+      border-radius:var(--radius);padding:18px;overflow:auto}
+    .post-card{padding:8px 0}
+    .post-title{font-weight:700;font-size:clamp(18px,2vw,22px)}
+    .post-snippet{color:var(--muted);margin:.25rem 0 .75rem}
+
+    .site-footer{border-top:1px solid var(--line);background:#fff}
+    .footer-inner{padding:12px var(--gap)}
+    .aff-wrap{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
+    .aff-nav{height:42px;min-width:42px;border:1px solid var(--line);border-radius:10px;background:#fff;transition:background .2s}
+    .aff-nav:active,.aff-nav:focus{background:var(--ok);color:#fff}
+    .aff-track{position:relative;overflow-x:auto;overflow-y:hidden;display:flex;gap:8px;scroll-snap-type:x mandatory;
+               padding:8px 0;border-radius:16px;-webkit-overflow-scrolling:touch}
+    .aff-btn{flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid var(--line);
+             border-radius:12px;min-height:42px;height:42px;min-width:42px;aspect-ratio:1/1;width:clamp(42px,10vw,110px);
+             padding:0 10px;scroll-snap-align:center}
+    .aff-btn img{max-width:90%;max-height:70%;object-fit:contain;margin:auto}
+    .aff-focus{pointer-events:none;position:absolute;left:50%;transform:translateX(-50%);top:0;bottom:44px;
+               width:clamp(44px,10vw,110px);border:2px dashed #cbd5e1;border-radius:14px;opacity:.65}
+    .aff-tip{position:absolute;left:50%;transform:translate(-50%,-8px);bottom:54px;background:#111;color:#fff;
+             padding:6px 10px;border-radius:8px;font-size:12px;white-space:nowrap;display:none}
+    .aff-disclosure{margin:8px 0 0;font-size:12px;color:#475569}
+
+    .drawer-toggle{display:none;position:absolute;left:12px;top:12px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px}
+    @media (max-width: 800px){
+      .drawer-toggle{display:block}
+      .content{flex-direction:column}
+      .sidebar{position:fixed;left:0;top:56px;bottom:0;width:min(92vw,360px);max-width:100%;transform:translateX(-100%);
+               transition:transform .25s ease;box-shadow:16px 0 30px rgba(0,0,0,.1);z-index:20}
+      .sidebar.open{transform:translateX(0)}
+    }
+
+    :focus{outline:2px solid var(--accent);outline-offset:2px}
+    .skip-link{position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden}
+    .skip-link:focus{left:10px;top:10px;width:auto;height:auto;background:#111;color:#fff;padding:8px 12px;border-radius:6px;z-index:99}
+
+    .error-page{text-align:center;padding:60px 20px}
+    .error-page h1{font-size:3em;margin-bottom:20px}
+    .error-actions{display:flex;gap:12px;justify-content:center}
+    .btn{display:inline-block;padding:10px 16px;border-radius:8px;border:1px solid var(--line);background:#fff;text-decoration:none}
+  ]]></b:skin>
+</head>
+
+<body>
+  <a href="#site-main" class="skip-link">Skip to content</a>
+  <a href="#sidebar" class="skip-link">Skip to sidebar</a>
+
+  <div class='viewport'>
+    <header id='site-header' class='site-header' role='banner' aria-label='Site Header'>
+      <button class='drawer-toggle' type='button' aria-controls='sidebar' aria-expanded='false'>☰</button>
+      <div class='hero'>
+        <h1 class='hero-title'><data:blog.title/></h1>
+      </div>
+      <div class='search-bar'>
+        <form expr:action='data:blog.searchUrl' method='get' role='search'>
+          <input name='q' placeholder='Search by post number, e.g. #123' />
+          <button type='submit'>Search</button>
+        </form>
+      </div>
+    </header>
+
+    <main id='site-main' class='site-main' role='main' aria-label='Main Content'>
+      <div class='content'>
+        <b:section id='sidebar' class='sidebar' role='complementary' aria-label='Sidebar Widgets' showaddelement='yes' maxwidgets='10'>
+          <b:widget id='Profile1' type='Profile'/>
+          <b:widget id='Label1' type='Label'/>
+          <b:widget id='Archive1' type='BlogArchive'/>
+          <b:widget id='Search1' type='Search'/>
+        </b:section>
+
+        <b:section id='main' class='main' showaddelement='no' maxwidgets='1'>
+          <b:widget id='Blog1' type='Blog' locked='true'>
+            <b:includable id='main'>
+              <b:include name='status-message'/>
+              <b:loop values='data:posts' var='post'>
+                <article class='post-card'>
+                  <h2 class='post-title'><a expr:href='data:post.url'><data:post.title/></a></h2>
+                  <p class='post-snippet'><data:post.snippet/></p>
+                  <p class='post-meta'><data:post.dateHeader/></p>
+                </article>
+                <hr/>
+              </b:loop>
+              <b:include name='nextprev'/>
+            </b:includable>
+
+            <b:includable id='item'>
+              <article class='post'>
+                <h1 class='post-title'><data:post.title/></h1>
+                <div class='post-body'><data:post.body/></div>
+                <div class='comments'><b:include data='post' name='comments'/></div>
+              </article>
+            </b:includable>
+
+            <b:includable id='nextprev'>
+              <div class='blog-pager'>
+                <b:if cond='data:newerPageUrl'>
+                  <a class='blog-pager-newer-link' expr:href='data:newerPageUrl'>Newer</a>
+                </b:if>
+                <b:if cond='data:olderPageUrl'>
+                  <a class='blog-pager-older-link' expr:href='data:olderPageUrl'>Older</a>
+                </b:if>
+              </div>
+            </b:includable>
+
+            <b:includable id='status-message'>
+              <b:if cond='data:navMessage'><div class='status-msg'><data:navMessage/></div></b:if>
+            </b:includable>
+          </b:widget>
+        </b:section>
+      </div>
+    </main>
+
+    <footer id='site-footer' class='site-footer' role='contentinfo'>
+      <div class='footer-inner'>
+        <div class='aff-wrap' role='region' aria-label='Affiliate Partners'>
+          <button class='aff-nav aff-prev' aria-label='Previous'>◀</button>
+          <div class='aff-track' id='affTrack' tabindex='0' role='region'>
+            <div class='aff-focus' aria-hidden='true'></div>
+
+            <a class='aff-btn' href='#' data-tip='Amazon'>
+              <picture>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1GVtgj1jMCG23W3K0_6R3w6B0f-y4HO7d' />
+                <img src='https://drive.google.com/uc?export=view&id=117K1TIe3tFBMrcbVN5QVBB1NlawSYxsg' alt='Amazon' loading='lazy' />
+              </picture>
+            </a>
+            <a class='aff-btn' href='#' data-tip='eBay'>
+              <picture>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1RFY0S95l0DzDuzkTrm7ME_vxn4UQiEeA' />
+                <img src='https://drive.google.com/uc?export=view&id=1m9V7Q4h4_ffTR9O2w8ROOYJBVTCALCNB' alt='eBay' loading='lazy' />
+              </picture>
+            </a>
+            <a class='aff-btn' href='#' data-tip='Target'>
+              <picture>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1gAyg4dCjc1rp3GLTSOZsK7ou5s_RIQXg' />
+                <img src='https://drive.google.com/uc?export=view&id=1f7zRp73YnZTmqWxd2LgETcGaV03Hmhyp' alt='Target' loading='lazy' />
+              </picture>
+            </a>
+            <a class='aff-btn' href='#' data-tip='MercadoLibre'>
+              <picture>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1zWw5NhgzvWPqqf7tPZMs9uv-gsHrM9EQ' />
+                <img src='https://drive.google.com/uc?export=view&id=1zu-Lr6-1vu5QiwNakg_uy_HFTn5o5Q5H' alt='MercadoLibre' loading='lazy' />
+              </picture>
+            </a>
+            <a class='aff-btn' href='#' data-tip='Flipkart'>
+              <picture>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1ALcT_n5DbijN1bWXu6pvPEc4g0cPy-Bn' />
+                <img src='https://drive.google.com/uc?export=view&id=1Ku8XSpOOjGMpx1pOeuIHPPTXH4PVRijh' alt='Flipkart' loading='lazy' />
+              </picture>
+            </a>
+            <a class='aff-btn' href='#' data-tip='Amazon India'>
+              <picture>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1R7wpbTGsv3HlOdF5tdNSjJmpaGHrsxEq' />
+                <img src='https://drive.google.com/uc?export=view&id=1sbjAWzodg35UZpSKkTZ-RAzVhObc5nRn' alt='Amazon India' loading='lazy' />
+              </picture>
+            </a>
+            <a class='aff-btn' href='#' data-tip='Shopee'>
+              <picture>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1Oh70rqpYv7ivcrP2QSsikX3u2Hs2weSI' />
+                <img src='https://drive.google.com/uc?export=view&id=1FAC_jJC4JnxvrYST5cBcXE6JDINk1-E-' alt='Shopee' loading='lazy' />
+              </picture>
+            </a>
+            <a class='aff-btn' href='#' data-tip='Lazada'>
+              <picture>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1roEVkn9ayRshrTG4km_zPwEKDoqRvq9S' />
+                <img src='https://drive.google.com/uc?export=view&id=1wjvZfYNSNwOk6B5qfpwFBFw_CHRlqFlX' alt='Lazada' loading='lazy' />
+              </picture>
+            </a>
+            <a class='aff-btn' href='#' data-tip='AliExpress'>
+              <picture>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=16sndrd2aIXwWA6Szzf_yKyeUKm6ca7jq' />
+                <img src='https://drive.google.com/uc?export=view&id=19flZsiW3X780JFJCzmrCSm8d4NNpwO91' alt='AliExpress' loading='lazy' />
+              </picture>
+            </a>
+            <a class='aff-btn' href='#' data-tip='Otto'>
+              <picture>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=16-NycdL8-nuUYmSGVNq8K_xH8GOT6Jsm' />
+                <img src='https://drive.google.com/uc?export=view&id=1LQnf1XOBF9F9DPBZuYntIwhAkCLCzWAU' alt='Otto' loading='lazy' />
+              </picture>
+            </a>
+            <a class='aff-btn' href='#' data-tip='Zalando'>
+              <picture>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1PFfo68xqV9r-hKzLFsP72QEK7ysDBMG_' />
+                <img src='https://drive.google.com/uc?export=view&id=1daj9hhk7w3y8QfwO2JJ7L8f3M22k_3eY' alt='Zalando' loading='lazy' />
+              </picture>
+            </a>
+            <a class='aff-btn' href='#' data-tip='Allegro'>
+              <picture>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1FOZVCDAfvT14-QGIfiGzoFl5jAG_W6ZO' />
+                <img src='https://drive.google.com/uc?export=view&id=1Fw2JWxx1ux8zfeZ8Px-vBArnOIafeQET' alt='Allegro' loading='lazy' />
+              </picture>
+            </a>
+            <div class='aff-tip' id='affTip' role='status' aria-live='polite'></div>
+          </div>
+          <button class='aff-nav aff-next' aria-label='Next'>▶</button>
+          <p class='aff-disclosure'>All affiliate usage is free. When you use or purchase, the operator receives a small commission from the partner.</p>
+        </div>
+        <b:section id='footer' class='footer' showaddelement='yes' maxwidgets='3'>
+          <b:widget id='Attribution1' type='Attribution' locked='true'/>
+        </b:section>
+      </div>
+    </footer>
+  </div>
+
+  <b:if cond='data:blog.pageType == \"error_page\"'>
+    <div class='error-page'>
+      <h1>404</h1>
+      <p>Sorry, the page you are looking for does not exist.</p>
+      <div class='error-actions'>
+        <a href='javascript:history.back()' class='btn'>← Go Back</a>
+        <a expr:href='data:blog.homepageUrl' class='btn'>🏠 Home</a>
+      </div>
+    </div>
+  </b:if>
+
+  <script>
+  (function(){
+    var btn=document.querySelector('.drawer-toggle');
+    if(btn){ btn.addEventListener('click',function(){ var s=document.getElementById('sidebar'); if(s){ s.classList.toggle('open'); } }); }
+
+    const track=document.getElementById('affTrack');
+    const tip=document.getElementById('affTip');
+    const prev=document.querySelector('.aff-prev');
+    const next=document.querySelector('.aff-next');
+
+    function nearest(){
+      if(!track) return null;
+      const mid=track.getBoundingClientRect().left + track.clientWidth/2;
+      let best=null, d=1e9;
+      track.querySelectorAll('.aff-btn').forEach(b=>{
+        const r=b.getBoundingClientRect();
+        const c=r.left + r.width/2;
+        const dd=Math.abs(c-mid);
+        if(dd<d){d=dd;best=b;}
+      });
+      return best;
+    }
+    function snap(){
+      const b=nearest(); if(!b) return;
+      const r=b.getBoundingClientRect(), tr=track.getBoundingClientRect();
+      const dx=(r.left + r.width/2) - (tr.left + tr.width/2);
+      track.scrollBy({left:dx, behavior:'smooth'});
+      tip.textContent=b.getAttribute('data-tip')||''; tip.style.display='block';
+      clearTimeout(tip._t); tip._t=setTimeout(()=> tip.style.display='none',1600);
+    }
+    function move(dir){
+      const bs=[...track.querySelectorAll('.aff-btn')]; if(!bs.length) return;
+      const cur=nearest()||bs[0]; const i=bs.indexOf(cur); const nx=Math.max(0,Math.min(bs.length-1,i+dir));
+      bs[nx].scrollIntoView({behavior:'smooth', inline:'center'}); setTimeout(snap,200);
+    }
+    track && (track.style.touchAction='pan-x');
+    if(track){
+      let down=false, startX=0, left=0;
+      track.addEventListener('pointerdown',e=>{down=true;startX=e.pageX;left=track.scrollLeft;track.setPointerCapture(e.pointerId)});
+      track.addEventListener('pointermove',e=>{if(down) track.scrollLeft = left - (e.pageX-startX)});
+      track.addEventListener('pointerup',e=>{down=false;track.releasePointerCapture(e.pointerId); setTimeout(snap,120)});
+      track.addEventListener('keydown',e=>{ if(e.key==='ArrowLeft') move(-1); if(e.key==='ArrowRight') move(1); });
+      track.addEventListener('scroll',()=>{ clearTimeout(track._t); track._t=setTimeout(snap,120); });
+      window.addEventListener('resize',()=> setTimeout(snap,120));
+      document.addEventListener('DOMContentLoaded',()=> setTimeout(snap,200));
+    }
+    prev && prev.addEventListener('click',()=> move(-1));
+    next && next.addEventListener('click',()=> move(1));
+  })();
+  </script>
+</body>
+</html>
