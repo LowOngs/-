@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE html>
 <html b:version='2' expr:class='data:blog.languageDirection'
-  xmlns='http://www.w3.org/1999/xhtml'
-  xmlns:b='http://www.google.com/2005/gml/b'
-  xmlns:data='http://www.google.com/2005/gml/data'
-  xmlns:expr='http://www.google.com/2005/gml/expr'>
+  xmlns='https://www.w3.org/1999/xhtml'
+  xmlns:b='https://www.google.com/2005/gml/b'
+  xmlns:data='https://www.google.com/2005/gml/data'
+  xmlns:expr='https://www.google.com/2005/gml/expr'>
 
 <head>
   <meta content='IE=edge' http-equiv='X-UA-Compatible'/>
@@ -88,7 +88,75 @@
     .error-page h1{font-size:3em;margin-bottom:20px}
     .error-actions{display:flex;gap:12px;justify-content:center}
     .btn{display:inline-block;padding:10px 16px;border-radius:8px;border:1px solid var(--line);background:#fff;text-decoration:none}
-  ]]></b:skin>
+  
+
+
+/* === Affiliation disclosure mobile sizing === */
+.aff-disclosure{
+  font-size: clamp(11px, 2.8vw, 14px);
+  line-height: 1.3;
+  margin: 8px 0 0;
+  text-align: center;
+  white-space: normal;
+  word-break: keep-all;
+  hyphens: none;
+}
+/* === Comment Translate ORB === */
+.ct-orb{
+  position:absolute; z-index:9999;
+  width:10mm; height:10mm; border-radius:50%;
+  background-color:#1a1a1a;
+  background-image:url('https://drive.google.com/uc?export=view&amp;id=1qKLovBFS8m1XXge2pwkd9LAtFyM_yuzf');
+  background-size:80% auto;
+  background-repeat:no-repeat;
+  background-position:center;
+  box-shadow:0 4px 18px rgba(0,0,0,.35), inset 0 0 8px rgba(255,255,255,.15);
+  cursor:grab;
+}
+.ct-orb:active{ cursor:grabbing; }
+.ct-orb-close{
+  position:absolute; right:-6px; top:-6px; width:18px; height:18px;
+  border-radius:50%; border:none; background:#000; color:#fff; font-size:12px; line-height:18px; cursor:pointer;
+  box-shadow:0 2px 6px rgba(0,0,0,.4);
+}
+.ct-stem{
+  position:absolute; left:50%; top:50%; width:2px; height:0; background:#2ad;
+  transform:translate(0,-50%); transform-origin:top;
+  transition:height .25s ease;
+}
+.ct-flag{
+  position:absolute; left:100%; top:50%;
+  transform:translate(8px,-50%);
+  min-width:220px; background:rgba(20,22,28,.95); color:#fff; border-radius:10px;
+  box-shadow:0 6px 18px rgba(0,0,0,.35);
+  padding:10px 10px 6px; border:1px solid rgba(255,255,255,.08);
+}
+.ct-orb:hover .ct-stem,
+.ct-orb .ct-flag:not([hidden]) ~ .ct-stem{ height:48px; }
+.ct-flag[hidden]{ display:none !important; }
+.ct-flag-row{ display:flex; gap:8px; align-items:center; }
+.ct-eng{
+  flex:1 1 auto; padding:8px 10px; border-radius:8px; border:1px solid #2a7;
+  background:#0e141a; color:#e8f7ff; cursor:pointer; font-size:13px;
+}
+.ct-eng.is-last{ border-color:#4fe; box-shadow:0 0 0 2px rgba(79,238,255,.2) inset; }
+.ct-i{
+  margin-left:6px; display:inline-flex; width:16px; height:16px; border-radius:50%;
+  justify-content:center; align-items:center; background:#233; color:#9fe; font-size:11px;
+}
+.ct-flag-foot{ display:flex; justify-content:flex-end; margin-top:6px; }
+.ct-flag-close{
+  width:24px; height:24px; border-radius:6px; border:none; background:#222; color:#fff; cursor:pointer;
+}
+.ct-toast{
+  position:fixed; left:50%; bottom:24px; transform:translateX(-50%);
+  background:rgba(20,22,28,.95); color:#fff; padding:8px 12px; border-radius:8px;
+  opacity:0; pointer-events:none; transition:opacity .2s;
+}
+.ct-toast.show{ opacity:1; }
+.ct-eng:focus, .ct-flag-close:focus, .ct-orb-close:focus{ outline:2px solid #4fe; outline-offset:2px; }
+
+]]></b:skin>
 </head>
 
 <body>
@@ -103,7 +171,7 @@
       </div>
       <div class='search-bar'>
         <form expr:action='data:blog.searchUrl' method='get' role='search'>
-          <input name='q' placeholder='Search by post number, e.g. #123' />
+          <input name='q' placeholder='Search by post number, e.g. #000123' />
           <button type='submit'>Search</button>
         </form>
       </div>
@@ -168,81 +236,45 @@
             <div class='aff-focus' aria-hidden='true'></div>
 
             <a class='aff-btn' href='#' data-tip='Amazon'>
-              <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1GVtgj1jMCG23W3K0_6R3w6B0f-y4HO7d' />
-                <img src='https://drive.google.com/uc?export=view&id=117K1TIe3tFBMrcbVN5QVBB1NlawSYxsg' alt='Amazon' loading='lazy' />
-              </picture>
+              <img src='https://drive.google.com/uc?export=view&amp;id=1qKLovBFS8m1XXge2pwkd9LAtFyM_yuzf' alt='Partner' loading='lazy'/>
             </a>
             <a class='aff-btn' href='#' data-tip='eBay'>
-              <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1RFY0S95l0DzDuzkTrm7ME_vxn4UQiEeA' />
-                <img src='https://drive.google.com/uc?export=view&id=1m9V7Q4h4_ffTR9O2w8ROOYJBVTCALCNB' alt='eBay' loading='lazy' />
-              </picture>
+              <img src='https://drive.google.com/uc?export=view&amp;id=1qKLovBFS8m1XXge2pwkd9LAtFyM_yuzf' alt='Partner' loading='lazy'/>
             </a>
             <a class='aff-btn' href='#' data-tip='Target'>
-              <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1gAyg4dCjc1rp3GLTSOZsK7ou5s_RIQXg' />
-                <img src='https://drive.google.com/uc?export=view&id=1f7zRp73YnZTmqWxd2LgETcGaV03Hmhyp' alt='Target' loading='lazy' />
-              </picture>
+              <img src='https://drive.google.com/uc?export=view&amp;id=1qKLovBFS8m1XXge2pwkd9LAtFyM_yuzf' alt='Partner' loading='lazy'/>
             </a>
             <a class='aff-btn' href='#' data-tip='MercadoLibre'>
-              <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1zWw5NhgzvWPqqf7tPZMs9uv-gsHrM9EQ' />
-                <img src='https://drive.google.com/uc?export=view&id=1zu-Lr6-1vu5QiwNakg_uy_HFTn5o5Q5H' alt='MercadoLibre' loading='lazy' />
-              </picture>
+              <img src='https://drive.google.com/uc?export=view&amp;id=1qKLovBFS8m1XXge2pwkd9LAtFyM_yuzf' alt='Partner' loading='lazy'/>
             </a>
             <a class='aff-btn' href='#' data-tip='Flipkart'>
-              <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1ALcT_n5DbijN1bWXu6pvPEc4g0cPy-Bn' />
-                <img src='https://drive.google.com/uc?export=view&id=1Ku8XSpOOjGMpx1pOeuIHPPTXH4PVRijh' alt='Flipkart' loading='lazy' />
-              </picture>
+              <img src='https://drive.google.com/uc?export=view&amp;id=1qKLovBFS8m1XXge2pwkd9LAtFyM_yuzf' alt='Partner' loading='lazy'/>
             </a>
             <a class='aff-btn' href='#' data-tip='Amazon India'>
-              <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1R7wpbTGsv3HlOdF5tdNSjJmpaGHrsxEq' />
-                <img src='https://drive.google.com/uc?export=view&id=1sbjAWzodg35UZpSKkTZ-RAzVhObc5nRn' alt='Amazon India' loading='lazy' />
-              </picture>
+              <img src='https://drive.google.com/uc?export=view&amp;id=1qKLovBFS8m1XXge2pwkd9LAtFyM_yuzf' alt='Partner' loading='lazy'/>
             </a>
             <a class='aff-btn' href='#' data-tip='Shopee'>
-              <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1Oh70rqpYv7ivcrP2QSsikX3u2Hs2weSI' />
-                <img src='https://drive.google.com/uc?export=view&id=1FAC_jJC4JnxvrYST5cBcXE6JDINk1-E-' alt='Shopee' loading='lazy' />
-              </picture>
+              <img src='https://drive.google.com/uc?export=view&amp;id=1qKLovBFS8m1XXge2pwkd9LAtFyM_yuzf' alt='Partner' loading='lazy'/>
             </a>
             <a class='aff-btn' href='#' data-tip='Lazada'>
-              <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1roEVkn9ayRshrTG4km_zPwEKDoqRvq9S' />
-                <img src='https://drive.google.com/uc?export=view&id=1wjvZfYNSNwOk6B5qfpwFBFw_CHRlqFlX' alt='Lazada' loading='lazy' />
-              </picture>
+              <img src='https://drive.google.com/uc?export=view&amp;id=1qKLovBFS8m1XXge2pwkd9LAtFyM_yuzf' alt='Partner' loading='lazy'/>
             </a>
             <a class='aff-btn' href='#' data-tip='AliExpress'>
-              <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=16sndrd2aIXwWA6Szzf_yKyeUKm6ca7jq' />
-                <img src='https://drive.google.com/uc?export=view&id=19flZsiW3X780JFJCzmrCSm8d4NNpwO91' alt='AliExpress' loading='lazy' />
-              </picture>
+              <img src='https://drive.google.com/uc?export=view&amp;id=1qKLovBFS8m1XXge2pwkd9LAtFyM_yuzf' alt='Partner' loading='lazy'/>
             </a>
             <a class='aff-btn' href='#' data-tip='Otto'>
-              <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=16-NycdL8-nuUYmSGVNq8K_xH8GOT6Jsm' />
-                <img src='https://drive.google.com/uc?export=view&id=1LQnf1XOBF9F9DPBZuYntIwhAkCLCzWAU' alt='Otto' loading='lazy' />
-              </picture>
+              <img src='https://drive.google.com/uc?export=view&amp;id=1qKLovBFS8m1XXge2pwkd9LAtFyM_yuzf' alt='Partner' loading='lazy'/>
             </a>
             <a class='aff-btn' href='#' data-tip='Zalando'>
-              <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1PFfo68xqV9r-hKzLFsP72QEK7ysDBMG_' />
-                <img src='https://drive.google.com/uc?export=view&id=1daj9hhk7w3y8QfwO2JJ7L8f3M22k_3eY' alt='Zalando' loading='lazy' />
-              </picture>
+              <img src='https://drive.google.com/uc?export=view&amp;id=1qKLovBFS8m1XXge2pwkd9LAtFyM_yuzf' alt='Partner' loading='lazy'/>
             </a>
             <a class='aff-btn' href='#' data-tip='Allegro'>
-              <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1FOZVCDAfvT14-QGIfiGzoFl5jAG_W6ZO' />
-                <img src='https://drive.google.com/uc?export=view&id=1Fw2JWxx1ux8zfeZ8Px-vBArnOIafeQET' alt='Allegro' loading='lazy' />
-              </picture>
+              <img src='https://drive.google.com/uc?export=view&amp;id=1qKLovBFS8m1XXge2pwkd9LAtFyM_yuzf' alt='Partner' loading='lazy'/>
             </a>
             <div class='aff-tip' id='affTip' role='status' aria-live='polite'></div>
           </div>
           <button class='aff-nav aff-next' aria-label='Next'>▶</button>
-          <p class='aff-disclosure'>All affiliate usage is free. When you use or purchase, the operator receives a small commission from the partner.</p>
+          <p class='aff-disclosure'>Affiliate use is free. For qualifying purchases, the operator may receive a commission from partners.</p>
         </div>
         <b:section id='footer' class='footer' showaddelement='yes' maxwidgets='3'>
           <b:widget id='Attribution1' type='Attribution' locked='true'/>
@@ -251,7 +283,7 @@
     </footer>
   </div>
 
-  <b:if cond='data:blog.pageType == \"error_page\"'>
+  <b:if cond='data:blog.pageType == &quot;error_page&quot;'>
     <div class='error-page'>
       <h1>404</h1>
       <p>Sorry, the page you are looking for does not exist.</p>
@@ -262,7 +294,8 @@
     </div>
   </b:if>
 
-  <script>
+  <script><![CDATA[
+
   (function(){
     var btn=document.querySelector('.drawer-toggle');
     if(btn){ btn.addEventListener('click',function(){ var s=document.getElementById('sidebar'); if(s){ s.classList.toggle('open'); } }); }
@@ -297,7 +330,7 @@
       const cur=nearest()||bs[0]; const i=bs.indexOf(cur); const nx=Math.max(0,Math.min(bs.length-1,i+dir));
       bs[nx].scrollIntoView({behavior:'smooth', inline:'center'}); setTimeout(snap,200);
     }
-    track && (track.style.touchAction='pan-x');
+    track &amp;&amp; (track.style.touchAction='pan-x');
     if(track){
       let down=false, startX=0, left=0;
       track.addEventListener('pointerdown',e=>{down=true;startX=e.pageX;left=track.scrollLeft;track.setPointerCapture(e.pointerId)});
@@ -308,9 +341,163 @@
       window.addEventListener('resize',()=> setTimeout(snap,120));
       document.addEventListener('DOMContentLoaded',()=> setTimeout(snap,200));
     }
-    prev && prev.addEventListener('click',()=> move(-1));
-    next && next.addEventListener('click',()=> move(1));
+    prev &amp;&amp; prev.addEventListener('click',()=> move(-1));
+    next &amp;&amp; next.addEventListener('click',()=> move(1));
   })();
-  </script>
+  
+]]></script>
+<script><![CDATA[
+
+// == Comment Translate Orb ==
+(function(){
+  const WINS = { google:null, papago:null, deepl:null };
+  const ORB_ID = 'ct-orb';
+  const ENG_KEY = 'ct_engine_last';
+  const TL = 'en';
+  const POS_KEY = (cid)=>`ct_orb_pos_${cid}`;
+
+  function getCommentRoot(btn){ return btn.closest('[data-comment-id]') || btn.closest('.comment'); }
+  function getCommentId(root){ return root?.getAttribute('data-comment-id') || (root?.id || 'global'); }
+  function getCommentText(root){
+    const el = root?.querySelector('.comment-body,.comment-content,[data-comment-text],.content');
+    return (el ? (el.innerText||el.textContent) : '').trim();
+  }
+  function restoreOrPlace(orb, cid, x, y){
+    try{
+      const saved = localStorage.getItem(POS_KEY(cid));
+      if(saved){ const p = JSON.parse(saved); setPos(orb, p.x, p.y); return; }
+    }catch(e){}
+    setPos(orb, x, y);
+  }
+  function setPos(el, x, y){
+    el.style.left = Math.max(8, x) + 'px';
+    el.style.top  = Math.max(8, y) + 'px';
+  }
+  function enableDrag(orb, cid){
+    let sx=0, sy=0, ox=0, oy=0, dragging=false;
+    const onDown = (e)=>{
+      if(e.target.closest('.ct-flag')) return;
+      dragging=true;
+      const p = e.touches? e.touches[0] : e;
+      sx=p.clientX; sy=p.clientY;
+      const r = orb.getBoundingClientRect();
+      ox = r.left + window.scrollX; oy = r.top + window.scrollY;
+      e.preventDefault();
+    };
+    const onMove = (e)=>{
+      if(!dragging) return;
+      const p = e.touches? e.touches[0] : e;
+      setPos(orb, ox + (p.clientX-sx), oy + (p.clientY-sy));
+    };
+    const onUp = ()=>{
+      if(!dragging) return;
+      dragging=false;
+      const cid2 = orb.getAttribute('data-cid') || 'global';
+      localStorage.setItem(POS_KEY(cid2), JSON.stringify({x: parseInt(orb.style.left)||0, y: parseInt(orb.style.top)||0}));
+    };
+    orb.addEventListener('mousedown', onDown);
+    orb.addEventListener('touchstart', onDown, {passive:false});
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('touchmove', onMove, {passive:false});
+    window.addEventListener('mouseup', onUp);
+    window.addEventListener('touchend', onUp);
+  }
+  function openMini(engine, text, tl){
+    if(!text){ toast('No comment text found.'); return; }
+    const t = encodeURIComponent(text);
+    const feat = 'popup=yes,width=980,height=720,noopener';
+    const name = `ct_${engine}`;
+    let url;
+    if(engine==='google'){
+      url = `https://translate.google.com/?sl=auto&amp;tl=${encodeURIComponent(tl)}&amp;text=${t}&amp;op=translate`;
+    }else if(engine==='deepl'){
+      url = `https://www.deepl.com/translator#auto/${encodeURIComponent(tl)}/${t}`;
+    }else{
+      url = `https://papago.naver.com/?sk=auto&amp;tk=${encodeURIComponent(tl)}&amp;st=${t}`;
+    }
+    try{
+      navigator.clipboard &amp;&amp; navigator.clipboard.writeText(text).catch(()=>{});
+      let w = WINS[engine];
+      if(!w || w.closed){ w = window.open(url, name, feat); WINS[engine]=w; }
+      else{ w.location.href = url; w.focus(); }
+      if(!WINS[engine]) throw new Error('popup blocked');
+    }catch(e){
+      toast('Popup blocked. Allow popups. Text is copied to clipboard.');
+      window.open(engine==='google'?'https://translate.google.com/':engine==='deepl'?'https://www.deepl.com/translator':'https://papago.naver.com/','_blank');
+    }
+  }
+  function toast(msg){
+    let t=document.getElementById('ct-toast');
+    if(!t){ t=document.createElement('div'); t.id='ct-toast'; t.className='ct-toast'; document.body.appendChild(t); }
+    t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2200);
+  }
+  function createOrb(root, anchorBtn){
+    const existing = document.getElementById(ORB_ID);
+    if(existing){ existing.remove(); }
+    const cid = getCommentId(root);
+    const orb = document.createElement('div');
+    orb.id = ORB_ID; orb.className='ct-orb'; orb.setAttribute('data-cid', cid);
+    orb.innerHTML = [
+      '<button class="ct-orb-close" aria-label="Close orb">×</button>',
+      '<div class="ct-stem"></div>',
+      '<div class="ct-flag" hidden>',
+        '<div class="ct-flag-row">',
+          '<button class="ct-eng" data-eng="google" aria-label="Google Translate">Google<span class="ct-i" title="Auto-detect, global coverage">i</span></button>',
+          '<button class="ct-eng" data-eng="papago" aria-label="Papago">Papago<span class="ct-i" title="Strong for Asian languages">i</span></button>',
+          '<button class="ct-eng" data-eng="deepl" aria-label="DeepL">DeepL<span class="ct-i" title="Strong for European languages">i</span></button>',
+        '</div>',
+        '<div class="ct-flag-foot"><button class="ct-flag-close" aria-label="Close panel">×</button></div>',
+      '</div>'
+    ].join('');
+    document.body.appendChild(orb);
+
+    const r = anchorBtn.getBoundingClientRect();
+    const x = window.scrollX + r.right + 8;
+    const y = window.scrollY + r.top + (r.height/2) - 24;
+    restoreOrPlace(orb, cid, x, y);
+    enableDrag(orb, cid);
+
+    const last = localStorage.getItem(ENG_KEY);
+    if(last){
+      orb.querySelectorAll('.ct-eng').forEach(b=> b.classList.toggle('is-last', b.dataset.eng===last));
+    }
+
+    orb.querySelector('.ct-orb-close').onclick = ()=> orb.remove();
+    orb.addEventListener('click', (e)=>{
+      if(e.target.classList.contains('ct-eng')){
+        const eng = e.target.dataset.eng;
+        localStorage.setItem(ENG_KEY, eng);
+        openMini(eng, getCommentText(root), TL);
+      }else if(e.target.classList.contains('ct-flag-close')){
+        orb.querySelector('.ct-flag').hidden = true;
+      }else if(e.target.closest('.ct-orb')){
+        const flag = orb.querySelector('.ct-flag');
+        flag.hidden = !flag.hidden;
+      }
+    });
+  }
+  // Public: bind from comment "번역" link
+  window.ctSpawnOrbAt = function(btn){
+    const root = getCommentRoot(btn);
+    if(!root){ alert('Comment root not found.'); return; }
+    createOrb(root, btn);
+  };
+
+  // Auto-attach "번역" trigger if not present (defensive enhancement)
+  document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('.comment,[data-comment-id]').forEach(function(c){
+      if(c.querySelector('.ct-trans-trigger')) return;
+      const body = c.querySelector('.comment-body,.comment-content,[data-comment-text],.content');
+      if(!body) return;
+      const a = document.createElement('a');
+      a.href='javascript:void(0)'; a.textContent='번역'; a.className='ct-trans-trigger';
+      a.style.marginLeft='8px'; a.onclick=function(){ window.ctSpawnOrbAt(this); };
+      const actions = c.querySelector('.comment-actions,.actions,.footer');
+      (actions||body).appendChild(a);
+    });
+  });
+})();
+
+]]></script>
 </body>
 </html>
