@@ -182,7 +182,7 @@
         <b:section id='sidebar' class='sidebar' role='complementary' aria-label='Sidebar Widgets' showaddelement='yes' maxwidgets='10'>
           <b:widget id='Profile1' type='Profile'/>
           <b:widget id='Label1' type='Label'/>
-          <b:widget id='Archive1' type='BlogArchive'/>
+          <b:widget id='BlogArchive1' type='BlogArchive'/>
           <b:widget id='Search1' type='Search'/>
         </b:section>
 
