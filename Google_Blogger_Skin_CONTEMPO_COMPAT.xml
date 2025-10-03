@@ -92,7 +92,7 @@
 /* === ONA additions (Disclosure + Comment ORB) === */
 .aff-disclosure{font-size:clamp(11px,2.8vw,14px);line-height:1.3;margin:8px 0 0;text-align:center;white-space:normal;word-break:keep-all}
 .ct-orb{position:absolute;z-index:9999;width:10mm;height:10mm;border-radius:50%;
- background:#1a1a1a url('https://drive.google.com/uc?export=view&id=1qKLovBFS8m1XXge2pwkd9LAtFyM_yuzf') center/80% no-repeat;
+ background:#1a1a1a url('https://drive.google.com/uc?export=view&amp;id=1qKLovBFS8m1XXge2pwkd9LAtFyM_yuzf') center/80% no-repeat;
  box-shadow:0 4px 18px rgba(0,0,0,.35),inset 0 0 8px rgba(255,255,255,.15);cursor:grab}
 .ct-orb:active{cursor:grabbing}
 .ct-stem{position:absolute;left:50%;top:50%;width:2px;height:0;background:#2ad;transform:translate(0,-50%);transform-origin:top;transition:height .25s}
@@ -188,74 +188,74 @@
 
             <a class='aff-btn' href='#' data-tip='Amazon'>
               <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1GVtgj1jMCG23W3K0_6R3w6B0f-y4HO7d'>
-                <img src='https://drive.google.com/uc?export=view&id=117K1TIe3tFBMrcbVN5QVBB1NlawSYxsg' alt='Amazon' loading='lazy'>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&amp;id=1GVtgj1jMCG23W3K0_6R3w6B0f-y4HO7d' />
+                <img src='https://drive.google.com/uc?export=view&amp;id=117K1TIe3tFBMrcbVN5QVBB1NlawSYxsg' alt='Amazon' loading='lazy' />
               </picture>
             </a>
             <a class='aff-btn' href='#' data-tip='eBay'>
               <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1RFY0S95l0DzDuzkTrm7ME_vxn4UQiEeA'>
-                <img src='https://drive.google.com/uc?export=view&id=1m9V7Q4h4_ffTR9O2w8ROOYJBVTCALCNB' alt='eBay' loading='lazy'>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&amp;id=1RFY0S95l0DzDuzkTrm7ME_vxn4UQiEeA' />
+                <img src='https://drive.google.com/uc?export=view&amp;id=1m9V7Q4h4_ffTR9O2w8ROOYJBVTCALCNB' alt='eBay' loading='lazy' />
               </picture>
             </a>
             <a class='aff-btn' href='#' data-tip='Target'>
               <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1gAyg4dCjc1rp3GLTSOZsK7ou5s_RIQXg'>
-                <img src='https://drive.google.com/uc?export=view&id=1f7zRp73YnZTmqWxd2LgETcGaV03Hmhyp' alt='Target' loading='lazy'>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&amp;id=1gAyg4dCjc1rp3GLTSOZsK7ou5s_RIQXg' />
+                <img src='https://drive.google.com/uc?export=view&amp;id=1f7zRp73YnZTmqWxd2LgETcGaV03Hmhyp' alt='Target' loading='lazy' />
               </picture>
             </a>
             <a class='aff-btn' href='#' data-tip='MercadoLibre'>
               <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1zWw5NhgzvWPqqf7tPZMs9uv-gsHrM9EQ'>
-                <img src='https://drive.google.com/uc?export=view&id=1zu-Lr6-1vu5QiwNakg_uy_HFTn5o5Q5H' alt='MercadoLibre' loading='lazy'>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&amp;id=1zWw5NhgzvWPqqf7tPZMs9uv-gsHrM9EQ' />
+                <img src='https://drive.google.com/uc?export=view&amp;id=1zu-Lr6-1vu5QiwNakg_uy_HFTn5o5Q5H' alt='MercadoLibre' loading='lazy' />
               </picture>
             </a>
             <a class='aff-btn' href='#' data-tip='Flipkart'>
               <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1ALcT_n5DbijN1bWXu6pvPEc4g0cPy-Bn'>
-                <img src='https://drive.google.com/uc?export=view&id=1Ku8XSpOOjGMpx1pOeuIHPPTXH4PVRijh' alt='Flipkart' loading='lazy'>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&amp;id=1ALcT_n5DbijN1bWXu6pvPEc4g0cPy-Bn' />
+                <img src='https://drive.google.com/uc?export=view&amp;id=1Ku8XSpOOjGMpx1pOeuIHPPTXH4PVRijh' alt='Flipkart' loading='lazy' />
               </picture>
             </a>
             <a class='aff-btn' href='#' data-tip='Amazon India'>
               <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1R7wpbTGsv3HlOdF5tdNSjJmpaGHrsxEq'>
-                <img src='https://drive.google.com/uc?export=view&id=1sbjAWzodg35UZpSKkTZ-RAzVhObc5nRn' alt='Amazon India' loading='lazy'>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&amp;id=1R7wpbTGsv3HlOdF5tdNSjJmpaGHrsxEq' />
+                <img src='https://drive.google.com/uc?export=view&amp;id=1sbjAWzodg35UZpSKkTZ-RAzVhObc5nRn' alt='Amazon India' loading='lazy' />
               </picture>
             </a>
             <a class='aff-btn' href='#' data-tip='Shopee'>
               <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1Oh70rqpYv7ivcrP2QSsikX3u2Hs2weSI'>
-                <img src='https://drive.google.com/uc?export=view&id=1FAC_jJC4JnxvrYST5cBcXE6JDINk1-E-' alt='Shopee' loading='lazy'>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&amp;id=1Oh70rqpYv7ivcrP2QSsikX3u2Hs2weSI' />
+                <img src='https://drive.google.com/uc?export=view&amp;id=1FAC_jJC4JnxvrYST5cBcXE6JDINk1-E-' alt='Shopee' loading='lazy' />
               </picture>
             </a>
             <a class='aff-btn' href='#' data-tip='Lazada'>
               <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1roEVkn9ayRshrTG4km_zPwEKDoqRvq9S'>
-                <img src='https://drive.google.com/uc?export=view&id=1wjvZfYNSNwOk6B5qfpwFBFw_CHRlqFlX' alt='Lazada' loading='lazy'>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&amp;id=1roEVkn9ayRshrTG4km_zPwEKDoqRvq9S' />
+                <img src='https://drive.google.com/uc?export=view&amp;id=1wjvZfYNSNwOk6B5qfpwFBFw_CHRlqFlX' alt='Lazada' loading='lazy' />
               </picture>
             </a>
             <a class='aff-btn' href='#' data-tip='AliExpress'>
               <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=16sndrd2aIXwWA6Szzf_yKyeUKm6ca7jq'>
-                <img src='https://drive.google.com/uc?export=view&id=19flZsiW3X780JFJCzmrCSm8d4NNpwO91' alt='AliExpress' loading='lazy'>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&amp;id=16sndrd2aIXwWA6Szzf_yKyeUKm6ca7jq' />
+                <img src='https://drive.google.com/uc?export=view&amp;id=19flZsiW3X780JFJCzmrCSm8d4NNpwO91' alt='AliExpress' loading='lazy' />
               </picture>
             </a>
             <a class='aff-btn' href='#' data-tip='Otto'>
               <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=16-NycdL8-nuUYmSGVNq8K_xH8GOT6Jsm'>
-                <img src='https://drive.google.com/uc?export=view&id=1LQnf1XOBF9F9DPBZuYntIwhAkCLCzWAU' alt='Otto' loading='lazy'>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&amp;id=16-NycdL8-nuUYmSGVNq8K_xH8GOT6Jsm' />
+                <img src='https://drive.google.com/uc?export=view&amp;id=1LQnf1XOBF9F9DPBZuYntIwhAkCLCzWAU' alt='Otto' loading='lazy' />
               </picture>
             </a>
             <a class='aff-btn' href='#' data-tip='Zalando'>
               <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1PFfo68xqV9r-hKzLFsP72QEK7ysDBMG_'>
-                <img src='https://drive.google.com/uc?export=view&id=1daj9hhk7w3y8QfwO2JJ7L8f3M22k_3eY' alt='Zalando' loading='lazy'>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&amp;id=1PFfo68xqV9r-hKzLFsP72QEK7ysDBMG_' />
+                <img src='https://drive.google.com/uc?export=view&amp;id=1daj9hhk7w3y8QfwO2JJ7L8f3M22k_3eY' alt='Zalando' loading='lazy' />
               </picture>
             </a>
             <a class='aff-btn' href='#' data-tip='Allegro'>
               <picture>
-                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&id=1FOZVCDAfvT14-QGIfiGzoFl5jAG_W6ZO'>
-                <img src='https://drive.google.com/uc?export=view&id=1Fw2JWxx1ux8zfeZ8Px-vBArnOIafeQET' alt='Allegro' loading='lazy'>
+                <source media='(min-width: 900px)' srcset='https://drive.google.com/uc?export=view&amp;id=1FOZVCDAfvT14-QGIfiGzoFl5jAG_W6ZO' />
+                <img src='https://drive.google.com/uc?export=view&amp;id=1Fw2JWxx1ux8zfeZ8Px-vBArnOIafeQET' alt='Allegro' loading='lazy' />
               </picture>
             </a>
             <div class='aff-tip' id='affTip' role='status' aria-live='polite'></div>
@@ -281,7 +281,7 @@
     </div>
   </b:if>
 
-  <script>
+  <script><![CDATA[
   (function(){
     var btn=document.querySelector('.drawer-toggle');
     if(btn){ btn.addEventListener('click',function(){ var s=document.getElementById('sidebar'); if(s){ s.classList.toggle('open'); } }); }
@@ -330,7 +330,7 @@
     prev && prev.addEventListener('click',()=> move(-1));
     next && next.addEventListener('click',()=> move(1));
   })();
-  </script>
+  ]]></script>
 
 <script><![CDATA[(function(){
   // Lightweight ORB initializer placeholder; real logic loaded by comment_orb.js if present
