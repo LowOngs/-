@@ -1,32 +1,8 @@
 #!/usr/bin/env python3
 """
-blogger_validator.py (풀체크·자가교정형)
+blogger_validator.py (업데이트판)
 
-목표: XML 파일을 구글 블로그 생성 조건에 맞게 자동 교정 → 반복 검사 → 완성본 출력
-
-기능:
-1. XML 문법 교정
-   - & → &amp;
-   - <script> 본문 CDATA 래핑
-   - void 태그(meta, link, img, br 등) 자가폐쇄
-
-2. 구글 블로그 필수 규칙 점검
-   - 루트 네임스페이스 확인
-   - <b:include data='blog' name='all-head-content'/> 존재 확인
-   - <b:skin><![CDATA[ ... ]]></b:skin> 존재 확인
-   - 조건문 문자열 비교에서 &quot; 강제
-   - <data:.../>는 문서화된 속성만 허용
-   - widget type 화이트리스트 검사
-   - widget id 중복 검사
-
-3. 금지 요소 차단
-   - HTML5 전용 태그(video, audio, canvas 등) 경고
-   - <style>은 반드시 <b:skin> 안에만 존재
-   - http:// 링크 차단 (https만 허용)
-
-4. 반복 검사 루프
-   - 교정 → 검사 → 실패 시 다시 교정 → 재검사
-   - 더 이상 교정 불가한 치명 오류가 없을 때 “✅ 완성본” 출력
+목표: Blogger XML 템플릿 자동 교정 + 반복 검사
 """
 
 import sys, re, pathlib, difflib
@@ -69,15 +45,14 @@ def validate_once(text:str):
         errors.append(f"XML 파싱 오류: {e}")
         return errors, warnings
 
-    # 루트 네임스페이스 확인
-    ns = root.attrib
+    # 루트 네임스페이스 검사 (텍스트 기반)
     required_ns = {
         "xmlns:b":"http://www.google.com/2005/gml/b",
         "xmlns:data":"http://www.google.com/2005/gml/data",
         "xmlns:expr":"http://www.google.com/2005/gml/expr"
     }
     for k,v in required_ns.items():
-        if k not in ns or ns[k]!=v:
+        if f"{k}='{v}'" not in text and f'{k}="{v}"' not in text:
             errors.append(f"루트 네임스페이스 누락/불일치: {k}")
 
     # 필수 태그 확인
@@ -86,9 +61,11 @@ def validate_once(text:str):
     if "<b:skin" not in text:
         errors.append("b:skin 블록 누락")
 
-    # 조건문 &quot; 검사
-    if re.search(r"cond=['\"][^'\"]*==[^'\"]*['\"]", text):
-        errors.append("조건문 문자열 비교시 &quot; 미사용")
+    # 조건문 문자열 비교 검사
+    conds = re.findall(r"<b:if[^>]*cond=['\"]([^'\"]+)['\"][^>]*>", text)
+    for c in conds:
+        if "==" in c and "&quot;" not in c:
+            errors.append("조건문 문자열 비교시 &quot; 미사용")
 
     # widget 검사
     widgets = root.findall(".//{http://www.google.com/2005/gml/b}widget")
@@ -121,7 +98,6 @@ def validate_loop(path: pathlib.Path):
         fixed = auto_fix(fixed)
         errors, warnings = validate_once(fixed)
         if not errors:
-            # 최종 결과
             outpath = path.with_name(path.stem + "_FINAL.xml")
             outpath.write_text(fixed, encoding="utf-8")
             print(f"✅ 최종 결과: 완성본 ({iteration}회 교정)")
