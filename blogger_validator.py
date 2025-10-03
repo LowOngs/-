@@ -1,147 +1,130 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-blogger_validator_updated.py
-Blogger XML template linter + auto-fixer + core-structure enforcement.
+blogger_validator.py (업데이트판, 풀체크·자가교정형)
 
-Usage:
-  python blogger_validator_updated.py INPUT.xml
-  python blogger_validator_updated.py INPUT.xml --fix OUTPUT.xml
+목표: Blogger XML 템플릿 자동 교정 → 반복 검사 → 완성본 출력
+포함:
+- XML 문법 교정: & 이스케이프, <script> CDATA, void 태그 자가폐쇄
+- 필수 규칙 점검: 네임스페이스, all-head-content, b:skin
+- 조건식 검사: 문자열 비교는 &quot; 또는 \" 허용
+- 위젯 검사: 타입 화이트리스트(검색 위젯 Search 포함), ID 중복
+- 금지/권장: http://, style의 위치, video/audio/canvas 경고
 """
-import sys, re, hashlib
-from pathlib import Path
 
-VOID_TAGS = ("img","br","hr","input","meta","link","source","base","area","col","embed","param","track","wbr")
-AMP_KEYS  = ("id","export","text","tl","sk","tk","st")
+import sys, re, pathlib
+from xml.etree import ElementTree as ET
 
-NS_REQUIRED = {
-    'xmlns="http://www.w3.org/1999/xhtml"': re.compile(r'xmlns="https?://www\.w3\.org/1999/xhtml"', re.I),
-    'xmlns:b="http://www.google.com/2005/gml/b"': re.compile(r'xmlns:b="https?://www\.google\.com/2005/gml/b"', re.I),
-    'xmlns:data="http://www.google.com/2005/gml/data"': re.compile(r'xmlns:data="https?://www\.google\.com/2005/gml/data"', re.I),
-    'xmlns:expr="http://www.google.com/2005/gml/expr"': re.compile(r'xmlns:expr="https?://www\.google\.com/2005/gml/expr"', re.I),
+# Blogger에서 흔히 허용되는 위젯 타입 목록
+ALLOWED_WIDGETS = {
+    "Blog", "Search", "BlogSearch", "BlogArchive", "Profile", "Header",
+    "PopularPosts", "FeaturedPost", "Attribution", "Label",
+    "Text", "HTML", "Image", "PageList"
 }
 
-CORE_RULES = [
-  (r'<b:include[^>]+name=["\']all-head-content["\']', "missing all-head-content include"),
-  (r'<b:skin>.*<!\[CDATA\[', "missing <b:skin> with CDATA"),
-  (r'<b:section[^>]+id=["\']main["\']', "missing main section"),
-  (r'<b:widget[^>]+id=["\']Blog1["\'][^>]+type=["\']Blog["\']', "missing Blog1 widget"),
-  (r'<b:section[^>]+id=["\']sidebar["\']', "missing sidebar section"),
-  (r'<b:section[^>]+id=["\']footer["\']', "missing footer section"),
-]
+# 자가폐쇄해야 하는 빈 태그
+VOID_TAGS = ["meta","link","img","br","hr","input","source","track"]
 
-def digest(s): return hashlib.sha256(s.encode("utf-8","ignore")).hexdigest()[:8]
-def load_text(p): return Path(p).read_text(encoding="utf-8", errors="replace")
-def save_text(p, s): Path(p).write_text(s, encoding="utf-8")
+def auto_fix(text: str) -> str:
+    fixed = text
 
-def replace_ns(s):
-    before = s
-    for good, pat in NS_REQUIRED.items():
-        s = pat.sub(good, s)
-    return s, (s!=before)
+    # 1) & 이스케이프: 이미 엔티티(&...;)인 경우는 제외
+    fixed = re.sub(r'&(?!#\d+;|#x[0-9A-Fa-f]+;|\w+;)', '&amp;', fixed)
 
-def escape_ampersands(s):
-    before = s
-    s = s.replace("&amp;amp;", "&amp;")
-    for k in AMP_KEYS:
-        s = re.sub(rf'(&){k}=', rf'&amp;{k}=', s)
-    return s, (s!=before)
+    # 2) <script> 본문을 CDATA로 래핑
+    def wrap_cdata(m):
+        inner = m.group(1)
+        if "<![CDATA[" in inner:
+            return m.group(0)
+        return "<script><![CDATA[\n" + inner + "\n]]></script>"
+    fixed = re.sub(r"<script[^>]*>(.*?)</script>", wrap_cdata, fixed, flags=re.S|re.I)
 
-def self_close_voids(s):
-    before = s
-    for t in VOID_TAGS:
-        s = re.sub(rf'<{t}(\s[^<>]*?)?>', lambda m: m.group(0)[:-1] + " />" if not m.group(0).rstrip().endswith("/>") else m.group(0), s, flags=re.I)
-    return s, (s!=before)
+    # 3) void 태그 자가폐쇄
+    for tag in VOID_TAGS:
+        fixed = re.sub(rf"<{tag}([^>/]*?)>", rf"<{tag}\1/>", fixed, flags=re.I)
 
-def fix_error_page_cond(s):
-    before = s
-    s = re.sub(r'(<b:if\s+[^>]*cond=)"\s*data:blog\.pageType\s*==\s*"error_page"\s*(")',
-               r"\1'data:blog.pageType == &quot;error_page&quot;'\2", s, flags=re.I)
-    s = re.sub(r'="[^"]*?==\s*"error_page"[^"]*?"',
-               lambda m: m.group(0).replace('== "error_page"', '== &quot;error_page&quot;'), s)
-    return s, (s!=before)
+    return fixed
 
-def wrap_script_cdata(s):
-    before = s; out=[]; i=0
-    while True:
-        m = re.search(r'(?is)<script[^>]*>', s[i:])
-        if not m: out.append(s[i:]); break
-        a=i+m.start(); b=i+m.end()
-        out.append(s[i:a]); out.append(s[a:b])
-        close = s.find("</script>", b)
-        if close==-1: out.append(s[b:]); break
-        body = s[b:close]
-        if "<![CDATA[" not in body: out.append("<![CDATA["); out.append(body); out.append("]]>")
-        else: out.append(body)
-        out.append("</script>"); i = close+len("</script>")
-    res="".join(out); return res, (res!=before)
+def validate_once(text: str):
+    errors, warnings = [], []
 
-def strip_strange_spaces(s):
-    before=s
-    s = s.replace("\u00A0","").replace("\u200B","").replace("\u200C","").replace("\u200D","").replace("\uFEFF","")
-    s = re.sub(r"<d\s+ata:", "<data:", s, flags=re.I)
-    s = re.sub(r"</d\s+ata:", "</data:", s, flags=re.I)
-    s = re.sub(r"<b\s+:", "<b:", s, flags=re.I)
-    s = re.sub(r"<expr\s+:", "<expr:", s, flags=re.I)
-    s = re.sub(r"<data\s+:", "<data:", s, flags=re.I)
-    return s, (s!=before)
+    # XML 파싱
+    try:
+        root = ET.fromstring(text)
+    except Exception as e:
+        errors.append(f"XML 파싱 오류: {e}")
+        return errors, warnings
 
-def ensure_core_blocks(s):
-    issues = []
-    for pat,msg in CORE_RULES:
-        if not re.search(pat, s, re.I|re.S): issues.append(msg)
-    return issues
+    # 루트 네임스페이스(텍스트 기반 검사: 중복 선언 오검출 방지)
+    required_ns = {
+        "xmlns:b":   "http://www.google.com/2005/gml/b",
+        "xmlns:data":"http://www.google.com/2005/gml/data",
+        "xmlns:expr":"http://www.google.com/2005/gml/expr"
+    }
+    for k, v in required_ns.items():
+        if f"{k}='{v}'" not in text and f'{k}="{v}"' not in text:
+            errors.append(f"루트 네임스페이스 누락/불일치: {k}")
 
-def check_widget_ids(s):
-    issues=[]
-    if re.search(r"<b:widget\s+id=['\"]Search\d*['\"]\s+type=['\"]Search['\"]", s, re.I):
-        issues.append("Search widget id must be BlogSearchN (not SearchN)")
-    if re.search(r"<b:widget\s+id=['\"]Archive\d*['\"]\s+type=['\"]BlogArchive['\"]", s, re.I):
-        issues.append("BlogArchive widget id must be BlogArchiveN (not ArchiveN)")
-    return issues
+    # 필수 요소
+    if "<b:include data='blog' name='all-head-content'/>" not in text:
+        errors.append("필수 include 누락: <b:include data='blog' name='all-head-content'/>")
+    if "<b:skin" not in text:
+        errors.append("b:skin 블록 누락")
 
-def validate_only(s):
-    errs=[]
-    if re.search(r'(?<!&amp;)&(id|export|text|tl|sk|tk|st)=', s): errs.append("found unescaped & in query strings")
-    if re.search(r'cond="[^"]*==\s*"error_page"', s, re.I): errs.append("invalid quoting in error_page condition")
-    if re.search(r"<d(?=[^a-zA-Z:])", s): errs.append("suspicious '<d' token; likely split <data:> or script needs CDATA")
-    for pat in NS_REQUIRED.values():
-        if pat.search(s): errs.append("namespace uses https://; must be http://")
-    errs+=ensure_core_blocks(s)
-    errs+=check_widget_ids(s)
-    return errs
+    # 조건문 문자열 비교 검사: == 가 있을 때 &quot; 또는 \" 허용
+    conds = re.findall(r"<b:if[^>]*cond=['\"]([^'\"]+)['\"][^>]*>", text)
+    for c in conds:
+        if "==" in c and ("&quot;" not in c and '\\"' not in c):
+            errors.append("조건문 문자열 비교시 &quot; 또는 \\\" 사용 필요")
 
-def auto_fix(s, max_rounds=4):
-    steps=[strip_strange_spaces, replace_ns, escape_ampersands, self_close_voids, fix_error_page_cond, wrap_script_cdata]
-    history=[digest(s)]; notes=[]
-    for _ in range(max_rounds):
-        changed=False
-        for fn in steps:
-            s2,chg=fn(s)
-            if chg: s=s2; changed=True; notes.append(fn.__name__)
-        if not changed: break
-        h=digest(s)
-        if h in history: break
-        history.append(h)
-    return s, list(dict.fromkeys(notes))
+    # 위젯 검사
+    widgets = root.findall(".//{http://www.google.com/2005/gml/b}widget")
+    ids = []
+    for w in widgets:
+        wid = w.get("id")
+        t = w.get("type")
+        if t not in ALLOWED_WIDGETS:
+            errors.append(f"INVALID_WIDGET_TYPE id={wid}, type={t}")
+        if wid in ids:
+            errors.append(f"DUPLICATE_ID {wid}")
+        ids.append(wid)
 
-def main():
-    if len(sys.argv)<2:
-        print(__doc__); sys.exit(2)
-    inp=sys.argv[1]; fix_out=None
-    if len(sys.argv)>=4 and sys.argv[2]=="--fix": fix_out=sys.argv[3]
-    src=load_text(inp); errs_before=validate_only(src)
-    if not fix_out:
-        if errs_before:
-            print("FAILED"); [print("-",e) for e in errs_before]; sys.exit(1)
-        print("OK"); sys.exit(0)
-    fixed,notes=auto_fix(src)
-    errs_after=validate_only(fixed)
-    save_text(fix_out,fixed)
-    print("Fix notes:", ", ".join(notes) if notes else "(none)")
-    if errs_after:
-        print("RECHECK: FAILED"); [print("-",e) for e in errs_after]; sys.exit(1)
-    print("RECHECK: OK"); sys.exit(0)
+    # 금지/권장
+    if re.search(r"<(video|audio|canvas)(\s|>)", text, re.I):
+        warnings.append("HTML5 전용 태그 사용: video/audio/canvas")
+    if re.search(r"<style[^>]*>", text) and "<b:skin" not in text:
+        warnings.append("style 태그가 b:skin 밖에 있음")
+    if "http://" in text:
+        warnings.append("http:// 링크 발견 (https 권장)")
 
-if __name__=="__main__":
-    main()
+    return errors, warnings
+
+def validate_loop(path: pathlib.Path):
+    raw = path.read_text(encoding="utf-8")
+    fixed = raw
+    for i in range(1, 5):  # 최대 4회 시도
+        fixed = auto_fix(fixed)
+        errors, warnings = validate_once(fixed)
+        if not errors:
+            outpath = path.with_name(path.stem + "_FINAL.xml")
+            outpath.write_text(fixed, encoding="utf-8")
+            print(f"✅ 최종 결과: 완성본 ({i}회 교정)")
+            for w in warnings:
+                print("⚠️", w)
+            print("출력 파일:", outpath)
+            return True
+        if i == 4:
+            print("❌ 반복 교정 실패. 남은 오류:")
+            for e in errors:
+                print(" -", e)
+            return False
+        # 다음 루프에서 재교정 계속
+    return False
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("사용법: python blogger_validator.py <xml파일>")
+        sys.exit(1)
+    path = pathlib.Path(sys.argv[1])
+    ok = validate_loop(path)
+    sys.exit(0 if ok else 2)
