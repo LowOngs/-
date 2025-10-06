@@ -1,58 +1,79 @@
-<!-- overlay.header.htmlfrag : Contempo-synced header vv63 -->
-<header id="og-header" role="banner" aria-label="사이트 헤더">
+<!-- overlay.header.htmlfrag : Contempo-synced header v64-en -->
+
+<header id="og-header" role="banner" aria-label="Site header">
   <div class="og-container og-row og-row-1">
     <div class="og-left">
-      <div id="og-translate" class="og-translator" aria-label="번역기">
-        <select id="og-lang" aria-label="언어 선택">
-          <option value="">언어 선택</option>
+      <div id="og-translate" class="og-translator" aria-label="Translator">
+        <select id="og-lang" aria-label="Language">
+          <option value="">Language</option>
           <option value="en">English</option>
-          <option value="ko">한국어</option>
-          <option value="ja">日本語</option>
-          <option value="zh-CN">简体中文</option>
+          <option value="ko">Korean</option>
+          <option value="ja">Japanese</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
         </select>
         <div id="og-trans-bar" class="og-trans-bar" hidden>
           <button type="button" data-engine="google"  class="og-btn">Google</button>
           <button type="button" data-engine="papago"  class="og-btn">Papago</button>
           <button type="button" data-engine="deepl"   class="og-btn">DeepL</button>
-          <button class="og-tip-btn" aria-label="번역기 안내">i</button>
+          <button class="og-tip-btn" aria-label="About translators">i</button>
           <div class="og-tooltip" role="tooltip" hidden>
-            <p><b>Google:</b> 광범위한 언어 지원, 문맥 정확도는 평균적입니다.</p>
-            <p><b>Papago:</b> 유럽어 및 한–영 번역 품질이 우수합니다.</p>
-            <p><b>DeepL:</b> 문맥 분석 기반으로 자연스러운 번역을 제공합니다.</p>
+            <p><b>Google:</b> Broad language support; solid general accuracy.</p>
+            <p><b>Papago:</b> Strong for Korean↔English and many European languages.</p>
+            <p><b>DeepL:</b> Natural translations with context modeling.</p>
           </div>
         </div>
       </div>
     </div>
     <div class="og-right">
-      <form class="og-search og-search--contempo" action="/search" method="get" role="search" aria-label="검색">
-        <input name="q" placeholder="검색" />
-        <button type="submit" aria-label="검색 제출">🔍</button>
+      <form class="og-search og-search--contempo" action="/search" method="get" role="search" aria-label="Search">
+        <input name="q" placeholder="Search" />
+        <button type="submit" aria-label="Submit search">🔍</button>
       </form>
     </div>
   </div>
 
   <div class="og-container og-row og-row-2">
-    <div class="og-brand"><a href="/" aria-label="홈">Ongdalsaem Knowldge Archive</a></div>
+    <div class="og-brand"><a href="/" aria-label="Home">Ongdalsaem Knowldge Archive</a></div>
   </div>
 
-  <div class="og-container og-row og-row-3" role="navigation" aria-label="공지 및 이동">
+  <div class="og-container og-row og-row-3" role="navigation" aria-label="Notice and navigation">
     <div class="og-left">
-      <a class="og-btn og-prev" href="#" aria-label="이전 글">◀ 이전</a>
-
-      <div class="og-notice-editor" hidden>
-        <textarea id="og-notice" rows="2" placeholder="공지 내용을 입력하세요..."></textarea>
-        <button class="og-btn og-apply" type="button">적용</button>
-        <button class="og-btn og-stop" type="button" hidden>중지</button>
-      </div>
-
-      <div class="og-notice-ticker" aria-live="polite" hidden>
-        <span id="og-notice-text"></span>
-      </div>
+      <a class="og-btn og-prev" href="#" aria-label="Previous post">◀ Prev</a>
     </div>
+
+    <div class="og-notice-wrap" aria-label="Notice controls">
+      <button type="button" class="og-notice-btn prev" aria-label="Previous notice">
+        <div class="og-btn-inner">
+          <span class="og-arrow" aria-hidden="true">←</span>
+          <span class="og-label">prev</span>
+        </div>
+      </button>
+
+      <div class="og-notice-area">
+        <div class="og-notice-editor" hidden>
+          <textarea id="og-notice" rows="2" placeholder="One notice per line. Multiple lines are saved as a list."></textarea>
+          <div class="og-notice-ops">
+            <button class="og-btn og-apply" type="button">Apply</button>
+            <button class="og-btn og-stop" type="button" hidden>Stop</button>
+          </div>
+        </div>
+        <div class="og-notice-ticker" aria-live="polite" hidden>
+          <span id="og-notice-text"></span>
+        </div>
+      </div>
+
+      <button type="button" class="og-notice-btn next" aria-label="Next notice">
+        <div class="og-btn-inner">
+          <span class="og-arrow" aria-hidden="true">→</span>
+          <span class="og-label">next</span>
+        </div>
+      </button>
+    </div>
+
     <div class="og-right">
-      <a class="og-btn og-next" href="#" aria-label="다음 글">다음 ▶</a>
+      <a class="og-btn og-next" href="#" aria-label="Next post">Next ▶</a>
     </div>
   </div>
 
-  <nav class="og-rail" id="og-cat-rail" role="navigation" aria-label="카테고리"></nav>
+  <nav class="og-rail" id="og-cat-rail" role="navigation" aria-label="Categories"></nav>
 </header>
