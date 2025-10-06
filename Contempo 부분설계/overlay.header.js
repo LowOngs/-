@@ -1,4 +1,5 @@
-// overlay.header.js : Contempo-synced header vv63
+// overlay.header.js : Contempo-synced header v64-en
+
 (function(w,d){
   var root = d.getElementById('og-header');
   if(!root) return;
@@ -64,33 +65,104 @@
   if(prev){ if(blogNext) prev.href = blogNext.href; else prev.setAttribute('disabled','disabled'); }
   if(next){ if(blogPrev) next.href = blogPrev.href; else next.setAttribute('disabled','disabled'); }
 
-  var editor=root.querySelector('.og-notice-editor');
-  var textarea=root.querySelector('#og-notice');
-  var btnApply=root.querySelector('.og-apply');
-  var btnStop=root.querySelector('.og-stop');
-  var ticker=root.querySelector('.og-notice-ticker');
-  var tickTxt=root.querySelector('#og-notice-text');
+  // Notice system
+  var editor = root.querySelector('.og-notice-editor');
+  var textarea = root.querySelector('#og-notice');
+  var btnApply = root.querySelector('.og-apply');
+  var btnStop  = root.querySelector('.og-stop');
+  var ticker   = root.querySelector('.og-notice-ticker');
+  var tickTxt  = root.querySelector('#og-notice-text');
+  var btnPrev  = root.querySelector('.og-notice-btn.prev');
+  var btnNext  = root.querySelector('.og-notice-btn.next');
 
-  function loadNotice(){ try{return w.localStorage.getItem('ogNotice')||'';}catch(_){return'';} }
-  function saveNotice(v){ try{w.localStorage.setItem('ogNotice',v||'');}catch(_){} }
-  function showTicker(text){ if(!ticker||!tickTxt)return; if(!text){ticker.hidden=true;return;} tickTxt.textContent=text; ticker.hidden=false; }
-  function playTicker(run){ if(!tickTxt)return; tickTxt.style.animationPlayState = run ? 'running' : 'paused'; }
+  function loadList(){
+    try{
+      var raw = w.localStorage.getItem('ogNoticeList');
+      if(!raw) return [];
+      var arr = JSON.parse(raw);
+      return Array.isArray(arr)? arr : [];
+    }catch(_){
+      return [];
+    }
+  }
+  function saveList(arr){
+    try{ w.localStorage.setItem('ogNoticeList', JSON.stringify(arr||[])); }catch(_){}
+  }
+  function loadIndex(){
+    try{ return parseInt(w.localStorage.getItem('ogNoticeIndex')||'0',10) || 0; }catch(_){ return 0; }
+  }
+  function saveIndex(i){
+    try{ w.localStorage.setItem('ogNoticeIndex', String(i||0)); }catch(_){}
+  }
+  function loadRunning(){
+    try{ return w.localStorage.getItem('ogNoticeRunning') === '1'; }catch(_){ return false; }
+  }
+  function saveRunning(b){
+    try{ w.localStorage.setItem('ogNoticeRunning', b? '1':'0'); }catch(_){}
+  }
 
-  var current=loadNotice();
-  showTicker(current); playTicker(!!current);
+  var list = loadList();
+  var idx  = Math.min(loadIndex(), Math.max(0, list.length-1));
+  var run  = loadRunning();
 
-  if(isOwner && editor){ editor.hidden=false; if(textarea) textarea.value=current; }
-  if(isOwner){ if(btnApply) btnApply.hidden=!!current; if(btnStop) btnStop.hidden=!current; }
+  function renderTicker(){
+    if(!ticker || !tickTxt) return;
+    if(!list.length){
+      ticker.hidden = true;
+      if(btnPrev) btnPrev.disabled = true;
+      if(btnNext) btnNext.disabled = true;
+      return;
+    }
+    tickTxt.textContent = list[idx] || '';
+    ticker.hidden = false;
+    if(btnPrev) btnPrev.disabled = (list.length<=1);
+    if(btnNext) btnNext.disabled = (list.length<=1);
+    tickTxt.style.animationPlayState = run ? 'running' : 'paused';
+  }
+
+  function showEditor(show){
+    if(!editor) return;
+    editor.hidden = !show;
+  }
+
+  if(isOwner){
+    showEditor(!run);
+  } else {
+    showEditor(false);
+  }
+
+  renderTicker();
 
   if(btnApply) btnApply.addEventListener('click', function(){
-    var val=(textarea&&textarea.value||'').trim();
-    saveNotice(val); showTicker(val); playTicker(!!val);
-    if(isOwner){ btnApply.hidden=!!val; if(btnStop) btnStop.hidden=!val; }
-    alert('공지 적용 완료');
+    if(!textarea) return;
+    var lines = (textarea.value||'').split(/\r?\n/).map(function(s){return s.trim();}).filter(Boolean);
+    list = lines;
+    idx = 0;
+    run = list.length>0;
+    saveList(list); saveIndex(idx); saveRunning(run);
+    renderTicker();
+    if(isOwner){ 
+      showEditor(!run);
+      if(btnApply) btnApply.hidden = !!run;
+      if(btnStop)  btnStop.hidden  = !run;
+    }
+    if(!run) alert('No notices entered.');
   });
+
   if(btnStop) btnStop.addEventListener('click', function(){
-    playTicker(false);
-    if(isOwner){ btnStop.hidden=true; if(btnApply) btnApply.hidden=false; }
-    alert('공지 흐름 중지됨');
+    run = false; saveRunning(run); renderTicker();
+    if(isOwner){ 
+      showEditor(true);
+      if(btnApply) btnApply.hidden = false;
+      if(btnStop)  btnStop.hidden  = true;
+    }
   });
+
+  function shift(delta){
+    if(!list.length) return;
+    idx = (idx + delta + list.length) % list.length;
+    saveIndex(idx); renderTicker();
+  }
+  if(btnPrev) btnPrev.addEventListener('click', function(){ shift(-1); });
+  if(btnNext) btnNext.addEventListener('click', function(){ shift(1); });
 })(window,document);
