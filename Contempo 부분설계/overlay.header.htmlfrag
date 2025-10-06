@@ -1,12 +1,10 @@
-<!-- overlay.header.htmlfrag : 3-row header per spec -->
-<header id="og-header" role="banner" aria-label="Site header">
-  <!-- Row 1: Left translator (selector + service bar), Right compact Contempo search -->
+<!-- overlay.header.htmlfrag : Contempo-synced header vv63 -->
+<header id="og-header" role="banner" aria-label="사이트 헤더">
   <div class="og-container og-row og-row-1">
     <div class="og-left">
-      <div id="og-translate" class="og-translator" aria-label="Translator">
-        <label for="og-lang" class="og-visually-hidden">Language</label>
-        <select id="og-lang" aria-label="Language">
-          <option value="">Language</option>
+      <div id="og-translate" class="og-translator" aria-label="번역기">
+        <select id="og-lang" aria-label="언어 선택">
+          <option value="">언어 선택</option>
           <option value="en">English</option>
           <option value="ko">한국어</option>
           <option value="ja">日本語</option>
@@ -16,38 +14,45 @@
           <button type="button" data-engine="google"  class="og-btn">Google</button>
           <button type="button" data-engine="papago"  class="og-btn">Papago</button>
           <button type="button" data-engine="deepl"   class="og-btn">DeepL</button>
+          <button class="og-tip-btn" aria-label="번역기 안내">i</button>
+          <div class="og-tooltip" role="tooltip" hidden>
+            <p><b>Google:</b> 광범위한 언어 지원, 문맥 정확도는 평균적입니다.</p>
+            <p><b>Papago:</b> 유럽어 및 한–영 번역 품질이 우수합니다.</p>
+            <p><b>DeepL:</b> 문맥 분석 기반으로 자연스러운 번역을 제공합니다.</p>
+          </div>
         </div>
       </div>
     </div>
     <div class="og-right">
-      <form class="og-search og-search--contempo" action="/search" method="get" role="search" aria-label="Search">
-        <input name="q" placeholder="Search" />
-        <button type="submit" aria-label="Submit search">🔍</button>
+      <form class="og-search og-search--contempo" action="/search" method="get" role="search" aria-label="검색">
+        <input name="q" placeholder="검색" />
+        <button type="submit" aria-label="검색 제출">🔍</button>
       </form>
     </div>
   </div>
 
-  <!-- Row 2: Brand centered -->
   <div class="og-container og-row og-row-2">
-    <div class="og-brand"><a href="/" aria-label="Home">Ongdalsaem Knowldge Archive</a></div>
+    <div class="og-brand"><a href="/" aria-label="홈">Ongdalsaem Knowldge Archive</a></div>
   </div>
 
-  <!-- Row 3: Prev / Notice editor (owner only) + Apply  |  Next -->
-  <div class="og-container og-row og-row-3" role="navigation" aria-label="Pager and actions">
+  <div class="og-container og-row og-row-3" role="navigation" aria-label="공지 및 이동">
     <div class="og-left">
-      <a class="og-btn og-prev" href="#" aria-label="Previous">◀ Prev</a>
+      <a class="og-btn og-prev" href="#" aria-label="이전 글">◀ 이전</a>
+
       <div class="og-notice-editor" hidden>
-        <label for="og-notice" class="og-visually-hidden">Notice</label>
-        <textarea id="og-notice" rows="2" placeholder="Write a notice..."></textarea>
-        <button class="og-btn og-apply" type="button" aria-label="Apply notice">Apply</button>
+        <textarea id="og-notice" rows="2" placeholder="공지 내용을 입력하세요..."></textarea>
+        <button class="og-btn og-apply" type="button">적용</button>
+        <button class="og-btn og-stop" type="button" hidden>중지</button>
       </div>
-      <div class="og-notice-display" aria-live="polite"></div>
+
+      <div class="og-notice-ticker" aria-live="polite" hidden>
+        <span id="og-notice-text"></span>
+      </div>
     </div>
     <div class="og-right">
-      <a class="og-btn og-next" href="#" aria-label="Next">Next ▶</a>
+      <a class="og-btn og-next" href="#" aria-label="다음 글">다음 ▶</a>
     </div>
   </div>
 
-  <!-- Category rail stays below header -->
-  <nav class="og-rail" id="og-cat-rail" role="navigation" aria-label="Categories"></nav>
+  <nav class="og-rail" id="og-cat-rail" role="navigation" aria-label="카테고리"></nav>
 </header>
