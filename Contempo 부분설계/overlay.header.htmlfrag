@@ -1,0 +1,53 @@
+<!-- overlay.header.htmlfrag : 3-row header per spec -->
+<header id="og-header" role="banner" aria-label="Site header">
+  <!-- Row 1: Left translator (selector + service bar), Right compact Contempo search -->
+  <div class="og-container og-row og-row-1">
+    <div class="og-left">
+      <div id="og-translate" class="og-translator" aria-label="Translator">
+        <label for="og-lang" class="og-visually-hidden">Language</label>
+        <select id="og-lang" aria-label="Language">
+          <option value="">Language</option>
+          <option value="en">English</option>
+          <option value="ko">한국어</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+        </select>
+        <div id="og-trans-bar" class="og-trans-bar" hidden>
+          <button type="button" data-engine="google"  class="og-btn">Google</button>
+          <button type="button" data-engine="papago"  class="og-btn">Papago</button>
+          <button type="button" data-engine="deepl"   class="og-btn">DeepL</button>
+        </div>
+      </div>
+    </div>
+    <div class="og-right">
+      <form class="og-search og-search--contempo" action="/search" method="get" role="search" aria-label="Search">
+        <input name="q" placeholder="Search" />
+        <button type="submit" aria-label="Submit search">🔍</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Row 2: Brand centered -->
+  <div class="og-container og-row og-row-2">
+    <div class="og-brand"><a href="/" aria-label="Home">Ongdalsaem Knowldge Archive</a></div>
+  </div>
+
+  <!-- Row 3: Prev / Notice editor (owner only) + Apply  |  Next -->
+  <div class="og-container og-row og-row-3" role="navigation" aria-label="Pager and actions">
+    <div class="og-left">
+      <a class="og-btn og-prev" href="#" aria-label="Previous">◀ Prev</a>
+      <div class="og-notice-editor" hidden>
+        <label for="og-notice" class="og-visually-hidden">Notice</label>
+        <textarea id="og-notice" rows="2" placeholder="Write a notice..."></textarea>
+        <button class="og-btn og-apply" type="button" aria-label="Apply notice">Apply</button>
+      </div>
+      <div class="og-notice-display" aria-live="polite"></div>
+    </div>
+    <div class="og-right">
+      <a class="og-btn og-next" href="#" aria-label="Next">Next ▶</a>
+    </div>
+  </div>
+
+  <!-- Category rail stays below header -->
+  <nav class="og-rail" id="og-cat-rail" role="navigation" aria-label="Categories"></nav>
+</header>
