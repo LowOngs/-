@@ -20,7 +20,7 @@
 - 바탕화면
   - bookshelf_full_bg.jpg(풀 스크린 배경): https://drive.google.com/file/d/1deNd_XkYQqvlqK1LsYyMx80cQuag4XRW/view?usp=drive_link 
   - bookshelf_soft_bg.jpg(반응 스크린 배경): https://drive.google.com/file/d/15fqvSa9jA9CeMlL6T6ek22Y8U0V1Mq1H/view?usp=drive_link
-2-1) 헤더
+2-1) 헤더(고정)
 - 1층 좌측 번역 위젯: 구글/파파고/딥엘 3중 선택 드롭+i(번역기 특징) 
 - 1층 우측 검색: 컨템포 스킨 검색 확장 디자인 폭을 줄여서 그대로 사용.
   글번호 검색지원 ex. #123(#000123) placeholder 다국어화, 엔터/버튼 제출 지원.
