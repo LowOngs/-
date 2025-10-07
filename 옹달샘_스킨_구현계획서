@@ -17,6 +17,9 @@
 ────────────────────────────────────────────────────
 2) 구역별 상세 명세
 -  구역 공통: pc 화면 제어에 따른 반응형 설계 100% 동일, 배경 변경 전까지 컨템포 기본 배경 사용.
+- 바탕화면
+  - bookshelf_full_bg.jpg(풀 스크린 배경): https://drive.google.com/file/d/1deNd_XkYQqvlqK1LsYyMx80cQuag4XRW/view?usp=drive_link 
+  - bookshelf_soft_bg.jpg(반응 스크린 배경): https://drive.google.com/file/d/15fqvSa9jA9CeMlL6T6ek22Y8U0V1Mq1H/view?usp=drive_link
 2-1) 헤더
 - 1층 좌측 번역 위젯: 구글/파파고/딥엘 3중 선택 드롭+i(번역기 특징) 
 - 1층 우측 검색: 컨템포 스킨 검색 확장 디자인 폭을 줄여서 그대로 사용.
@@ -40,13 +43,16 @@
 - 상태 정의: guest(미로그인) / member(로그인 사용자, 오너 아님) / owner(블로그 소유자).
 
 - 1층: 사이드바 처음에 나오는 둥근 이미지와 사용자 명을 위로 올린다.
+  둥근이미지(profile_avatar: https://drive.google.com/file/d/1PIw4Lelyw8OmULh0bUdf3jQvEWX3sMOT/view?usp=drive_link)
    헤더의 브랜드 명 하단 면과 비슷한 높이로 원형의 바닥면(6시방향 꼭지점-쿼드런트) 위치가 비슷할 정도로 올린다.
 - 2층: 사용자 이름
 - 3층: 버튼 추가
   - guest: [구독하기] [로그인]
   - member: [마이페이지] [로그아웃]
   - owner: [블로그 관리] [로그아웃] [제휴정보관리] [프로필 이동] :운영자 모드시에만
-- 4층: 카테고리(토끼 PNG + 메인 호버 주황빛(클릭시 1초 유지), 하부 카테고리 선택 시 금빛 상시 후광)
+- 4층: 카테고리
+  - 카테고리 앞 토끼 PNG (icon_sidebar_rabbit: https://drive.google.com/file/d/1r8M0a61pZ5XEWePcR6kysbdqVkoUdgTc/view?usp=drive_link)
+  - 메인 호버 주황빛(클릭시 1초 유지), 하부 카테고리 선택 시 금빛 상시 후광)
    # Category list = Display name 
 
    # Reviews & Buying Guides
@@ -81,18 +87,18 @@
 - 횡스크롤 상자 안의 무한회전 마우스 드래그/터치 드래그 가능, 스크롤 중앙 구역 포커스라인 생성/자동 비율 맞춤 구현
 - 포커스존 도착시 풍선 툴팁(파트너사 풀네임 1.2초), 다른곳 터치시 즉시 사라짐.
 - 12개사 파트너 명
-  1번 → Amazon (https://drive.google.com/file/d/1TSqB8lWokfq6cmbCjJyLLEtS9A8YKDQ9/view?usp=drive_link)
-  2번 → eBay (https://drive.google.com/file/d/1DMHCahD75qUG49jWXRPoOjglYf4oXjuB/view?usp=drive_link)
-  3번 → Target (https://drive.google.com/file/d/1IE1vhCO7Njq0hRRt5FRbJ7YltHtzwRJr/view?usp=drive_link)
-  4번 → Mercado Libre (https://drive.google.com/file/d/1Y3uSYQPw50Wut1WVCrnCcsaYbyoSD7xH/view?usp=drive_link)
-  5번 → Flipkart (https://drive.google.com/file/d/1jCVIkW-ULS5GO9zD-dpDEV0Jsp7dTU4d/view?usp=drive_link)
-  6번 → Amazon India (https://drive.google.com/file/d/14jXDZSGLbiIehaCUvaK6ytpjW1fEZO7G/view?usp=drive_link)
-  7번 → Shopee (https://drive.google.com/file/d/1myIvsI6UvOJSrLV45VH4f7wo5Ow9Ucbv/view?usp=drive_link)
-  8번 → Lazada (https://drive.google.com/file/d/1CGl9Ff1v1cG3O-UmVABo8wgQB-9JD_z3/view?usp=drive_link)
-  9번 → AliExpress (https://drive.google.com/file/d/1Z5-ybY3i62klO-oCvgAXVHfHH0oRyzLL/view?usp=drive_link)
-  10번 → Otto 
-  11번 → Zalando
-  12번 → Allegro
+  1번 → Amazon (btn_square_amazon:https://drive.google.com/file/d/1TSqB8lWokfq6cmbCjJyLLEtS9A8YKDQ9/view?usp=drive_link)
+  2번 → eBay (btn_square_ebay:https://drive.google.com/file/d/1DMHCahD75qUG49jWXRPoOjglYf4oXjuB/view?usp=drive_link)
+  3번 → Target (btn_square_target:https://drive.google.com/file/d/1IE1vhCO7Njq0hRRt5FRbJ7YltHtzwRJr/view?usp=drive_link)
+  4번 → Mercado Libre (btn_square_mercadolibre:https://drive.google.com/file/d/1Y3uSYQPw50Wut1WVCrnCcsaYbyoSD7xH/view?usp=drive_link)
+  5번 → Flipkart (btn_square_flipkart:https://drive.google.com/file/d/1jCVIkW-ULS5GO9zD-dpDEV0Jsp7dTU4d/view?usp=drive_link)
+  6번 → Amazon India (btn_square_amazon_india:https://drive.google.com/file/d/14jXDZSGLbiIehaCUvaK6ytpjW1fEZO7G/view?usp=drive_link)
+  7번 → Shopee (btn_square_shopee:https://drive.google.com/file/d/1myIvsI6UvOJSrLV45VH4f7wo5Ow9Ucbv/view?usp=drive_link)
+  8번 → Lazada (btn_square_lazada:https://drive.google.com/file/d/1CGl9Ff1v1cG3O-UmVABo8wgQB-9JD_z3/view?usp=drive_link)
+  9번 → AliExpress (btn_square_aliexpress:https://drive.google.com/file/d/1Z5-ybY3i62klO-oCvgAXVHfHH0oRyzLL/view?usp=drive_link)
+  10번 → Otto (btn_square_otto:https://drive.google.com/file/d/1IqWAFrpAeoANqj93UxmO8HV51szrt4_a/view?usp=drive_link)
+  11번 → Zalando (btn_square_zalando:https://drive.google.com/file/d/1lAAIsrWowMJxXyMbffS-Je3odofKX6j-/view?usp=drive_link)
+  12번 → Allegro (btn_square_allegro:https://drive.google.com/file/d/1h2SYuVgC8UL9uzAhsjXMxqEA9YaHSNZK/view?usp=drive_link)
 
 - 2층: 제휴 고지 문구
 
