@@ -26,6 +26,7 @@
 - 공지칸은 링크 구조가 아님. 직접 텍스트입력+적용 또는 중지. 적용후 우에서 좌로 텍스트 흐름 방식, 읽기모드(지우거나 터치 불가)
 - 공지창 전체길이- 블로그명과 동일 반응형태로 줄어듬.
 
+
 2-2) 본문(Main)
 - 기본 구성: 컨템포 기본 스킨 구조를 따름
 - 글 목록/글 본문. 카드형 목록, 본문 내 대표 이미지, 제목/메타.
@@ -35,49 +36,71 @@
   · 스크롤 시 나타났다 즉시 사라짐, 호버 헤제 시 즉시 사라짐.
 
 
-2-3) 사이드바(Sidebar: 오른쪽, 독립 스크롤)
- · 상태 정의: guest(미로그인) / member(로그인 사용자, 오너 아님) / owner(블로그 소유자).
- guest: [구독하기] [로그인]
-    - member: [마이페이지] [로그아웃]
-    - owner: [관리] [로그아웃]
+2-3) 사이드바(Sidebar: 왼쪽, 독립 스크롤)
+- 상태 정의: guest(미로그인) / member(로그인 사용자, 오너 아님) / owner(블로그 소유자).
 
-- 1층: 공지사항 제목(양쪽 클로버)
-- 2층: 공지 출력창 + 우측 적용버튼(운영자 전용)
-- 3층: 구분선
-- 4층: 카테고리(토끼 PNG + 아코디언식, 메인 호버 주황빛 3초마다, 하부 카테고리 선택 시 금빛 상시 후광)
+- 1층: 사이드바 처음에 나오는 둥근 이미지와 사용자 명을 위로 올린다.
+   헤더의 브랜드 명 하단 면과 비슷한 높이로 원형의 바닥면(6시방향 꼭지점-쿼드런트) 위치가 비슷할 정도로 올린다.
+- 2층: 사용자 이름
+- 3층: 버튼 추가
+  - guest: [구독하기] [로그인]
+  - member: [마이페이지] [로그아웃]
+  - owner: [블로그 관리] [로그아웃] [제휴정보관리] [프로필 이동] :운영자 모드시에만
+- 4층: 카테고리(토끼 PNG + 메인 호버 주황빛(클릭시 1초 유지), 하부 카테고리 선택 시 금빛 상시 후광)
+   # Category list = Display name 
+
+   # Reviews & Buying Guides
+    - app-reviews(라벨)
+    - IT device-reviews(라벨)
+   # Conquer Tech
+    - how-to-playbooks(라벨)
+   # Sophisticated Choice
+    - smart-savings(라벨)
+   # Practical Playbook
+    - templates-checklists(라벨)
 - 5층: 구분선
 - 6층: Ads Google 텍스트
 - 7층: 애드센스 디스플레이(광고 허가시 출력 가능하게 미리구현) -6,7층 최대한 간격없게 붙임
 - 8층: 🎁 제휴특가안내 🎁
-- 9~12층: 특가 출력창4층 고정창 확보(파트너당 1링크, 최대 3링크, 문구 슬래시 구분)
+- 9~12층: 특가 출력창 4층 고정창 확보(파트너당 1링크, 최대 3링크, 문구 슬래시 구분)- 8,9층 최대한 간격없게 붙임
+  - 출력예시 1,2,3,4 -> 5번째 출력시 다시 1번창에 추가(두줄이 됨), api 특가정보시 연결모드 특가정보 없으면 미출력(출력문구 단순화- 사명+상품명+상품명+../), 삭제 지우기, 터치 불가능.
+  - 호버/터치 시 글 멈춤, 좌우 드래그 가능, 클릭시 트래킹링크+api 특가창 이동.
 - 13층: 구분선
-- 14층: 방문자 집계 텍스트
-  현황상자 구성(일간+월간)
-- 15층: 월간 현황판(색상 단계별 점등)
-- 16층: 구분선
-- 17층: 재휴 집계관리(운영자 구역-로그인시만 활성(pc모드 기준시에만_)
+- 14층: 최신글 5개
+- 15층: 인기글 5개
+- 16층: 방문자 집계 텍스트
+  - 현황판 상자 구성(일간+월간)
+  - 월간 현황판(색상 단계별 점등) - 5만 미만: 흰색, 10만 미만: 파란색, 50만 미만: 초록색, 100만 미만: 주황색, 500만 이상:빨간색
+- 17층: 구분선
+- 18층: 재휴 집계관리-운영자 구역(로그인시만 활성, pc모드 기준시에만_)
+  -2열 6줄로 구성, 파트너사 명+기록칸 형태. 한국시간/달 기준 초기화. 읽기모드 창창
+
   
 2-4) 푸터(Footer: 하단 고정)
-- 1층: 12개 파트너사 버튼(PC2 전용 이미지 2.5:1)
+- 1층: 12개 파트너사 버튼(1:1)
+- 횡스크롤 상자 안의 무한회전 마우스 드래그/터치 드래그 가능, 스크롤 중앙 구역 포커스라인 생성/자동 비율 맞춤 구현
+- 포커스존 도착시 풍선 툴팁(파트너사 풀네임 1.2초), 다른곳 터치시 즉시 사라짐.
+- 12개사 파트너 명
+  1번 → Amazon (https://drive.google.com/file/d/1TSqB8lWokfq6cmbCjJyLLEtS9A8YKDQ9/view?usp=drive_link)
+  2번 → eBay (https://drive.google.com/file/d/1DMHCahD75qUG49jWXRPoOjglYf4oXjuB/view?usp=drive_link)
+  3번 → Target (https://drive.google.com/file/d/1IE1vhCO7Njq0hRRt5FRbJ7YltHtzwRJr/view?usp=drive_link)
+  4번 → Mercado Libre (https://drive.google.com/file/d/1Y3uSYQPw50Wut1WVCrnCcsaYbyoSD7xH/view?usp=drive_link)
+  5번 → Flipkart (https://drive.google.com/file/d/1jCVIkW-ULS5GO9zD-dpDEV0Jsp7dTU4d/view?usp=drive_link)
+  6번 → Amazon India (https://drive.google.com/file/d/14jXDZSGLbiIehaCUvaK6ytpjW1fEZO7G/view?usp=drive_link)
+  7번 → Shopee (https://drive.google.com/file/d/1myIvsI6UvOJSrLV45VH4f7wo5Ow9Ucbv/view?usp=drive_link)
+  8번 → Lazada (https://drive.google.com/file/d/1CGl9Ff1v1cG3O-UmVABo8wgQB-9JD_z3/view?usp=drive_link)
+  9번 → AliExpress (https://drive.google.com/file/d/1Z5-ybY3i62klO-oCvgAXVHfHH0oRyzLL/view?usp=drive_link)
+  10번 → Otto 
+  11번 → Zalando
+  12번 → Allegro
+
 - 2층: 제휴 고지 문구
 
 - Deal 마크: 3초당 1회 은은한 후광.
 
 ────────────────────────────────────────────────────
 4) 운영자 팝업
- 12개사 파트너 명
-1번 → Amazon 
-2번 → eBay 
-3번 → Target 
-4번 → Mercado Libre
-5번 → Flipkart 
-6번 → Amazon India 
-7번 → Shopee
-8번 → Lazada 
-9번 → AliExpress 
-10번 → Otto 
-11번 → Zalando
-12번 → Allegro
+
 
 ① 제휴사 정보 관리
 - 12사 × ID/Track/API 입력, 적용버튼.
