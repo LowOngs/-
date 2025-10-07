@@ -1,0 +1,81 @@
+<!-- Overlay Footer + Operator Popup + Translation Orb -->
+<div id="ogx-root" class="ogx-root" aria-hidden="false">
+
+  <!-- Footer (fixed) -->
+  <footer class="ogx-footer" role="contentinfo" aria-label="Affiliate footer">
+    <div class="ogx-inner">
+
+      <!-- row 1: partners carousel -->
+      <div class="ogx-row ogx-partners" role="region" aria-label="Affiliate Partners">
+        <button class="ogx-nav ogx-prev" type="button" aria-label="Move focus left" title="Prev"></button>
+
+        <div class="ogx-track-wrap" aria-live="polite">
+          <div class="ogx-focusline" aria-hidden="true"></div>
+          <div class="ogx-track" id="ogx-track" tabindex="0" role="listbox" aria-label="Partners">
+            <!-- tiles via JS -->
+          </div>
+        </div>
+
+        <button class="ogx-nav ogx-next" type="button" aria-label="Move focus right" title="Next"></button>
+      </div>
+
+      <!-- row 2: disclosure -->
+      <p class="ogx-disclosure">Affiliate use is free. The operator may earn a commission from partner links.</p>
+    </div>
+  </footer>
+
+  <!-- Operator popup (Admin only, Ctrl+Alt+O) -->
+  <div class="ogx-admin" id="ogx-admin" role="dialog" aria-modal="true" aria-label="Affiliate settings" hidden>
+    <div class="ogx-admin-box">
+      <header class="ogx-admin-hd">
+        <h3>제휴 설정</h3>
+        <button type="button" class="ogx-admin-close" aria-label="닫기">✕</button>
+      </header>
+      <div class="ogx-admin-body">
+        <div class="ogx-admin-grid ogx-admin-head">
+          <div>ID</div><div>트랙 URL</div><div>API 키 / 엔드포인트</div><div>발효</div><div>적용</div>
+        </div>
+        <div id="ogx-admin-rows"></div>
+        <div class="ogx-admin-actions">
+          <button type="button" id="ogx-admin-export" class="ogx-btn">구성 Export</button>
+          <button type="button" id="ogx-admin-import" class="ogx-btn">구성 Import</button>
+          <input type="file" id="ogx-admin-file" accept="application/json" hidden>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Translation orb -->
+  <button class="ogx-trans-fab" id="ogx-trans-fab" type="button" aria-label="Open translation tools">
+    <img alt="Translate" src="https://drive.google.com/uc?export=view&id=1qKLovBFS8m1XXge2pwkd9LAtFyM_yuzf">
+  </button>
+
+  <div id="ogx-trans-orb" class="ogx-trans-orb" role="dialog" aria-modal="false" aria-label="Translate comments" hidden>
+    <div class="ogx-trans-head">
+      <strong>Translate comments</strong>
+      <button type="button" class="ogx-trans-close" aria-label="Close">✕</button>
+    </div>
+    <div class="ogx-trans-body">
+      <div class="ogx-trans-rail">
+        <button class="ogx-flag" data-engine="google" title="Google Translate (balanced)">
+          <span>Google</span><i>i</i>
+        </button>
+        <button class="ogx-flag" data-engine="papago" title="Papago (better EU languages)">
+          <span>Papago</span><i>i</i>
+        </button>
+        <button class="ogx-flag" data-engine="deepl" title="DeepL (contextual nuance)">
+          <span>DeepL</span><i>i</i>
+        </button>
+      </div>
+      <label class="ogx-trans-lb">Text to translate
+        <textarea id="ogx-trans-src" rows="4" placeholder="Paste or type here"></textarea>
+      </label>
+      <div class="ogx-trans-actions">
+        <button type="button" id="ogx-trans-run" class="ogx-btn">Open mini translator</button>
+        <button type="button" id="ogx-trans-clear" class="ogx-btn ogx-ghost">Clear</button>
+      </div>
+      <p class="ogx-note">This opens the selected service in a new tab. No text is sent automatically.</p>
+    </div>
+  </div>
+
+</div>
