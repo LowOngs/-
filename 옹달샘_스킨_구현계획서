@@ -47,6 +47,10 @@
   · 기본 숨김, 마우스 근접/스크롤 시 등장.
   · 호버 시 초록색 글로우
   · 스크롤 시 나타났다 즉시 사라짐, 호버 헤제 시 즉시 사라짐.
+    구현 주의사항:
+    - onclick=".."제거, js에서 addEventListener로 바인딩. href="#"또는 javascript: 앵커를 안전한<button type="button">으로 치환.
+    - <-Prev는 .og-prev, next->는 .og-next 클래스로 식별.
+    - 본문 하단에 소형 바잉넏 스크립트 삽입. prev: 기본 history.back(), next: data-href 있으면 그 경로로 이동. 없으면 안전 기본값(/search?updated-max)사용.
 
 
 2-3) 사이드바(Sidebar: 왼쪽, 독립 스크롤)
