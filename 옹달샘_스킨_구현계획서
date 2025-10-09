@@ -18,8 +18,8 @@
 2) 구역별 상세 명세
 -  구역 공통: pc 화면 제어에 따른 반응형 설계 100% 동일, 배경 변경 전까지 컨템포 기본 배경 사용.
 - 바탕화면
-  - bookshelf_full_bg.jpg(풀 스크린 배경): https://drive.google.com/file/d/1deNd_XkYQqvlqK1LsYyMx80cQuag4XRW/view?usp=drive_link 
-  - bookshelf_soft_bg.jpg(반응 스크린 배경): https://drive.google.com/file/d/15fqvSa9jA9CeMlL6T6ek22Y8U0V1Mq1H/view?usp=drive_link
+  - bookshelf_full_bg.jpg(풀 스크린 배경):
+  - bookshelf_soft_bg.jpg(반응 스크린 배경): 
 2-1) 헤더(고정)
 - 1층 좌측 직접 만든 번역 드롭바 : 구글/파파고/딥엘 3중 선택 드롭+i(번역기 특징):번역위쳇은 파서가 외부 위젯/스크립트를 제한함. 
 - 번역바를 css/js 직접만들어서 제공, 번역상자 안에 플레이스홀더 바탕 흐림체"Select a translator" 입력, 툴팁 1.2초 표시. 버튼 클릭시 새탭으로 번역사이트 이동만 수행.
@@ -57,13 +57,13 @@
 - 상태 정의: guest(미로그인) / member(로그인 사용자, 오너 아님) / owner(블로그 소유자).
 
 - 1층: 사이드바 처음에 나오는 둥근 이미지와 사용자 명을 위로 올린다.
-  둥근이미지(profile_avatar: https://drive.google.com/file/d/1PIw4Lelyw8OmULh0bUdf3jQvEWX3sMOT/view?usp=drive_link)
+  
    헤더의 브랜드 명 하단 면과 비슷한 높이로 원형의 바닥면(6시방향 꼭지점-쿼드런트) 위치가 비슷할 정도로 올린다.
 - 2층: 사용자 이름
 - 3층: 버튼 추가
   - guest: [구독하기] 
 - 4층: 카테고리
-  - 카테고리 앞 토끼 PNG (icon_sidebar_rabbit: https://drive.google.com/file/d/1r8M0a61pZ5XEWePcR6kysbdqVkoUdgTc/view?usp=drive_link)
+  - 카테고리 앞 토끼 PNG 
   - 메인 호버 주황빛(클릭시 1초 유지), 하부 카테고리 선택 시 금빛 상시 후광)
    # Category list = Display name 
 
