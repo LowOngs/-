@@ -125,16 +125,19 @@
   Affiliate use is free. For certain affiliate programs, the operator receives a commission from the affiliate.
 
 ────────────────────────────────────────────────────
-4) 운영자 팝업
+4) 운영자 전용 관리 팝업
+① 제휴집계관리
+
+
+
 
 ① 제휴 정보 관리
-- 열(ID+적용버튼/Track+적용버튼/API+적용버튼) 
+- 열(Track+적용버튼) 
 - 줄(12사 나열)
 - 저장=localStorage 덮어쓰기, 즉시 UI 반영.
 - Track 미입력: 푸터 버튼 회색 비활성 상태
-- API 미입력: D 마크 비활성, 특가정보안내 해당줄 라인 비활성
-- Track+API+발효: D 활성(특가페이지 이동), 트레킹 링크(특가 이동), 특가정보안내 해당줄 라인 활성
-- Track+API+미발효: D 비활성, 트레킹 링크(정상 페이지 이동)
+- 설정:Export/Inport(Json) 구글 Apps Script쪽 설정을 내보내기(Json) -> 블로그 패널 불러오기(json)로 붙여주는 동기화 절차 권장.
+
 
 ────────────────────────────────────────────────────
 5) 번역 오브(댓글 번역 기능)
