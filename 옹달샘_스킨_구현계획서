@@ -108,26 +108,25 @@
 - 포커스존 도착시 풍선 툴팁(파트너사 풀네임 1.2초), 다른곳 터치시 즉시 사라짐. 글쓰기 영역 중앙을 기준으로 포커스 기준 중앙을 맞춤
 - 스크롤상자(긴 둥근 직사각형) 좌/우 양측 끝에 각각 삼각형 포커스존 이동 화살표(초록 반응형 버튼)
 - 12개사 파트너 명
-  1번 → Amazon (btn_square_amazon:https://drive.google.com/file/d/1TSqB8lWokfq6cmbCjJyLLEtS9A8YKDQ9/view?usp=drive_link)
-  2번 → eBay (btn_square_ebay:https://drive.google.com/file/d/1DMHCahD75qUG49jWXRPoOjglYf4oXjuB/view?usp=drive_link)
-  3번 → Target (btn_square_target:https://drive.google.com/file/d/1IE1vhCO7Njq0hRRt5FRbJ7YltHtzwRJr/view?usp=drive_link)
-  4번 → Mercado Libre (btn_square_mercadolibre:https://drive.google.com/file/d/1Y3uSYQPw50Wut1WVCrnCcsaYbyoSD7xH/view?usp=drive_link)
-  5번 → Flipkart (btn_square_flipkart:https://drive.google.com/file/d/1jCVIkW-ULS5GO9zD-dpDEV0Jsp7dTU4d/view?usp=drive_link)
-  6번 → Amazon India (btn_square_amazon_india:https://drive.google.com/file/d/14jXDZSGLbiIehaCUvaK6ytpjW1fEZO7G/view?usp=drive_link)
-  7번 → Shopee (btn_square_shopee:https://drive.google.com/file/d/1myIvsI6UvOJSrLV45VH4f7wo5Ow9Ucbv/view?usp=drive_link)
-  8번 → Lazada (btn_square_lazada:https://drive.google.com/file/d/1CGl9Ff1v1cG3O-UmVABo8wgQB-9JD_z3/view?usp=drive_link)
-  9번 → AliExpress (btn_square_aliexpress:https://drive.google.com/file/d/1Z5-ybY3i62klO-oCvgAXVHfHH0oRyzLL/view?usp=drive_link)
-  10번 → Otto (btn_square_otto:https://drive.google.com/file/d/1IqWAFrpAeoANqj93UxmO8HV51szrt4_a/view?usp=drive_link)
-  11번 → Zalando (btn_square_zalando:https://drive.google.com/file/d/1lAAIsrWowMJxXyMbffS-Je3odofKX6j-/view?usp=drive_link)
-  12번 → Allegro (btn_square_allegro:https://drive.google.com/file/d/1h2SYuVgC8UL9uzAhsjXMxqEA9YaHSNZK/view?usp=drive_link)
-
+  1번 → Amazon 
+  2번 → eBay 
+  3번 → Target 
+  4번 → Mercado Libre
+  5번 → Flipkart 
+  6번 → Amazon India 
+  7번 → Shopee 
+  8번 → Lazada 
+  9번 → AliExpress 
+  10번 → Otto 
+  11번 → Zalando 
+  12번 → Allegro 
 - 2층: 제휴 고지 문구
   Affiliate use is free. For certain affiliate programs, the operator receives a commission from the affiliate.
 
 ────────────────────────────────────────────────────
 4) 운영자 전용 관리 팝업
 ① 제휴집계관리
-
+  - 제휴정보관리창에 함께 집계, 푸터구역 파트너 버튼 클릭율 한달간 집계.
 
 
 
@@ -147,15 +146,9 @@
 - 닫기 X버튼: 오브 상단 X=전체 종료, 번역문 깃발 우측 아래 X=번역문만 닫기(막대기 포함).
 - 오브 드래그 이동 가능, 위치 기억.
 
-────────────────────────────────────────────────────
-6) 파트너 버튼·D·마키 파이프라인
-- Deal(D) 마크는 알림 전용. 클릭=특가 페이지(TRACK+D).
-- 마키 문구: API 제공 특가명. 없으면 비활성.
-- 클릭 시 첫 활성 특가 페이지 이동.
-- 클릭 통계: localStorage 저장, 월간 누적 집계.
 
 ────────────────────────────────────────────────────
-7) SEO/국제화/접근성
+6) SEO/국제화/접근성
 - H1=포스트 제목 1개.
 - ALT=“앱명/파트너명 + 맥락” 규칙.
 - 메타 description, OG/Twitter 카드, canonical.
@@ -163,10 +156,6 @@
 - aria landmark·label 준수, 모달 role="dialog".
 
 ────────────────────────────────────────────────────
-8) 버전 관리
-- 본 문서/소스 모두 v1.0.0 시작.
-- v1.0.x: 기능/구조 보강.
-- v1.x.0: 큰 기능 단위 업그레이드.
-- v2.0.0: 구조적 리뉴얼.
+
 
 ────────────────────────────────────────────────────
