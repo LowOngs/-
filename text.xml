@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html b:css='false' b:defaultwidgetversion='2' b:layoutsVersion='3' b:responsive='true'
+      expr:dir='data:blog.languageDirection' expr:lang='data:blog.locale'
+      xmlns='http://www.w3.org/1999/xhtml'
+      xmlns:b='http://www.google.com/2005/gml/b'
+      xmlns:data='http://www.google.com/2005/gml/data'
+      xmlns:expr='http://www.google.com/2005/gml/expr'>
+
+  <head>
+    <meta content='width=device-width, initial-scale=1' name='viewport'/>
+    <title><data:view.title.escaped/></title>
+    <b:include data='blog' name='all-head-content'/>
+
+    <!-- 스켈레톤 전용: 구조는 그대로, CSS만 추가 (파서 안전) -->
+    <b:skin><![CDATA[
+/* === OGX skeleton-only: layout behavior (no HTML changes) === */
+
+/* 헤더 상단 고정: sticky 방식(테마 충돌 적음) */
+header, #Header, #header, .header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: inherit;
+}
+
+/* 푸터 하단 고정(필요 시 off 가능) */
+footer, #Footer, #footer, .footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 900;
+  background: inherit;
+}
+
+/* 사이드바 독립 스크롤(실제 사이드 래퍼 셀렉터에 맞춰 범용 지정) */
+#sidebar, .sidebar, .sidebar-container, [id*="sidebar"] {
+  position: sticky;
+  top: 72px; /* 헤더 높이에 맞춰 조정 */
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+}
+
+/* 본문 스크롤 시 헤더와 겹침 방지 */
+main, #main, .main, .content, #content {
+  scroll-margin-top: 80px;
+}
+
+/* 보기 좋게 약간의 기본 여백/그리드 */
+body { margin: 0; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+.content-wrap { display: grid; grid-template-columns: 1fr 300px; gap: 18px; padding: 16px 0; }
+    ]]></b:skin>
+
+    <!-- 레이아웃 편집 모드에서 숨김 방지(필요시) -->
+    <b:template-skin><![CDATA[
+body#layout .hidden{display:inherit}
+    ]]></b:template-skin>
+  </head>
+
+  <body>
+    <div class='container'>
+
+      <!-- Header -->
+      <header class='header'>
+        <b:section id='header' name='Header' showaddelement='false'>
+          <!-- 필요시 Menu/PageList 위젯 등을 이 섹션에 배치 가능 (본 테스트판은 비움) -->
+        </b:section>
+      </header>
+
+      <!-- Main + Sidebar -->
+      <div class='content-wrap'>
+        <main class='content' role='main' id='main'>
+          <b:section id='page_body' name='Page Body' showaddelement='false'>
+            <b:widget id='Blog1' locked='true' title='Posts' type='Blog' visible='true'>
+              <b:includable id='main'>
+                <b:include name='super.main'/>
+              </b:includable>
+            </b:widget>
+          </b:section>
+        </main>
+
+        <aside class='sidebar' role='complementary' id='sidebar'>
+          <b:section id='sidebar_bottom' name='Sidebar (Bottom)' preferred='yes'>
+            <!-- 최소 위젯만 유지하여 파서/레이아웃 확인 -->
+            <b:widget id='ReportAbuse1' locked='true' title='' type='ReportAbuse' visible='true'>
+              <b:includable id='main'><b:include name='reportAbuse'/></b:includable>
+            </b:widget>
+          </b:section>
+        </aside>
+      </div>
+
+      <!-- Footer -->
+      <footer class='footer' role='contentinfo' id='footer'>
+        <b:section id='footer' name='Footer' showaddelement='false'>
+          <!-- 본 테스트판은 비움(고정 동작만 확인) -->
+        </b:section>
+      </footer>
+
+    </div>
+  </body>
+</html><?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html b:css='false' b:defaultwidgetversion='2' b:layoutsVersion='3' b:responsive='true'
+      expr:dir='data:blog.languageDirection' expr:lang='data:blog.locale'
+      xmlns='http://www.w3.org/1999/xhtml'
+      xmlns:b='http://www.google.com/2005/gml/b'
+      xmlns:data='http://www.google.com/2005/gml/data'
+      xmlns:expr='http://www.google.com/2005/gml/expr'>
+
+  <head>
+    <meta content='width=device-width, initial-scale=1' name='viewport'/>
+    <title><data:view.title.escaped/></title>
+    <b:include data='blog' name='all-head-content'/>
+
+    <!-- 스켈레톤 전용: 구조는 그대로, CSS만 추가 (파서 안전) -->
+    <b:skin><![CDATA[
+/* === OGX skeleton-only: layout behavior (no HTML changes) === */
+
+/* 헤더 상단 고정: sticky 방식(테마 충돌 적음) */
+header, #Header, #header, .header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: inherit;
+}
+
+/* 푸터 하단 고정(필요 시 off 가능) */
+footer, #Footer, #footer, .footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 900;
+  background: inherit;
+}
+
+/* 사이드바 독립 스크롤(실제 사이드 래퍼 셀렉터에 맞춰 범용 지정) */
+#sidebar, .sidebar, .sidebar-container, [id*="sidebar"] {
+  position: sticky;
+  top: 72px; /* 헤더 높이에 맞춰 조정 */
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+}
+
+/* 본문 스크롤 시 헤더와 겹침 방지 */
+main, #main, .main, .content, #content {
+  scroll-margin-top: 80px;
+}
+
+/* 보기 좋게 약간의 기본 여백/그리드 */
+body { margin: 0; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+.content-wrap { display: grid; grid-template-columns: 1fr 300px; gap: 18px; padding: 16px 0; }
+    ]]></b:skin>
+
+    <!-- 레이아웃 편집 모드에서 숨김 방지(필요시) -->
+    <b:template-skin><![CDATA[
+body#layout .hidden{display:inherit}
+    ]]></b:template-skin>
+  </head>
+
+  <body>
+    <div class='container'>
+
+      <!-- Header -->
+      <header class='header'>
+        <b:section id='header' name='Header' showaddelement='false'>
+          <!-- 필요시 Menu/PageList 위젯 등을 이 섹션에 배치 가능 (본 테스트판은 비움) -->
+        </b:section>
+      </header>
+
+      <!-- Main + Sidebar -->
+      <div class='content-wrap'>
+        <main class='content' role='main' id='main'>
+          <b:section id='page_body' name='Page Body' showaddelement='false'>
+            <b:widget id='Blog1' locked='true' title='Posts' type='Blog' visible='true'>
+              <b:includable id='main'>
+                <b:include name='super.main'/>
+              </b:includable>
+            </b:widget>
+          </b:section>
+        </main>
+
+        <aside class='sidebar' role='complementary' id='sidebar'>
+          <b:section id='sidebar_bottom' name='Sidebar (Bottom)' preferred='yes'>
+            <!-- 최소 위젯만 유지하여 파서/레이아웃 확인 -->
+            <b:widget id='ReportAbuse1' locked='true' title='' type='ReportAbuse' visible='true'>
+              <b:includable id='main'><b:include name='reportAbuse'/></b:includable>
+            </b:widget>
+          </b:section>
+        </aside>
+      </div>
+
+      <!-- Footer -->
+      <footer class='footer' role='contentinfo' id='footer'>
+        <b:section id='footer' name='Footer' showaddelement='false'>
+          <!-- 본 테스트판은 비움(고정 동작만 확인) -->
+        </b:section>
+      </footer>
+
+    </div>
+  </body>
+</html>
