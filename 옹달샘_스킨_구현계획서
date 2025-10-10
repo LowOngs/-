@@ -95,7 +95,7 @@
   - 일반 방문자에게 숨기기, 운영자 로그인시에만 DOM 표시, <b:if cond='data:blog/isMobile == "false" and date:view.isAdmin'>조건으로 두기.
   - [제휴정보관리] [프로필 이동] :운영자 모드시에만
   - 제휴정보관리-> /p/admin.html새탭 연결,
-  - 관리자 폼에서 파트너별 정보 입력(트래킹 링크, 아이디, 활성/비활성 입력)
+  - 관리자 폼에서 파트너별 정보 입력(트래킹 링크 활성/비활성 입력)
   - 저장 클릭-> Web App에 POST-> Google Sheet 업데이트
   - 푸터 버튼 클릭 시 Web App이 시트 기준으로 활성 파트너만 통과, dest로 302 이동, 동시에 클릭 기록 누적. 최종 권장 Web App+Sheet
 
