@@ -1,0 +1,27 @@
+function handleRedirect_(e){
+  const raw = (e.parameter && (e.parameter.pid  e.parameter.partner))  '';
+  const pid = pidFrom_(raw);
+
+  const props = PropertiesService.getScriptProperties();
+  const url = pid ? (props.getProperty('url_'+pid) || '') : '';
+  const on  = pid ? (props.getProperty('on_'+pid) === '1') : false;
+
+  if (!pid){
+    return HtmlService.createHtmlOutput('<meta name="referrer" content="no-referrer"><h3>Unknown partner.</h3>');
+  }
+  if (!on){
+    return HtmlService.createHtmlOutput('<meta name="referrer" content="no-referrer"><h3>Inactive partner button (OFF).</h3>');
+  }
+  if (!url){
+    // 컬러지만 클릭은 원래 가젯에서 막지만, 직접 접근 시 안내
+    return HtmlService.createHtmlOutput('<meta name="referrer" content="no-referrer"><h3>Partner is ON but link not configured yet.</h3>');
+  }
+
+  // 집계는 ON + URL 있을 때만 증가
+  bumpClick_(pid);
+
+  const html = '<meta name="referrer" content="no-referrer">'
+             + '<script>location.replace(' + JSON.stringify(url) + ')</script>'
+             + '<noscript><a href='+JSON.stringify(url)+'>Continue</a></noscript>';
+  return HtmlService.createHtmlOutput(html);
+}
