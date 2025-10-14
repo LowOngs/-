@@ -1,4 +1,4 @@
-<!-- ▼ Footer Partners (v12): 강제 회색·비클릭 기본, map=TRUE만 컬러/클릭 -->
+<!-- ▼ Footer Partners (v12r2): OFF=회색/비클릭, ON+URL없음=컬러/비클릭, ON+URL있음=컬러/클릭 -->
 <style>
   .partner-wrap{
     --btnSize:74px; --arrowSize:88px; --gap:12px;
@@ -30,14 +30,21 @@
   .partner-wrap .card img[src*="allegro"]{       transform:scale(1.32); }
   .partner-wrap .card img[src*="aliexpress"]{    transform:scale(1.32); }
 
-  /* CSS에서도 우선순위 높이기(테마 상쇄 방지) */
-  .partner-wrap .partner-btn:not(.is-active){
+  /* 기본: 회색 + 비클릭 */
+  .partner-wrap .partner-btn.state-off,
+  .partner-wrap .partner-btn.state-on-noclick {
     filter: grayscale(1) brightness(.85) opacity(.55) !important;
-    pointer-events:none !important;
     cursor: default !important;
   }
-  .partner-wrap .partner-btn:not(.is-active) img{
+  .partner-wrap .partner-btn.state-off img,
+  .partner-wrap .partner-btn.state-on-noclick img{
     filter: grayscale(1) brightness(.9) opacity(.75) !important;
+  }
+
+  /* ON 컬러(클릭 가능/불가 공통) */
+  .partner-wrap .partner-btn.state-on,
+  .partner-wrap .partner-btn.state-on-noclick{
+    filter:none !important;
   }
 </style>
 
@@ -72,8 +79,7 @@
     </a>
     <a class="card partner-btn" data-pid="aliexpress" aria-label="AliExpress">
       <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_aliexpress.png?raw=1" alt="AliExpress" />
-
-</a>
+    </a>
     <a class="card partner-btn" data-pid="otto" aria-label="Otto">
       <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_otto.png?raw=1" alt="Otto" />
     </a>
@@ -106,53 +112,66 @@
 
   window.addEventListener('load', init, {once:true});
 
-  function forceGray(el){
-    el.style.filter = 'grayscale(1) brightness(.85) opacity(.55)';
-    const img = el.querySelector('img'); if (img) img.style.filter = 'grayscale(1) brightness(.9) opacity(.75)';
-    el.style.pointerEvents = 'none';
-    el.removeAttribute('href'); el.removeAttribute('target'); el.removeAttribute('rel');
-    el.classList.remove('is-active');
-  }
-  function forceActive(el){
-    el.style.filter = ''; const img = el.querySelector('img'); if (img) img.style.filter = '';
+  function paintState(el, st){
+    // st: { on:boolean, clickable:boolean, href:string }
+    // 1) OFF → 회색·비클릭
+    if (!st || !st.on){
+      el.classList.remove('state-on','state-on-noclick');
+      el.classList.add('state-off');
+      el.removeAttribute('href'); el.removeAttribute('target'); el.removeAttribute('rel');
+      el.style.pointerEvents = 'none';
+      return;
+    }
+    // 2) ON + URL 없음 → 컬러지만 비클릭
+    if (st.on && !st.clickable){
+      el.classList.remove('state-off','state-on');
+      el.classList.add('state-on-noclick');
+      el.removeAttribute('href'); el.removeAttribute('target'); el.removeAttribute('rel');
+      el.style.pointerEvents = 'none';
+      return;
+    }
+    // 3) ON + URL 있음 → 컬러 + 클릭 가능 (집계 경유)
+    el.classList.remove('state-off','state-on-noclick');
+    el.classList.add('state-on');
+    el.href   = withQS(EXEC_BASE, {cmd:'go', pid: el.getAttribute('data-pid'), src:'footer'});
+    el.target = '_blank';
+    el.rel    = 'nofollow noopener';
     el.style.pointerEvents = '';
-    el.classList.add('is-active');
   }
 
   function init(){
     const els = document.querySelectorAll('.partner-btn[data-pid]');
     if (!els.length) return;
 
-    // 기본: 모두 회색·비클릭(인라인 강제)
-    els.forEach(forceGray);
+    // 초기 상태: 모두 OFF로 칠해 두기
+    els.forEach(el=>{
+      el.classList.add('state-off');
+      el.removeAttribute('href'); el.removeAttribute('target'); el.removeAttribute('rel');
+      el.style.pointerEvents = 'none';
+    });
 
-    // (보호) 비활성 클릭 차단
+    // 보호: OFF/NoLink 상태에서는 클릭 무시
     document.addEventListener('click', function(e){
       const a = e.target.closest('.partner-btn');
       if (!a) return;
-      if (!a.classList.contains('is-active')) { e.preventDefault(); e.stopPropagation(); }
+      if (a.classList.contains('state-off') || a.classList.contains('state-on-noclick')){
+        e.preventDefault(); e.stopPropagation();
+      }
     }, true);
 
-    // 활성맵 로드
+    // 활성맵 불러오기
     fetch(withQS(EXEC_BASE, {cmd:'map'}), {cache:'no-store'})
       .then(r => { if(!r.ok) throw new Error('map http '+r.status); return r.json(); })
       .then(map => {
         els.forEach(el=>{
           const pid = el.getAttribute('data-pid');
-          const active = !!(map && map[pid]);
-          if (active){
-            forceActive(el);
-            el.href   = withQS(EXEC_BASE, {cmd:'go', pid, src:'footer'});
-            el.target = '_blank';
-            el.rel    = 'nofollow noopener';
-          } else {
-            forceGray(el);
-          }
+          const st  = (map && map[pid]) ? map[pid] : {on:false, clickable:false, href:''};
+          paintState(el, st);
         });
       })
       .catch(err=>{
         console.warn('[partners] map fetch failed:', err);
-        // 실패 시 모두 회색 유지
+        // 실패 시 초기 OFF 상태 유지
       });
   }
 })();
