@@ -1,27 +1,159 @@
-function handleRedirect_(e){
-  const raw = (e && e.parameter && (e.parameter.pid || e.parameter.partner)) || '';
-  const pid = pidFrom_(raw);
-
-  const props = PropertiesService.getScriptProperties();
-  const url = pid ? (props.getProperty('url_' + pid) || '') : '';
-  const on  = pid ? (props.getProperty('on_' + pid) === '1') : false;
-
-  if (!pid){
-    return HtmlService.createHtmlOutput('<meta name="referrer" content="no-referrer"><h3>Unknown partner.</h3>');
+<!-- ▼ Footer Partners (v12): 강제 회색·비클릭 기본, map=TRUE만 컬러/클릭 -->
+<style>
+  .partner-wrap{
+    --btnSize:74px; --arrowSize:88px; --gap:12px;
   }
-  if (!on){
-    return HtmlService.createHtmlOutput('<meta name="referrer" content="no-referrer"><h3>Inactive partner button (OFF).</h3>');
+  .partner-wrap .arrow{
+    width:var(--arrowSize);height:var(--arrowSize);
+    border:none;border-radius:9999px;background:#555;color:#fff;
+    cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+    font-size:42px;box-shadow:0 3px 6px rgba(0,0,0,.25);
   }
-  if (!url){
-    // 컬러지만 클릭은 원래 가젯에서 막지만, 직접 접근 시 안내
-    return HtmlService.createHtmlOutput('<meta name="referrer" content="no-referrer"><h3>Partner is ON but link not configured yet.</h3>');
+  .partner-wrap .strip{
+    flex:1 1 auto;display:flex;gap:var(--gap);
+    overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;
+    scroll-snap-type:x mandatory;scroll-behavior:smooth;
+    padding:12px 0;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;
+  }
+  .partner-wrap .card{
+    flex:0 0 auto;scroll-snap-align:center;
+    width:var(--btnSize);height:var(--btnSize);
+    border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;padding:0;background:none;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
+  .partner-wrap .card img{
+    width:100%;height:100%;object-fit:cover;border-radius:12px;display:block;
+    transition:transform .2s ease;
+  }
+  /* 로고 작았던 3개 확대 유지 */
+  .partner-wrap .card img[src*="amazon_india"]{ transform:scale(1.34); }
+  .partner-wrap .card img[src*="allegro"]{       transform:scale(1.32); }
+  .partner-wrap .card img[src*="aliexpress"]{    transform:scale(1.32); }
+
+  /* CSS에서도 우선순위 높이기(테마 상쇄 방지) */
+  .partner-wrap .partner-btn:not(.is-active){
+    filter: grayscale(1) brightness(.85) opacity(.55) !important;
+    pointer-events:none !important;
+    cursor: default !important;
+  }
+  .partner-wrap .partner-btn:not(.is-active) img{
+    filter: grayscale(1) brightness(.9) opacity(.75) !important;
+  }
+</style>
+
+<div class="partner-wrap" style="display:flex;align-items:center;justify-content:center;gap:14px;max-width:100%;margin:14px 0;">
+  <button type="button" class="arrow" aria-label="Scroll left"
+          onclick="this.nextElementSibling.scrollBy({left:-420,behavior:'smooth'})">‹</button>
+
+  <div class="strip">
+    <a class="card partner-btn" data-pid="amazon" aria-label="Amazon">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_amazon.png?raw=1" alt="Amazon" />
+    </a>
+    <a class="card partner-btn" data-pid="ebay" aria-label="eBay">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_ebay.png?raw=1" alt="eBay" />
+    </a>
+    <a class="card partner-btn" data-pid="target" aria-label="Target">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_target.png?raw=1" alt="Target" />
+    </a>
+    <a class="card partner-btn" data-pid="mercadolibre" aria-label="Mercado Libre">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_mercadolibre.png?raw=1" alt="Mercado Libre" />
+    </a>
+    <a class="card partner-btn" data-pid="flipkart" aria-label="Flipkart">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_flipkart.png?raw=1" alt="Flipkart" />
+    </a>
+    <a class="card partner-btn" data-pid="amazon_in" aria-label="Amazon India">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_amazon_india.png?raw=1" alt="Amazon India" />
+    </a>
+    <a class="card partner-btn" data-pid="shopee" aria-label="Shopee">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_shopee.png?raw=1" alt="Shopee" />
+    </a>
+    <a class="card partner-btn" data-pid="lazada" aria-label="Lazada">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_lazada.png?raw=1" alt="Lazada" />
+    </a>
+    <a class="card partner-btn" data-pid="aliexpress" aria-label="AliExpress">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_aliexpress.png?raw=1" alt="AliExpress" />
+
+</a>
+    <a class="card partner-btn" data-pid="otto" aria-label="Otto">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_otto.png?raw=1" alt="Otto" />
+    </a>
+    <a class="card partner-btn" data-pid="zalando" aria-label="Zalando">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_zalando.png?raw=1" alt="Zalando" />
+    </a>
+    <a class="card partner-btn" data-pid="allegro" aria-label="Allegro">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_allegro.png?raw=1" alt="Allegro" />
+    </a>
+  </div>
+
+  <button type="button" class="arrow" aria-label="Scroll right"
+          onclick="this.previousElementSibling.scrollBy({left:420,behavior:'smooth'})">›</button>
+</div>
+
+<p style="text-align:center;margin:.6rem 0 0 0;font-size:.8rem;color:#ddd;white-space:normal;">
+  Affiliate use is free. For certain affiliate programs, the operator receives a commission from the affiliate.
+</p>
+
+<script>
+(function(){
+  /* ⬇ 쿼리 없는 exec 주소 */
+  const EXEC_BASE = 'https://script.google.com/macros/s/AKfycbxVHS_QoctY0cxMq9eHZGxlwT7obwzajAnvV22WDHJ-F6kgJDazRK6crq6mgLnjGeBuIw/exec';
+
+  const withQS = (base, params) => {
+    const u = new URL(base);
+    Object.entries(params).forEach(([k,v]) => u.searchParams.set(k, v));
+    return u.toString();
+  };
+
+  window.addEventListener('load', init, {once:true});
+
+  function forceGray(el){
+    el.style.filter = 'grayscale(1) brightness(.85) opacity(.55)';
+    const img = el.querySelector('img'); if (img) img.style.filter = 'grayscale(1) brightness(.9) opacity(.75)';
+    el.style.pointerEvents = 'none';
+    el.removeAttribute('href'); el.removeAttribute('target'); el.removeAttribute('rel');
+    el.classList.remove('is-active');
+  }
+  function forceActive(el){
+    el.style.filter = ''; const img = el.querySelector('img'); if (img) img.style.filter = '';
+    el.style.pointerEvents = '';
+    el.classList.add('is-active');
   }
 
-  // ON + URL 있을 때만 집계
-  bumpClick_(pid);
+  function init(){
+    const els = document.querySelectorAll('.partner-btn[data-pid]');
+    if (!els.length) return;
 
-  const html = '<meta name="referrer" content="no-referrer">' +
-               '<script>location.replace(' + JSON.stringify(url) + ');</script>' +
-               '<noscript><a href=' + JSON.stringify(url) + '>Continue</a></noscript>';
-  return HtmlService.createHtmlOutput(html);
-}
+    // 기본: 모두 회색·비클릭(인라인 강제)
+    els.forEach(forceGray);
+
+    // (보호) 비활성 클릭 차단
+    document.addEventListener('click', function(e){
+      const a = e.target.closest('.partner-btn');
+      if (!a) return;
+      if (!a.classList.contains('is-active')) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+
+    // 활성맵 로드
+    fetch(withQS(EXEC_BASE, {cmd:'map'}), {cache:'no-store'})
+      .then(r => { if(!r.ok) throw new Error('map http '+r.status); return r.json(); })
+      .then(map => {
+        els.forEach(el=>{
+          const pid = el.getAttribute('data-pid');
+          const active = !!(map && map[pid]);
+          if (active){
+            forceActive(el);
+            el.href   = withQS(EXEC_BASE, {cmd:'go', pid, src:'footer'});
+            el.target = '_blank';
+            el.rel    = 'nofollow noopener';
+          } else {
+            forceGray(el);
+          }
+        });
+      })
+      .catch(err=>{
+        console.warn('[partners] map fetch failed:', err);
+        // 실패 시 모두 회색 유지
+      });
+  }
+})();
+</script>
