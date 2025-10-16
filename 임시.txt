@@ -1,13 +1,18 @@
-<div class="wrap">
-    <header>
-      <h1>파트너 콘솔</h1>
-      <div class="ver" id="ver">v11.3</div>
-    </header>
+// ---- at top of Code.gs
+const VERSION = 'v11.3';
 
-    <script>
-      // 매 로드마다 ISO 시간 찍어 새 빌드 적용 여부 즉시 확인
-      (function(){
-        var v = document.getElementById('ver');
-        if (v) v.textContent = 'v11.3 · ' + new Date().toISOString();
-      })();
-    </script>
+// doGet 안에 이 줄들은 그대로 두고…
+function doGet(e){
+  const cmd = (e && e.parameter && e.parameter.cmd) || '';
+  if (cmd === 'ver') {
+    return ContentService
+      .createTextOutput(VERSION)
+      .setMimeType(ContentService.MimeType.TEXT);
+  }
+  if (cmd === 'map') return jsonActiveMap_();
+  if (cmd === 'go')  return handleRedirect_(e);
+  if (!isAdmin_()) return HtmlService.createHtmlOutput('<h3>Forbidden</h3>');
+  return HtmlService.createHtmlOutputFromFile('admin_dash')
+    .setTitle('Ongs · Partner Console – ' + VERSION)
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
