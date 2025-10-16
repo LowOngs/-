@@ -1,4 +1,4 @@
-<!-- Admin-only Quick Button (silent, fixed) -->
+<!-- Admin-only Quick Button (silent, fixed, cache-busted) -->
 <style>
   #opsWrap{display:none;margin:10px 0}
   #opsBtn{
@@ -12,11 +12,11 @@
 </style>
 
 <div id="opsWrap" aria-hidden="true">
-  <!-- 기본 href는 아무 데도 가지 않도록 '#' 으로 두고, JS에서만 열기 -->
+  <!-- 기본 href는 '#' -->
   <a id="opsBtn" href="#" rel="nofollow noopener" aria-label="운영정보관리" title="운영정보관리">
-    <svg viewbox="0 0 24 24" aria-hidden="true">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M12 8.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Zm9.4 3.2-1.9-.7a7.6 7.6 0 0 0-.6-1.5l1.1-1.7a.8.8 0 0 0-.1-1.1l-1.4-1.4a.8.8 0 0 0-1.1-.1l-1.7 1.1c-.5-.2-1-.4-1.5-.6l-.7-1.9a.8.8 0 0 0-.8-.6H9.9a.8.8 0 0 0-.8.6l-.7 1.9c-.5.2-1 .4-1.5.6L5.2 4.6a.8.8 0 0 0-1.1.1L2.7 6.1a.8.8 0 0 0-.1 1.1l1.1 1.7c-.2.5-.4 1-.6 1.5l-1.9.7a.8.8 0 0 0-.6.8v2a.8.8 0 0 0 .6.8l1.9.7c.2.5.4 1 .6 1.5l-1.1 1.7a.8.8 0 0 0 .1 1.1l1.4 1.4a.8.8 0 0 0 1.1.1l1.7-1.1c.5.2 1 .4 1.5.6l.7 1.9a.8.8 0 0 0 .8.6h2a.8.8 0 0 0 .8-.6l.7-1.9c.5-.2 1-.4 1.5-.6l1.7 1.1a.8.8 0 0 0 1.1-.1l1.4-1.4a.8.8 0 0 0 .1-1.1l-1.1-1.7c.2-.5.4-1 .6-1.5l1.9-.7a.8.8 0 0 0 .6-.8v-2a.8.8 0 0 0-.6-.8Z"/>
-    </path></svg>
+    </svg>
     운영정보관리
   </a>
 </div>
@@ -26,22 +26,25 @@
   const wrap = document.getElementById('opsWrap');
   const btn  = document.getElementById('opsBtn');
 
-  // ⬇⬇ 여기만 새 URL로 교체 (배포관리에서 복사). v=10은 캐시 무력화용 쿼리.
-  const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbzdngAqXOjZjd2_50snpGx7TfyZ_iFYABWKrBYRStDDdUjmFxOOmxnUO5xWiUr8YWDrKw/exec?v=10';
+  // ✅ 관리자 웹앱 URL (배포관리에서 복사한 실제 주소)
+  const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbzdngAqXOjZjd2_50snpGx7TfyZ_iFYABWKrBYRStDDdUjmFxOOmxnUO5xWiUr8YWDrKw/exec';
 
   let openUntil = 0;
   document.addEventListener('keydown', function(e){
     if(e.shiftKey && (e.key==='a' || e.key==='A')){
       wrap.classList.add('show1s');
       wrap.style.display='block';
-      openUntil = Date.now() + 1000;
+      openUntil = Date.now() + 1000; // 1초 동안만 허용
       setTimeout(()=>{ wrap.style.display='none'; }, 1000);
     }
   });
+
   btn.addEventListener('click', function(e){
     e.preventDefault();
     if (Date.now() <= openUntil) {
-      window.open(ADMIN_URL, '_blank', 'noopener');
+      // ✅ 캐시버스트 쿼리(cb=timestamp) 추가
+      const finalUrl = ADMIN_URL + '?cb=' + Date.now();
+      window.open(finalUrl, '_blank', 'noopener');
     }
   });
 })();
