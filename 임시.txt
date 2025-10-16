@@ -1,28 +1,49 @@
-<!-- ▼ Footer Partners (v12r2): OFF=회색/비클릭, ON+URL없음=컬러/비클릭, ON+URL있음=컬러/클릭 -->
+<!-- ▼ Footer Partners (v12r3): OFF=회색/비클릭, ON+URL없음=컬러/비클릭, ON+URL있음=컬러/클릭 -->
 <style>
   .partner-wrap{ --btnSize:74px; --arrowSize:88px; --gap:12px; }
   .partner-wrap .arrow{
-    width:var(--arrowSize);height:var(--arrowSize);border:none;border-radius:9999px;background:#555;color:#fff;
-    cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:42px;box-shadow:0 3px 6px rgba(0,0,0,.25);
+    width:var(--arrowSize);height:var(--arrowSize);
+    border:none;border-radius:9999px;background:#555;color:#fff;
+    cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+    font-size:42px;box-shadow:0 3px 6px rgba(0,0,0,.25);
   }
   .partner-wrap .strip{
-    flex:1 1 auto;display:flex;gap:var(--gap);overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;
-    scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:12px 0;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;
+    flex:1 1 auto;display:flex;gap:var(--gap);
+    overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;
+    scroll-snap-type:x mandatory;scroll-behavior:smooth;
+    padding:12px 0;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;
   }
   .partner-wrap .card{
-    flex:0 0 auto;scroll-snap-align:center;width:var(--btnSize);height:var(--btnSize);
-    border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;padding:0;background:none;display:inline-flex;align-items:center;justify-content:center;
+    flex:0 0 auto;scroll-snap-align:center;
+    width:var(--btnSize);height:var(--btnSize);
+    border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;padding:0;background:none;
+    display:inline-flex;align-items:center;justify-content:center;
   }
-  .partner-wrap .card img{ width:100%;height:100%;object-fit:cover;border-radius:12px;display:block;transition:transform .2s ease; }
+  .partner-wrap .card img{
+    width:100%;height:100%;object-fit:cover;border-radius:12px;display:block;
+    transition:transform .2s ease;
+  }
+  /* 로고 작았던 3개 확대 유지 */
   .partner-wrap .card img[src*="amazon_india"]{ transform:scale(1.34); }
   .partner-wrap .card img[src*="allegro"]{       transform:scale(1.32); }
   .partner-wrap .card img[src*="aliexpress"]{    transform:scale(1.32); }
+
+  /* OFF & 컬러-비클릭 공통 비활성 표현 */
   .partner-wrap .partner-btn.state-off,
-  .partner-wrap .partner-btn.state-on-noclick{ filter:grayscale(1) brightness(.85) opacity(.55)!important; cursor:default!important; }
+  .partner-wrap .partner-btn.state-on-noclick{
+    filter:grayscale(1) brightness(.85) opacity(.55) !important;
+    cursor:default !important;
+  }
   .partner-wrap .partner-btn.state-off img,
-  .partner-wrap .partner-btn.state-on-noclick img{ filter:grayscale(1) brightness(.9) opacity(.75)!important; }
+  .partner-wrap .partner-btn.state-on-noclick img{
+    filter:grayscale(1) brightness(.9) opacity(.75) !important;
+  }
+
+  /* ON 계열은 컬러 (클릭 가능/불가 둘 다 비활성 필터 제거) */
   .partner-wrap .partner-btn.state-on,
-  .partner-wrap .partner-btn.state-on-noclick{ filter:none!important; }
+  .partner-wrap .partner-btn.state-on-noclick{
+    filter:none !important;
+  }
 </style>
 
 <div class="partner-wrap" style="display:flex;align-items:center;justify-content:center;gap:14px;max-width:100%;margin:14px 0;">
@@ -78,7 +99,7 @@
 
 <script>
 (function(){
-  /* ⬇ 현재 배포 ‘웹 앱 URL’ */
+  /* ⬇ 현재 배포 ‘웹 앱 URL’ (관리자/푸터 모두 이 URL과 동일해야 함) */
   const EXEC_BASE = 'https://script.google.com/macros/s/AKfycbzdngAqXOjZjd2_50snpGx7TfyZ_iFYABWKrBYRStDDdUjmFxOOmxnUO5xWiUr8YWDrKw/exec';
 
   const withQS = (base, params) => {
@@ -91,6 +112,7 @@
 
   function paintState(el, st){
     // st: { on:boolean, clickable:boolean, href:string }
+    // 1) OFF → 회색·비클릭
     if (!st || !st.on){
       el.classList.remove('state-on','state-on-noclick');
       el.classList.add('state-off');
@@ -98,6 +120,7 @@
       el.style.pointerEvents = 'none';
       return;
     }
+    // 2) ON + URL 없음 → 컬러·비클릭
     if (st.on && !st.clickable){
       el.classList.remove('state-off','state-on');
       el.classList.add('state-on-noclick');
@@ -105,6 +128,7 @@
       el.style.pointerEvents = 'none';
       return;
     }
+    // 3) ON + URL 있음 → 컬러·클릭
     el.classList.remove('state-off','state-on-noclick');
     el.classList.add('state-on');
     el.href   = withQS(EXEC_BASE, {cmd:'go', pid: el.getAttribute('data-pid'), src:'footer'});
@@ -117,14 +141,14 @@
     const els = document.querySelectorAll('.partner-btn[data-pid]');
     if (!els.length) return;
 
-    // 초기 OFF 도색
+    // 초기 OFF 도색 + 비클릭
     els.forEach(el=>{
       el.classList.add('state-off');
       el.removeAttribute('href'); el.removeAttribute('target'); el.removeAttribute('rel');
       el.style.pointerEvents = 'none';
     });
 
-    // 보호: OFF/NoLink 상태 클릭 차단
+    // 보호: OFF/NoLink 상태 클릭 차단(테마/스크립트 간섭 방어)
     document.addEventListener('click', function(e){
       const a = e.target.closest('.partner-btn');
       if (!a) return;
@@ -133,12 +157,12 @@
       }
     }, true);
 
-    // 활성맵 불러오기(캐시버스터)
+    // 활성맵 불러오기 (캐시 버스터 포함)
     const mapUrl = withQS(EXEC_BASE, {cmd:'map', cb: Date.now()});
     fetch(mapUrl, {cache:'no-store'})
       .then(r => { if(!r.ok) throw new Error('map http '+r.status); return r.json(); })
       .then(map => {
-        console.log('[partners] map', mapUrl, map);
+        // console.log('[partners] map', mapUrl, map);
         els.forEach(el=>{
           const pid = el.getAttribute('data-pid');
           const st  = (map && map[pid]) ? map[pid] : {on:false, clickable:false, href:''};
@@ -147,6 +171,7 @@
       })
       .catch(err=>{
         console.warn('[partners] map fetch failed:', err);
+        // 실패 시 초기 OFF 상태 유지
       });
   }
 })();
