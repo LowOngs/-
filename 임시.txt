@@ -11,7 +11,7 @@
 <meta http-equiv="Expires" content="0"/>
 
 <style>
-  :root{--fg:#111;--muted:#6b7280;--line:#e5e7eb;--brand:#2563eb;--ok:#16a34a;--warn:#f59e0b;--danger:#ef4444}
+  :root{--fg:#111;--muted:#6b7280;--line:#e5e7eb;--brand:#2563eb;--ok:#16a34a;--danger:#ef4444}
   html,body{margin:0;padding:0;background:#fff;color:var(--fg);font:14px/1.5 system-ui,Segoe UI,Apple SD Gothic Neo,Helvetica,Arial}
   .wrap{max-width:980px;margin:40px auto;padding:0 20px}
   header{display:flex;justify-content:space-between;align-items:end;margin-bottom:24px}
@@ -20,31 +20,32 @@
   section{padding:20px 0;border-top:1px solid var(--line)}
   section:first-of-type{border-top:0}
   .desc{margin:6px 0 16px;color:var(--muted)}
+
   .grid{display:grid;grid-template-columns:1fr 1.5fr auto;gap:10px;align-items:center}
   .grid > div{padding:8px 0;border-bottom:1px dashed var(--line)}
   .head{font-weight:700;color:#000}
   .pid{font-weight:600}
   .row.actions{display:flex;gap:6px;align-items:center}
-  input[type="url"]{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit}
+
+  input[type="url"]{
+    width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--line);
+    border-radius:10px;font:inherit;transition:opacity .15s ease
+  }
+  input[readonly]{opacity:.7;cursor:not-allowed}
+
   .btn{appearance:none;border:0;border-radius:10px;padding:10px 12px;font-weight:700;cursor:pointer}
-  /* 1) 적용: 파란색 */
+  /* 적용: 파란색 / ‘저장됨(초록)’ 상태일 때는 .on 부여 */
   .btn-apply{background:var(--brand);color:#fff}
+  .btn-apply.on{background:var(--ok)!important;color:#fff!important}
   .btn-apply[disabled]{cursor:not-allowed}
-  /* 2) 잠금: 토글 / 잠금시 ‘적용’은 빨강 */
+
+  /* 잠금: 토글 / 잠금 시 ‘적용’은 빨강으로 표시(편집 불가 명확화) */
   .btn-lock{background:#e5e7eb;color:#111}
   .btn-apply.locked{background:var(--danger)!important;color:#fff!important;opacity:1}
-  /* 3) ON/OFF 토글(기본 ON) */
-  .btn-off-toggle{background:#10b981;color:#fff}     /* 현재 OFF(비활성) → 버튼에 ON 표시(초록) */
-  .btn-off-toggle.on {background:#dc2626;color:#fff} /* 현재 ON(활성)   → 버튼에 OFF 표시(빨강)  */
-  .on{background:var(--ok)!important;color:#fff!important}
-  .muted{color:var(--muted);font-size:12px}
-  .statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-  .card{border:1px solid var(--line);border-radius:12px;padding:12px}
-  .card h4{margin:0 0 8px 0;font-size:13px}
-  .big{font-size:22px;font-weight:800}
-  .err{ border-color:var(--danger) !important; background:#fff5f5; }
-  .flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  .pill{border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:12px;color:#555}
+
+  /* 현재 상태 라벨: ON=초록, OFF=회색 */
+  .btn-state{min-width:62px;text-align:center;background:#9ca3af;color:#fff}
+  .btn-state.on{background:var(--ok)!important;color:#fff!important}
 </style>
 </head>
 <body>
@@ -58,28 +59,25 @@
     <section id="sec-urls">
       <h2>파트너 링크 관리</h2>
       <p class="desc">
-        • <b>적용</b>: 형식 제한 없이 입력값을 그대로 저장합니다(빈 값 포함).<br/>
-        • <b>잠금</b>: ‘적용’ 실수 방지. 잠금 시 적용 버튼이 <b>빨간색</b>으로 바뀌고 비활성.<br/>
-        • <b>ON/OFF</b>: 기본 ON. <b>OFF 전환은 URL 저장값이 비어 있어야</b> 가능합니다.
+        • <b>적용</b>: 값 그대로 저장(빈 값 포함). 초록이면 “저장=동기화 완료”이며 <u>입력칸이 읽기전용</u>입니다.<br/>
+        • <b>잠금</b>: 적용 실수 방지(적용 버튼 빨강/비활성).<br/>
+        • <b>ON/OFF</b>: <u>현재 동작 상태</u>를 표시합니다. 기본 ON. OFF 전환은 “저장된 URL 없음”일 때만 가능.
       </p>
       <div class="grid" id="urlGrid">
         <div class="head">파트너</div>
         <div class="head">URL</div>
         <div class="head">동작</div>
       </div>
-      <p class="muted">푸터 동작: ON+URL=컬러·클릭 / ON만=컬러·비클릭 / OFF=회색·비클릭.</p>
+      <p class="desc" style="margin-top:8px">
+        푸터: <b>ON+URL</b>=컬러·클릭 / <b>ON만</b>=컬러·비클릭 / <b>OFF</b>=회색·비클릭.
+      </p>
     </section>
 
-    <!-- 집계(월별, 한국시간) -->
+    <!-- 집계(디자인용 더미) -->
     <section id="sec-stats">
       <h2>집계</h2>
-      <div class="flex" style="margin-bottom:8px">
-        <span class="pill" id="pill-month"></span>
-        <span class="pill">TZ: Asia/Seoul</span>
-        <span class="pill" id="pill-ref"></span>
-      </div>
-      <div class="statgrid" id="statGrid"></div>
-      <p class="muted" id="statsHint" style="margin-top:8px"></p>
+      <div id="statGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px"></div>
+      <p class="desc" id="statsHint" style="margin-top:8px"></p>
     </section>
   </div>
 
@@ -97,7 +95,7 @@
     wrap.querySelectorAll('.row').forEach(el=>el.remove());
 
     PARTNERS.forEach(([pid,name])=>{
-      const cur = stateMap[pid] || {url:'', on:true}; // ▶ on 기본 true
+      const cur = stateMap[pid] || {url:'', on:true}; // ▶ 기본 ON
       const nameDiv = h('div',{className:'pid row',textContent:name});
       const boxDiv  = h('div',{className:'row'});
       const actDiv  = h('div',{className:'row actions'});
@@ -105,64 +103,68 @@
       const inp = h('input',{type:'url', id:'url_'+pid, value:cur.url||'', placeholder:'(빈 값 허용) 트래킹 링크'});
       inp.dataset.last = cur.url || '';
 
-      const btnApply  = h('button',{className:'btn btn-apply', textContent:'적용'});
-      const btnLock   = h('button',{className:'btn btn-lock',  textContent:'잠금'});
-      const btnOffTgl = h('button',{className:'btn btn-off-toggle', textContent:''});
+      const btnApply = h('button',{className:'btn btn-apply', textContent:'적용'});
+      const btnLock  = h('button',{className:'btn btn-lock',  textContent:'잠금'});
+      const btnState = h('button',{className:'btn btn-state', textContent:''}); // 현재 상태 ON/OFF
 
-      // 잠금 토글
+      // ── 잠금 토글
       let locked = false;
-      function setLocked(state){
-        locked = !!state;
-        if (locked){
-          btnApply.classList.add('locked');
-          btnApply.disabled = true;
-          btnLock.textContent = '해제';
-          btnLock.setAttribute('aria-pressed','true');
-        }else{
-          btnApply.classList.remove('locked');
-          btnApply.disabled = false;
-          btnLock.textContent = '잠금';
-          btnLock.removeAttribute('aria-pressed');
+      function setLocked(v){
+        locked = !!v;
+        btnApply.classList.toggle('locked', locked);
+        btnApply.disabled = locked;
+        btnLock.textContent = locked ? '해제' : '잠금';
+        if (locked) { // 잠금이면 편집 막기
+          inp.readOnly = true;
+        } else {
+          // 잠금 해제 시, ‘저장동일(초록)’이면 다시 읽기전용 유지, 아니면 편집 가능
+          syncApplyVisual();
         }
       }
-      btnLock.addEventListener('click', ()=> setLocked(!locked) );
+      btnLock.addEventListener('click', ()=> setLocked(!locked));
 
-      // ON/OFF 버튼 문구·색상 (기본 ON)
-      function paintOffButton(isOn){
-        btnOffTgl.textContent = isOn ? 'OFF' : 'ON';
-        btnOffTgl.classList.toggle('on', !!isOn);
+      // ── ON/OFF 상태 라벨 & 토글
+      function paintStateLabel(isOn){
+        btnState.textContent = isOn ? 'ON' : 'OFF';
+        btnState.classList.toggle('on', !!isOn);
       }
-      paintOffButton(!!cur.on);
+      paintStateLabel(!!cur.on);
 
-      // ▶ ON/OFF 토글: OFF로 내릴 때는 저장값이 비어 있어야 함
-      btnOffTgl.addEventListener('click', ()=>{
+      btnState.addEventListener('click', ()=>{
         const nextOn = !cur.on;
-
-        if (!nextOn) { // OFF로 전환하려면 저장값/입력값 모두 비어 있어야
-          const haveLive  = !!(inp.value||'').trim();
-          const haveSaved = !!(inp.dataset.last||'').trim();
-          if (haveLive || haveSaved){
-            alert('트래킹 링크가 존재합니다. 먼저 입력값을 비우고 "적용"으로 저장한 뒤 OFF로 전환하세요.');
+        // OFF로 내릴 때: 저장된 URL 없어야 함
+        if (!nextOn) {
+          const saved = (inp.dataset.last||'').trim();
+          const live  = (inp.value||'').trim();
+          if (saved || live){
+            alert('트래킹 링크가 존재합니다. 먼저 입력칸을 비우고 "적용"으로 저장한 뒤 OFF로 전환하세요.');
             return;
           }
         }
-
-        btnOffTgl.disabled = true;
+        btnState.disabled = true;
         google.script.run
           .withSuccessHandler(res=>{
             drawStateGrid(res.state || {});
-            btnOffTgl.disabled = false;
           })
           .withFailureHandler(err=>{
             alert((err && err.message) || '상태 변경 실패');
-            btnOffTgl.disabled = false;
+            btnState.disabled = false;
           })
           .setPartnerOn(pid, nextOn);
       });
 
-      // ▶ URL 적용(검증 제거: 어떤 값이든 저장)
+      // ── 적용: 검증 없이 “그대로 저장”
       btnApply.addEventListener('click', ()=>{
         if (locked) return;
+
+        // “초록=저장 동기화 완료 상태”에서 버튼을 누르면 ‘편집 모드’로 전환
+        if (btnApply.classList.contains('on')){
+          btnApply.classList.remove('on');
+          inp.readOnly = false;
+          inp.focus(); inp.select();
+          return;
+        }
+
         const val = (inp.value||'').trim();
         btnApply.disabled = true; btnApply.textContent = '저장중…';
         google.script.run
@@ -170,7 +172,9 @@
             inp.dataset.last = res.url || '';
             btnApply.textContent = '적용됨';
             btnApply.classList.add('on');
-            setTimeout(()=>{ btnApply.textContent='적용'; btnApply.disabled=locked; }, 700);
+            // 저장동일 → 입력칸 읽기전용
+            inp.readOnly = true;
+            setTimeout(()=>{ btnApply.textContent='적용'; btnApply.disabled=locked; }, 600);
           })
           .withFailureHandler(err=>{
             alert('저장 실패: ' + ((err && err.message) || err));
@@ -179,50 +183,42 @@
           .setPartnerUrl(pid, val);
       });
 
-      inp.addEventListener('input', ()=>{
-        inp.classList.remove('err');
-        updateApplyState(btnApply, inp);
-      });
+      // 입력 변경 시 비주얼 동기화
+      function syncApplyVisual(){
+        const equal = (inp.value||'').trim() === (inp.dataset.last||'').trim();
+        btnApply.classList.toggle('on', equal);
+        // 초록(저장과 동일) ⇒ 읽기전용, 아니라면 편집 가능
+        inp.readOnly = equal ? true : !!locked;
+      }
+      inp.addEventListener('input', ()=>{ if (!locked) syncApplyVisual(); });
 
-      // DOM
+      // DOM 배치
       wrap.appendChild(nameDiv);
       wrap.appendChild(boxDiv); boxDiv.appendChild(inp);
-      wrap.appendChild(actDiv); actDiv.appendChild(btnApply); actDiv.appendChild(btnLock); actDiv.appendChild(btnOffTgl);
+      wrap.appendChild(actDiv); actDiv.appendChild(btnApply); actDiv.appendChild(btnLock); actDiv.appendChild(btnState);
 
-      updateApplyState(btnApply, inp);
+      // 최초 동기화: 기본 ON은 컬러로, 저장동일이면 읽기전용
+      paintStateLabel(!!cur.on);
+      syncApplyVisual();
     });
   }
 
-  function updateApplyState(btnApply, inp){
-    btnApply.classList.toggle('on', !!inp.dataset.last && inp.value.trim() === inp.dataset.last);
-  }
-
-  // 집계(디자인 유지)
+  // 집계(디자인용)
   function drawStats(data){
-    const stat = $('#statGrid'); stat.innerHTML='';
-    const month = data.yyyymm || '----';
-    $('#pill-month').textContent = 'Month: ' + month;
-    $('#pill-ref').textContent   = 'Ref: cmd=go&pid={1..12|name}';
-    const counts = data.counts || {};
+    const stat = document.querySelector('#statGrid'); stat.innerHTML='';
+    const counts = (data && data.counts) || {};
     PARTNERS.forEach(([pid,name])=>{
-      const card = h('div',{className:'card'});
-      card.appendChild(h('h4',{textContent:name}));
-      card.appendChild(h('div',{className:'big',textContent:String(counts[pid]||0)}));
-      stat.appendChild(card);
+      const box = h('div',{className:'card'});
+      box.appendChild(h('h4',{textContent:name}));
+      box.appendChild(h('div',{className:'big',textContent:String(counts[pid]||0)}));
+      stat.appendChild(box);
     });
-    $('#statsHint').textContent = '푸터 버튼은 Web App URL에 cmd=go&pid=… 로 연결되며, 클릭 시 월별 카운터가 자동 증가합니다.';
+    document.querySelector('#statsHint').textContent = '푸터: cmd=map으로 상태 반영, cmd=go로 집계/리디렉션.';
   }
 
   function init(){
-    google.script.run
-      .withSuccessHandler(drawStateGrid)
-      .withFailureHandler(()=>drawStateGrid({}))
-      .getPartnerState();
-
-    google.script.run
-      .withSuccessHandler(drawStats)
-      .withFailureHandler(()=>drawStats({yyyymm:'----',counts:{}}))
-      .getMonthlyStatsRPC();
+    google.script.run.withSuccessHandler(drawStateGrid).withFailureHandler(()=>drawStateGrid({})).getPartnerState();
+    google.script.run.withSuccessHandler(drawStats).withFailureHandler(()=>drawStats({counts:{}})).getMonthlyStatsRPC();
   }
   init();
 </script>
