@@ -83,7 +83,7 @@
 
 <script>
 (function(){
-  /* ⬇ 현재 배포 ‘웹 앱 URL’로 교체 */
+  /* ⬇ 현재 배포 ‘웹 앱 URL’ */
   const EXEC_BASE = 'https://script.google.com/macros/s/AKfycbyatNoxrAGrPqr9E5leFwhPQAl_wbnm79Or7J4S5AZCBYY9O1yKmQt6eFNbuZTIad1aEQ/exec';
 
   const withQS = (base, params) => {
@@ -94,8 +94,9 @@
 
   window.addEventListener('load', init, {once:true});
 
+  // 상태 반영
   function paintState(el, st){
-    // st: { on:boolean, clickable:boolean, href:string }
+    // st: {on:boolean, clickable:boolean, href:string}
     if (!st || !st.on){
       el.classList.remove('state-on','state-on-noclick');
       el.classList.add('state-off');
@@ -118,11 +119,28 @@
     el.style.pointerEvents = '';
   }
 
+  // 서버 응답을 신형/구형 모두 호환되게 정규화
+  function normalizeState(raw){
+    // 신형: 객체형 {on, clickable, href}
+    if (raw && typeof raw === 'object') {
+      return {
+        on: !!raw.on,
+        clickable: !!raw.clickable,
+        href: typeof raw.href === 'string' ? raw.href : ''
+      };
+    }
+    // 구형: 불리언 true/false
+    if (raw === true)  return { on:true,  clickable:false, href:'' };
+    if (raw === false) return { on:false, clickable:false, href:'' };
+    // 없을 때
+    return { on:false, clickable:false, href:'' };
+  }
+
   function init(){
     const els = document.querySelectorAll('.partner-btn[data-pid]');
     if (!els.length) return;
 
-    // 클릭 보호: OFF/NoLink 상태는 무시
+    // OFF/NoLink 상태 클릭 보호
     document.addEventListener('click', function(e){
       const a = e.target.closest('.partner-btn');
       if (!a) return;
@@ -131,20 +149,20 @@
       }
     }, true);
 
-    // 상태맵 불러오기(캐시버스터)
+    // 상태맵 로드(캐시버스터)
     const mapUrl = withQS(EXEC_BASE, {cmd:'map', cb: Date.now()});
     fetch(mapUrl, {cache:'no-store'})
       .then(r => { if(!r.ok) throw new Error('map http '+r.status); return r.json(); })
       .then(map => {
         els.forEach(el=>{
           const pid = el.getAttribute('data-pid');
-          const st  = (map && map[pid]) ? map[pid] : {on:false, clickable:false, href:''};
+          const st  = normalizeState(map ? map[pid] : undefined);
           paintState(el, st);
         });
       })
       .catch(err=>{
         console.warn('[partners] map fetch failed:', err);
-        // 실패 시 현재 표시 유지(초기 회색 도색을 하지 않으므로 컬러로 남을 수 있음)
+        // 실패 시 표시 유지
       });
   }
 })();
