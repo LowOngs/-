@@ -1,4 +1,4 @@
-/* ===== Ongs Partner Console – Code.gs (v11.3, frame-safe redirect) ===== */
+/* ===== Ongs Partner Console – Code.gs (v11.3, frame-safe + meta-refresh redirect) ===== */
 
 /** 파트너 목록 */
 var PARTNERS = [
@@ -10,10 +10,10 @@ var PARTNERS = [
 var TZ = 'Asia/Seoul';
 
 /** (선택) 집계용 스프레드시트 – 미설정이면 조용히 패스
- *  ⚠️ 여기엔 "스프레드시트 ID"를 넣어야 합니다 (docs.google.com/spreadsheets/... 의 그 ID).
+ *  ⚠️ 여긴 반드시 “스프레드시트 ID”를 넣으세요 (docs.google.com/spreadsheets/… 중간의 ID).
  *  Apps Script 웹앱 ID/URL을 넣으면 openById가 실패합니다.
  */
-var SPREADSHEET_ID = '14sGbEJvsdfCSbehpzg0140o2FG6TCb-Z2prMof8nFEs';  // 필요시 수정
+var SPREADSHEET_ID = '14sGbEJvsdfCSbehpzg0140o2FG6TCb-Z2prMof8nFEs';  // 필요 시 수정
 var SHEET_NAME     = 'stats';
 
 /** 관리자 판별 (“웹 앱: 나만” 또는 “모든 사용자” 중 로그인된 본인) */
@@ -63,7 +63,6 @@ function setPartnerUrl(pid, url){
   if (PARTNERS.indexOf(pid) < 0) throw new Error('unknown pid');
 
   var u = (url || '').trim();
-  // URL 정규식 검증은 의도적으로 제거 (빈 값 저장 가능)
   PropertiesService.getScriptProperties().setProperty('url_'+pid, u);
   return { ok:true, pid:pid, url:u };
 }
@@ -111,7 +110,7 @@ function jsonActiveMap_(){
  * 리디렉션 & 집계
  * ========================= */
 
-/** 방문자 리디렉션 (프레임 탈출 안전 처리) */
+/** 방문자 리디렉션 (프레임/보안 우회 폴백 포함) */
 function handleRedirect_(e){
   var raw = (e && e.parameter && (e.parameter.pid || e.parameter.partner)) || '';
   var pid = String(raw || '').trim().toLowerCase();
@@ -135,23 +134,17 @@ function handleRedirect_(e){
 
   bumpClick_(pid); // 시트 미설정이면 내부에서 조용히 패스
 
-  // ✅ 프레임에 갇히지 않도록 top/window.open 백업 포함
+  // ✅ 프레임에 갇히거나 차단될 때 대비: meta refresh + top.location + _top 링크 폴백
+  var safeUrl = url.replace(/"/g, '&quot;');
+  var U = JSON.stringify(url);
   var html =
     '<meta name="referrer" content="no-referrer">' +
-    '<script>' +
-    'try {' +
-    '  if (window.top && window.top !== window.self) {' +
-    '    window.top.location.replace(' + JSON.stringify(url) + ');' +
-    '  } else {' +
-    '    window.location.replace(' + JSON.stringify(url) + ');' +
-    '  }' +
-    '} catch (e) {' +
-    '  window.open(' + JSON.stringify(url) + ', "_blank", "noopener");' +
-    '}' +
-    '</script>' +
-    '<noscript><a target="_top" href=' + JSON.stringify(url) + '>Continue</a></noscript>';
+    '<meta http-equiv="refresh" content="0;url=' + safeUrl + '">' +
+    '<script>(function(){var u=' + U + ';try{if(top&&top!==self){top.location.assign(u);}else{location.assign(u);}}catch(e){try{window.open(u,"_top","noopener");}catch(_){}}})();</script>' +
+    '<noscript><a target="_top" href=' + U + '>Continue</a></noscript>';
 
-  return HtmlService.createHtmlOutput(html);
+  return HtmlService.createHtmlOutput(html)
+         .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
 /* =========================
