@@ -1,4 +1,4 @@
-/* ===== Ongs Partner Console – Code.gs (v11.3) ===== */
+/* ===== Ongs Partner Console – Code.gs (v11.3, frame-safe redirect) ===== */
 
 /** 파트너 목록 */
 var PARTNERS = [
@@ -9,8 +9,11 @@ var PARTNERS = [
 /** 기본 타임존 */
 var TZ = 'Asia/Seoul';
 
-/** (선택) 집계용 스프레드시트 – 미설정이면 조용히 패스 */
-var SPREADSHEET_ID = 'AKfycbzf7PPzEF6Kbcg6SXvzZKOe5l6U2kvadliRxAA1e-ohULkCP7c_5c5rDx4HpssvKgpsRw';      // 필요시 설정
+/** (선택) 집계용 스프레드시트 – 미설정이면 조용히 패스
+ *  ⚠️ 여기엔 "스프레드시트 ID"를 넣어야 합니다 (docs.google.com/spreadsheets/... 의 그 ID).
+ *  Apps Script 웹앱 ID/URL을 넣으면 openById가 실패합니다.
+ */
+var SPREADSHEET_ID = 'AKfycbzf7PPzEF6Kbcg6SXvzZKOe5l6U2kvadliRxAA1e-ohULkCP7c_5c5rDx4HpssvKgpsRw';  // 필요시 수정
 var SHEET_NAME     = 'stats';
 
 /** 관리자 판별 (“웹 앱: 나만” 또는 “모든 사용자” 중 로그인된 본인) */
@@ -108,7 +111,7 @@ function jsonActiveMap_(){
  * 리디렉션 & 집계
  * ========================= */
 
-/** 방문자 리디렉션 */
+/** 방문자 리디렉션 (프레임 탈출 안전 처리) */
 function handleRedirect_(e){
   var raw = (e && e.parameter && (e.parameter.pid || e.parameter.partner)) || '';
   var pid = String(raw || '').trim().toLowerCase();
@@ -132,10 +135,22 @@ function handleRedirect_(e){
 
   bumpClick_(pid); // 시트 미설정이면 내부에서 조용히 패스
 
-  var html = ''
-    + '<meta name="referrer" content="no-referrer">'
-    + '<script>location.replace(' + JSON.stringify(url) + ');</script>'
-    + '<noscript><a href=' + JSON.stringify(url) + '>Continue</a></noscript>';
+  // ✅ 프레임에 갇히지 않도록 top/window.open 백업 포함
+  var html =
+    '<meta name="referrer" content="no-referrer">' +
+    '<script>' +
+    'try {' +
+    '  if (window.top && window.top !== window.self) {' +
+    '    window.top.location.replace(' + JSON.stringify(url) + ');' +
+    '  } else {' +
+    '    window.location.replace(' + JSON.stringify(url) + ');' +
+    '  }' +
+    '} catch (e) {' +
+    '  window.open(' + JSON.stringify(url) + ', "_blank", "noopener");' +
+    '}' +
+    '</script>' +
+    '<noscript><a target="_top" href=' + JSON.stringify(url) + '>Continue</a></noscript>';
+
   return HtmlService.createHtmlOutput(html);
 }
 
@@ -176,7 +191,8 @@ function getSheet_(){
     }
     return sh;
   }catch(err){
-    return null; // 시트 접근 실패는 조용히 패스
+    // 시트 접근 실패는 조용히 패스(집계 없이도 기능 유지)
+    return null;
   }
 }
 
