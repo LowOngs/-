@@ -1,169 +1,164 @@
-<!-- ▼ Footer Partners (v12r3): 초기 회색 도색 제거 / 상태맵으로만 색·클릭 제어 -->
-<style>
-  .partner-wrap{ --btnSize:74px; --arrowSize:88px; --gap:12px; }
-  .partner-wrap .arrow{
-    width:var(--arrowSize);height:var(--arrowSize);border:none;border-radius:9999px;background:#555;color:#fff;
-    cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:42px;box-shadow:0 3px 6px rgba(0,0,0,.25);
-  }
-  .partner-wrap .strip{
-    flex:1 1 auto;display:flex;gap:var(--gap);overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;
-    scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:12px 0;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;
-  }
-  .partner-wrap .card{
-    flex:0 0 auto;scroll-snap-align:center;width:var(--btnSize);height:var(--btnSize);
-    border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;padding:0;background:none;display:inline-flex;align-items:center;justify-content:center;
-  }
-  .partner-wrap .card img{ width:100%;height:100%;object-fit:cover;border-radius:12px;display:block;transition:transform .2s ease; }
-  /* 로고 작았던 3개 확대 유지 */
-  .partner-wrap .card img[src*="amazon_india"]{ transform:scale(1.34); }
-  .partner-wrap .card img[src*="allegro"]{       transform:scale(1.32); }
-  .partner-wrap .card img[src*="aliexpress"]{    transform:scale(1.32); }
+<!-- Saved Pages (max 10) – paste this into an HTML/JavaScript gadget -->
+<div id="savedPagesWidget" style="font:14px/1.4 system-ui, -apple-system, Segoe UI, Arial; color:#111;">
+  <style>
+    #spw-wrap{border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fff}
+    #spw-title{margin:0 0 8px 0;font-size:16px;font-weight:700}
+    #spw-form{display:flex;gap:8px;margin:8px 0 10px 0}
+    #spw-input{flex:1 1 auto;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px}
+    #spw-add{padding:10px 12px;border:0;border-radius:10px;background:#2563eb;color:#fff;font-weight:700;cursor:pointer}
+    #spw-msg{font-size:12px;color:#6b7280;min-height:18px}
+    #spw-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+    .spw-item{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#f9fafb}
+    .spw-id{font-weight:700}
+    .spw-del{border:0;background:#ef4444;color:#fff;border-radius:8px;padding:4px 8px;cursor:pointer}
+    #spw-actions{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+    #spw-count{font-size:12px;color:#6b7280}
+    #spw-clear{border:0;background:#111;color:#fff;border-radius:10px;padding:8px 10px;cursor:pointer}
+    /* small flash for updates */
+    .flash{animation:spwFlash .6s ease}
+    @keyframes spwFlash{from{background:#fff2b3}to{background:transparent}}
+  </style>
 
-  /* OFF/비클릭 상태만 회색 처리 */
-  .partner-wrap .partner-btn.state-off,
-  .partner-wrap .partner-btn.state-on-noclick{ filter:grayscale(1) brightness(.85) opacity(.55)!important; cursor:default!important; }
-  .partner-wrap .partner-btn.state-off img,
-  .partner-wrap .partner-btn.state-on-noclick img{ filter:grayscale(1) brightness(.9) opacity(.75)!important; }
+  <div id="spw-wrap">
+    <h3 id="spw-title">Saved Pages</h3>
 
-  /* ON(클릭 가능/불가 공통)일 때 컬러 */
-  .partner-wrap .partner-btn.state-on,
-  .partner-wrap .partner-btn.state-on-noclick{ filter:none!important; }
-</style>
+    <div id="spw-form">
+      <input id="spw-input" type="text" placeholder="Type page id or URL (e.g., page123 or 123)" />
+      <button id="spw-add" type="button">Save</button>
+    </div>
 
-<div class="partner-wrap" style="display:flex;align-items:center;justify-content:center;gap:14px;max-width:100%;margin:14px 0;">
-  <button type="button" class="arrow" aria-label="Scroll left"
-          onclick="this.nextElementSibling.scrollBy({left:-420,behavior:'smooth'})">‹</button>
+    <div id="spw-msg"></div>
 
-  <div class="strip">
-    <a class="card partner-btn" data-pid="amazon" aria-label="Amazon">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_amazon.png?raw=1" alt="Amazon" />
-    </a>
-    <a class="card partner-btn" data-pid="ebay" aria-label="eBay">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_ebay.png?raw=1" alt="eBay" />
-    </a>
-    <a class="card partner-btn" data-pid="target" aria-label="Target">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_target.png?raw=1" alt="Target" />
-    </a>
-    <a class="card partner-btn" data-pid="mercadolibre" aria-label="Mercado Libre">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_mercadolibre.png?raw=1" alt="Mercado Libre" />
-    </a>
-    <a class="card partner-btn" data-pid="flipkart" aria-label="Flipkart">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_flipkart.png?raw=1" alt="Flipkart" />
-    </a>
-    <a class="card partner-btn" data-pid="amazon_in" aria-label="Amazon India">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_amazon_india.png?raw=1" alt="Amazon India" />
-    </a>
-    <a class="card partner-btn" data-pid="shopee" aria-label="Shopee">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_shopee.png?raw=1" alt="Shopee" />
-    </a>
-    <a class="card partner-btn" data-pid="lazada" aria-label="Lazada">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_lazada.png?raw=1" alt="Lazada" />
-    </a>
-    <a class="card partner-btn" data-pid="aliexpress" aria-label="AliExpress">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_aliexpress.png?raw=1" alt="AliExpress" />
-    </a>
-    <a class="card partner-btn" data-pid="otto" aria-label="Otto">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_otto.png?raw=1" alt="Otto" />
-    </a>
-    <a class="card partner-btn" data-pid="zalando" aria-label="Zalando">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_zalando.png?raw=1" alt="Zalando" />
-    </a>
-    <a class="card partner-btn" data-pid="allegro" aria-label="Allegro">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_allegro.png?raw=1" alt="Allegro" />
-    </a>
+    <div id="spw-list"></div>
+
+    <div id="spw-actions">
+      <div id="spw-count"></div>
+      <button id="spw-clear" type="button">Clear All</button>
+    </div>
   </div>
-
-  <button type="button" class="arrow" aria-label="Scroll right"
-          onclick="this.previousElementSibling.scrollBy({left:420,behavior:'smooth'})">›</button>
 </div>
-
-<p style="text-align:center;margin:.6rem 0 0 0;font-size:.8rem;color:#ddd;white-space:normal;">
-  Affiliate use is free. For certain affiliate programs, the operator receives a commission from the affiliate.
-</p>
 
 <script>
 (function(){
-  /* ⬇ 현재 배포 ‘웹 앱 URL’ */
-  const EXEC_BASE = 'https://script.google.com/macros/s/AKfycbxH-prUH-xtiVaSKxNNDx4QUCtCattAvvzcA_H0j5lZa9dcrfdWartd3AxxTu5B9AqjiQ/exec';
+  const KEY = 'ongs.savedPages.v1';     // localStorage key
+  const MAX = 10;
 
-  const withQS = (base, params) => {
-    const u = new URL(base);
-    Object.entries(params).forEach(([k,v]) => u.searchParams.set(k, v));
-    return u.toString();
-  };
+  const $ = (s, r=document) => r.querySelector(s);
+  const wrap = $('#savedPagesWidget');
+  const input = $('#spw-input', wrap);
+  const btnAdd = $('#spw-add', wrap);
+  const listEl = $('#spw-list', wrap);
+  const msgEl  = $('#spw-msg', wrap);
+  const countEl= $('#spw-count', wrap);
+  const btnClr = $('#spw-clear', wrap);
 
-  window.addEventListener('load', init, {once:true});
-
-  // 상태 반영
-  function paintState(el, st){
-    // st: {on:boolean, clickable:boolean, href:string}
-    if (!st || !st.on){
-      el.classList.remove('state-on','state-on-noclick');
-      el.classList.add('state-off');
-      el.removeAttribute('href'); el.removeAttribute('target'); el.removeAttribute('rel');
-      el.style.pointerEvents = 'none';
-      return;
-    }
-    if (st.on && !st.clickable){
-      el.classList.remove('state-off','state-on');
-      el.classList.add('state-on-noclick');
-      el.removeAttribute('href'); el.removeAttribute('target'); el.removeAttribute('rel');
-      el.style.pointerEvents = 'none';
-      return;
-    }
-    el.classList.remove('state-off','state-on-noclick');
-    el.classList.add('state-on');
-    el.href   = withQS(EXEC_BASE, {cmd:'go', pid: el.getAttribute('data-pid'), src:'footer'});
-    el.target = '_blank';
-    el.rel    = 'nofollow noopener';
-    el.style.pointerEvents = '';
+  function load(){
+    try{
+      const raw = localStorage.getItem(KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    }catch(e){ return []; }
+  }
+  function save(arr){
+    localStorage.setItem(KEY, JSON.stringify(arr));
   }
 
-  // 서버 응답을 신형/구형 모두 호환되게 정규화
-  function normalizeState(raw){
-    // 신형: 객체형 {on, clickable, href}
-    if (raw && typeof raw === 'object') {
-      return {
-        on: !!raw.on,
-        clickable: !!raw.clickable,
-        href: typeof raw.href === 'string' ? raw.href : ''
-      };
-    }
-    // 구형: 불리언 true/false
-    if (raw === true)  return { on:true,  clickable:false, href:'' };
-    if (raw === false) return { on:false, clickable:false, href:'' };
-    // 없을 때
-    return { on:false, clickable:false, href:'' };
+  // Normalize input to "pageNNN"
+  function parseToPageId(text){
+    if(!text) return '';
+    const t = String(text).trim();
+
+    // 1) Full URL containing "page123"
+    const mUrl = t.match(/page(\d{1,8})/i);
+    if (mUrl) return 'page' + mUrl[1];
+
+    // 2) Just "page123"
+    const mPid = t.match(/^page(\d{1,8})$/i);
+    if (mPid) return 'page' + mPid[1];
+
+    // 3) Pure number -> pageNNN
+    const mNum = t.match(/^\d{1,8}$/);
+    if (mNum) return 'page' + mNum[0];
+
+    return ''; // invalid
   }
 
-  function init(){
-    const els = document.querySelectorAll('.partner-btn[data-pid]');
-    if (!els.length) return;
+  function setMsg(txt, isError=false){
+    msgEl.textContent = txt || '';
+    msgEl.style.color = isError ? '#ef4444' : '#6b7280';
+  }
 
-    // OFF/NoLink 상태 클릭 보호
-    document.addEventListener('click', function(e){
-      const a = e.target.closest('.partner-btn');
-      if (!a) return;
-      if (a.classList.contains('state-off') || a.classList.contains('state-on-noclick')){
-        e.preventDefault(); e.stopPropagation();
-      }
-    }, true);
+  function render(flashId){
+    const items = load();
+    listEl.innerHTML = '';
+    items.forEach((id, idx)=>{
+      const chip = document.createElement('div');
+      chip.className = 'spw-item' + (flashId === id ? ' flash' : '');
+      const strong = document.createElement('span');
+      strong.className = 'spw-id';
+      strong.textContent = id;
 
-    // 상태맵 로드(캐시버스터)
-    const mapUrl = withQS(EXEC_BASE, {cmd:'map', cb: Date.now()});
-    fetch(mapUrl, {cache:'no-store'})
-      .then(r => { if(!r.ok) throw new Error('map http '+r.status); return r.json(); })
-      .then(map => {
-        els.forEach(el=>{
-          const pid = el.getAttribute('data-pid');
-          const st  = normalizeState(map ? map[pid] : undefined);
-          paintState(el, st);
-        });
-      })
-      .catch(err=>{
-        console.warn('[partners] map fetch failed:', err);
-        // 실패 시 표시 유지
+      const del = document.createElement('button');
+      del.className = 'spw-del';
+      del.textContent = 'Delete';
+      del.addEventListener('click', ()=>{
+        const arr = load().filter(x => x !== id);
+        save(arr);
+        render();
+        setMsg('Deleted: ' + id);
       });
+
+      chip.appendChild(strong);
+      chip.appendChild(del);
+      listEl.appendChild(chip);
+    });
+    countEl.textContent = items.length + ' / ' + MAX;
   }
+
+  btnAdd.addEventListener('click', ()=>{
+    const id = parseToPageId(input.value);
+    if (!id) { setMsg('Invalid format. Use "page123", "123", or a URL containing page123.', true); return; }
+
+    let arr = load();
+
+    // If already exists -> move to front
+    const existed = arr.includes(id);
+    if (existed){
+      arr = [id, ...arr.filter(x => x !== id)];
+      save(arr);
+      render(id);
+      setMsg('Already saved. Moved to top: ' + id);
+      input.value = '';
+      return;
+    }
+
+    // Enforce max 10
+    if (arr.length >= MAX){
+      setMsg('You can save up to 10 items. Please delete some or clear all before adding.', true);
+      return;
+    }
+
+    arr.unshift(id);
+    save(arr);
+    render(id);
+    setMsg('Saved: ' + id);
+    input.value = '';
+  });
+
+  btnClr.addEventListener('click', ()=>{
+    if (!confirm('Clear all saved pages?')) return;
+    save([]);
+    render();
+    setMsg('All cleared.');
+  });
+
+  // Enter key to add
+  input.addEventListener('keydown', (e)=>{
+    if (e.key === 'Enter') btnAdd.click();
+  });
+
+  // First render
+  render();
+  setMsg('Tip: You can paste a URL or type "page123" / just numbers.');
 })();
 </script>
