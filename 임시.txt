@@ -13,7 +13,7 @@
 
 <div id="opsWrap" aria-hidden="true">
   <a id="opsBtn" href="#" rel="nofollow noopener" aria-label="스크립트 관리" title="스크립트 관리">
-    <svg viewbox="0 0 24 24" width="18" height="18" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
       <circle cx="12" cy="12" r="3" fill="#fff"></circle>
       <g stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round">
         <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.5 4.5l1.4 1.4M18.1 18.1l1.4 1.4M19.5 4.5l-1.4 1.4M6.9 18.1l-1.4 1.4"></path>
@@ -28,15 +28,14 @@
   const wrap = document.getElementById('opsWrap');
   const btn  = document.getElementById('opsBtn');
 
-  // 네 실제 배포 URL
-  const ADMIN_URL_BASE = 'https://script.google.com/macros/s/AKfycbycWpb0FzgIcbs-WuIjcSGEVk8ITvNX1P99INi1US4Q2TLXrexBzPOMNPnClRosPUsl-w/exec
-';
+  // ✅ 실제 배포 URL (줄바꿈 없이, 한 줄로 입력!)
+  const ADMIN_URL_BASE = 'https://script.google.com/macros/s/AKfycbycWpb0FzgIcbs-WuIjcSGEVk8ITvNX1P99INi1US4Q2TLXrexBzPOMNPnClRosPUsl-w/exec';
   const ADMIN_URL = ADMIN_URL_BASE + (ADMIN_URL_BASE.includes('?') ? '&' : '?') + 'cb=' + Date.now();
 
   let openUntil = 0;
   const DURATION = 2000; // 2초
 
-  // Shift + A 누르면 2초간 표시/허용
+  // Shift + A 누르면 2초간 표시
   document.addEventListener('keydown', function(e){
     if(e.shiftKey && (e.key==='a' || e.key==='A')){
       wrap.classList.add('show2s');
