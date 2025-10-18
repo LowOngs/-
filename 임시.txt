@@ -1,125 +1,172 @@
-<!-- Saved Posts (page번호만) · v1 -->
+<!-- Saved Posts (client-side, localStorage) -->
 <style>
-  .saved-box{font:14px/1.45 system-ui, -apple-system, Segoe UI, Arial; color:#111}
-  .saved-row{display:flex;align-items:center;gap:8px;margin:10px 0}
-  .saved-input{flex:1 1 auto;padding:8px 10px;border:1px solid #e5e7eb;border-radius:10px}
-  .saved-btn{padding:8px 12px;border:0;border-radius:10px;background:#2563eb;color:#fff;font-weight:700;cursor:pointer}
-  .saved-btn:disabled{opacity:.6;cursor:not-allowed}
-  .saved-tip{margin:6px 0 10px;color:#6b7280;font-size:12px}
-  .saved-list{display:flex;flex-direction:column;gap:6px;margin:8px 0}
-  .saved-item{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px dashed #e5e7eb;border-radius:10px;padding:8px 10px}
-  .saved-item .txt{font-weight:600}
-  .saved-x{appearance:none;border:0;background:#f3f4f6;border-radius:8px;padding:4px 8px;cursor:pointer}
-  .saved-x:hover{background:#e5e7eb}
-  .saved-actions{display:flex;justify-content:flex-end;margin-top:8px}
-  .saved-clear{appearance:none;border:0;background:#e5e7eb;border-radius:10px;padding:8px 12px;cursor:pointer}
+  .sp-wrap{font:14px/1.5 system-ui,Segoe UI,Helvetica,Arial;color:#111}
+  .sp-row{display:flex;gap:8px;margin:8px 0}
+  .sp-input{flex:1 1 auto;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px}
+  .sp-btn{appearance:none;border:0;border-radius:8px;padding:8px 10px;font-weight:600;cursor:pointer}
+  .sp-btn.save{background:#2563eb;color:#fff}
+  .sp-btn.clear{background:#e5e7eb;color:#111}
+  .sp-tip{margin:6px 0 8px 0;color:#6b7280;font-size:12px}
+  .sp-err{color:#ef4444;font-size:12px;margin:4px 0 0 0;display:none}
+  .sp-list{display:flex;flex-direction:column;gap:6px;margin:10px 0 0}
+  .sp-item{display:flex;align-items:center;justify-content:space-between;
+           border:1px solid #e5e7eb;border-radius:8px;padding:8px 10px;background:#fff}
+  .sp-id{font-weight:700}
+  .sp-del{background:none;border:0;color:#ef4444;font-weight:800;cursor:pointer;font-size:16px;line-height:1}
+  .sp-del:focus{outline:2px solid #ef4444;outline-offset:2px}
 </style>
 
-<div class="saved-box" id="savedBox">
-  <div class="saved-row">
-    <input id="savedInput" class="saved-input" type="text" placeholder="페이지 입력" inputmode="numeric" />
-    <button id="savedAdd" class="saved-btn">저장</button>
+<div class="sp-wrap" id="spRoot">
+  <!-- 제목은 가젯에서 따로 넣으므로 여기는 본문만 -->
+  <div class="sp-row">
+    <!-- placeholder는 영어, 내부 주석은 한글 -->
+    <input id="spInput" class="sp-input" type="text" maxlength="30"
+           placeholder="Enter page id (e.g., page123)" aria-label="Enter page id">
+    <button class="sp-btn save" id="spSaveBtn" type="button">Save</button>
+    <button class="sp-btn clear" id="spClearBtn" type="button">Clear All</button>
   </div>
-  <div class="saved-tip">page 번호만 입력 (예: <b>page123</b> 또는 <b>123</b>) · 최대 10개</div>
-  <div id="savedList" class="saved-list"></div>
-  <div class="saved-actions"><button id="savedClear" class="saved-clear">모두 지우기</button></div>
+  <div class="sp-tip" id="spTip">Tip: Enter only the page id (e.g., page123). Max 10 saved.</div>
+  <div class="sp-err" id="spErr"></div>
+  <div class="sp-list" id="spList" role="list"></div>
 </div>
 
 <script>
 (function(){
-  const KEY = 'saved_pages_v1';        // localStorage key
-  const MAX = 10;                      // 최대 개수
-  const box = document.getElementById('savedBox');
-  const inp = document.getElementById('savedInput');
-  const btn = document.getElementById('savedAdd');
-  const list = document.getElementById('savedList');
-  const clearBtn = document.getElementById('savedClear');
+  'use strict';
+  // ===== 설정(변수명/키) =====
+  // 로컬스토리지 키
+  var LS_KEY = 'ongs_saved_posts';
+  // pageID 허용 패턴: page + 숫자
+  var ID_RE = /^page\d+$/i;
 
-  function load(){
-    try{ return JSON.parse(localStorage.getItem(KEY) || '[]'); }
-    catch(_){ return []; }
+  // ===== 엘리먼트 =====
+  var $ = function(s){ return document.querySelector(s); };
+  var root   = $('#spRoot');
+  var inp    = $('#spInput');
+  var errBox = $('#spErr');
+  var listEl = $('#spList');
+  var saveBtn= $('#spSaveBtn');
+  var clrBtn = $('#spClearBtn');
+
+  // ===== 저장/불러오기 =====
+  function loadList(){
+    try{
+      var raw = localStorage.getItem(LS_KEY);
+      if (!raw) return [];
+      var arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr : [];
+    }catch(e){ return []; }
   }
-  function save(arr){
-    localStorage.setItem(KEY, JSON.stringify(arr));
+  function saveList(arr){
+    try{
+      localStorage.setItem(LS_KEY, JSON.stringify(arr));
+    }catch(e){}
   }
-  function normalize(v){
-    // 공백 제거
-    v = String(v||'').trim();
-    if (!v) return '';
-    // 'page123' 허용
-    const m1 = v.match(/^page(\d+)$/i);
-    if (m1) return 'page' + m1[1];
-    // 순수 숫자면 page 접두어 부여
-    const m2 = v.match(/^\d+$/);
-    if (m2) return 'page' + v;
-    // 그 외는 불가
-    return '';
-  }
+
+  // ===== 렌더 =====
   function render(){
-    const arr = load();
-    list.innerHTML = '';
-    if (!arr.length){
-      const empty = document.createElement('div');
-      empty.className = 'saved-tip';
-      empty.textContent = '저장된 항목이 없습니다.';
-      list.appendChild(empty);
+    var items = loadList();
+    listEl.innerHTML = '';
+    if (!items.length) {
+      // 비어 있을 때는 목록을 비우고 종료
       return;
     }
-    arr.forEach((id, idx)=>{
-      const row = document.createElement('div');
-      row.className = 'saved-item';
-      const txt = document.createElement('div');
-      txt.className = 'txt';
-      txt.textContent = id;           // 필요 시 링크로 바꾸려면 여기서 앵커 생성
-      const del = document.createElement('button');
-      del.className = 'saved-x';
-      del.textContent = '✕';
-      del.setAttribute('aria-label','삭제');
-      del.addEventListener('click', ()=>{
-        const cur = load();
-        cur.splice(idx,1);
-        save(cur);
-        render();
+    items.forEach(function(id, idx){
+      var row = document.createElement('div');
+      row.className = 'sp-item';
+      row.setAttribute('role','listitem');
+
+      var left = document.createElement('div');
+      left.className = 'sp-id';
+      left.textContent = id;
+
+      var del = document.createElement('button');
+      del.className = 'sp-del';
+      del.setAttribute('type','button');
+      del.setAttribute('aria-label','Delete '+id);
+      del.textContent = '×';
+      del.addEventListener('click', function(){
+        removeAt(idx);
       });
-      row.appendChild(txt);
+
+      row.appendChild(left);
       row.appendChild(del);
-      list.appendChild(row);
+      listEl.appendChild(row);
     });
   }
-  function add(){
-    const val = normalize(inp.value);
-    if (!val){
-      alert('page 번호만 입력하세요. 예: page123 또는 123');
-      return;
-    }
-    let arr = load();
-    // 중복이면 앞으로 당기기
-    const existIdx = arr.indexOf(val);
-    if (existIdx >= 0){
-      arr.splice(existIdx,1); // 제거
-      arr.unshift(val);       // 맨 앞에
-      save(arr);
-      render();
-      inp.value = '';
-      return;
-    }
-    // 새 항목인데 10개 초과면 거부
-    if (arr.length >= MAX){
-      alert('최대 10개까지만 입력 가능합니다. 몇 개를 지우거나 모두 지우고 추가하세요.');
-      return;
-    }
-    arr.unshift(val);        // 맨 앞에 추가
-    save(arr);
-    render();
-    inp.value = '';
+
+  // ===== 에러 표시 =====
+  function showError(msg){
+    errBox.textContent = msg || '';
+    errBox.style.display = msg ? 'block' : 'none';
   }
 
-  btn.addEventListener('click', add);
-  inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter') add(); });
-  clearBtn.addEventListener('click', ()=>{
-    if (confirm('모든 저장 항목을 삭제할까요?')){ save([]); render(); }
+  // ===== 추가/삭제 로직 =====
+  function addId(id){
+    var v = String(id || '').trim();
+    // 형식 검사 (page+숫자만)
+    if (!ID_RE.test(v)) {
+      showError('Use format: page123 (letters "page" + digits).');
+      return;
+    }
+    var list = loadList();
+
+    // 이미 존재하면 앞으로 이동(중복 제거+재배치)
+    var lower = v.toLowerCase();
+    var pos = list.findIndex(function(x){ return String(x).toLowerCase() === lower; });
+    if (pos >= 0) {
+      list.splice(pos, 1);        // 기존 위치 제거
+      list.unshift(v);            // 맨 앞에 재삽입
+      saveList(list);
+      showError('');
+      inp.value = '';
+      render();
+      return;
+    }
+
+    // 새로 추가 — 최대 10 제한
+    if (list.length >= 10) {
+      showError('You can save up to 10 items. Delete some or clear all first.');
+      return;
+    }
+    list.unshift(v);
+    saveList(list);
+    showError('');
+    inp.value = '';
+    render();
+  }
+
+  function removeAt(index){
+    var list = loadList();
+    if (index < 0 || index >= list.length) return;
+    list.splice(index, 1);
+    saveList(list);
+    render();
+  }
+
+  function clearAll(){
+    saveList([]);
+    render();
+  }
+
+  // ===== 이벤트 바인딩 =====
+  saveBtn.addEventListener('click', function(){
+    addId(inp.value);
+  });
+  inp.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') {
+      addId(inp.value);
+    }
+  });
+  clrBtn.addEventListener('click', function(){
+    if (confirm('Clear all saved items?')) clearAll();
+  });
+  inp.addEventListener('input', function(){
+    // 입력 중 에러 문구는 숨김
+    showError('');
   });
 
+  // 초기 렌더
   render();
 })();
 </script>
