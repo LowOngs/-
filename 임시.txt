@@ -1,4 +1,4 @@
-/* ===== Ongs Partner Console – Code.gs (v11.3, frame-safe + meta-refresh redirect) ===== */
+/* ===== Ongs Partner Console – Code.gs (v11.3, frame-safe + meta-refresh redirect + diag) ===== */
 
 /** 파트너 목록 */
 var PARTNERS = [
@@ -13,8 +13,8 @@ var TZ = 'Asia/Seoul';
  *  ⚠️ 여긴 반드시 “스프레드시트 ID”를 넣으세요 (docs.google.com/spreadsheets/… 중간의 ID).
  *  Apps Script 웹앱 ID/URL을 넣으면 openById가 실패합니다.
  */
-var SPREADSHEET_ID = '14sGbEJvsdfCSbehpzg0140o2FG6TCb-Z2prMof8nFEs';  // 필요 시 수정
-var SHEET_NAME     = 'stats';
+var SPREADSHEET_ID = '14sGbEJvsdfCSbehpzg0140o2FG6TCb-Z2prMof8nFEs';  // ← 시트 ID만
+var SHEET_NAME     = 'stats';                                            // ← 탭 이름과 정확히 일치
 
 /** 관리자 판별 (“웹 앱: 나만” 또는 “모든 사용자” 중 로그인된 본인) */
 function isAdmin_(){
@@ -31,6 +31,37 @@ function doGet(e){
 
   // 방문자 리디렉션
   if (cmd === 'go')  return handleRedirect_(e);
+
+  // ──────────────── ▼ 진단/강제 카운트(임시) ────────────────
+  // 강제 1회 누적: /exec?cmd=bumpTest&pid=amazon
+  if (cmd === 'bumpTest'){
+    var pid = (e.parameter && e.parameter.pid) || 'amazon';
+    bumpClick_(String(pid).toLowerCase());
+    return ContentService.createTextOutput(JSON.stringify({ok:true, bumped:pid}))
+                         .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // 시트/권한 상태 점검: /exec?cmd=diag
+  if (cmd === 'diag'){
+    var diag = { ok:true, tz:TZ, sheetId:!!SPREADSHEET_ID, sheetName:SHEET_NAME };
+    try{
+      var sh = getSheet_();
+      diag.canOpen = !!sh;
+      if (sh){
+        var lastRow = sh.getLastRow();
+        diag.lastRow = lastRow;
+        if (lastRow >= 1){
+          var rng = sh.getRange(Math.max(1,lastRow-5+1), 1, Math.min(5,lastRow), 3).getValues();
+          diag.tail = rng;
+        }
+      }
+    }catch(err){
+      diag.ok = false; diag.error = String(err && err.message || err);
+    }
+    return ContentService.createTextOutput(JSON.stringify(diag))
+                         .setMimeType(ContentService.MimeType.JSON);
+  }
+  // ──────────────── ▲ 진단/강제 카운트(임시) ────────────────
 
   // 관리자 UI
   if (!isAdmin_()) return HtmlService.createHtmlOutput('<h3>Forbidden</h3>');
@@ -132,9 +163,10 @@ function handleRedirect_(e){
     return HtmlService.createHtmlOutput('<meta name="referrer" content="no-referrer"><h3>Partner is ON but link not configured yet.</h3>');
   }
 
-  bumpClick_(pid); // 시트 미설정이면 내부에서 조용히 패스
+  // 클릭 카운트 (시트 미설정이면 내부에서 조용히 패스)
+  bumpClick_(pid);
 
-  // ✅ 프레임에 갇히거나 차단될 때 대비: meta refresh + top.location + _top 링크 폴백
+  // 프레임에 갇히거나 차단될 때 대비: meta refresh + top.location + _top 링크 폴백
   var safeUrl = url.replace(/"/g, '&quot;');
   var U = JSON.stringify(url);
   var html =
