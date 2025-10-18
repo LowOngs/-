@@ -1,147 +1,169 @@
-/* ===== Ongs Partner Console – Code.gs (v11.3 집계 연결 버전) ===== */
-
-/** 파트너 목록 */
-var PARTNERS = [
-  'amazon','ebay','target','mercadolibre','flipkart',
-  'amazon_in','shopee','lazada','aliexpress','otto','zalando','allegro'
-];
-
-/** 기본 타임존 */
-var TZ = 'Asia/Seoul';
-
-/** 🟢 여기에 구글 시트 ID를 넣으세요 */
-var SPREADSHEET_ID = '여기에_시트_ID_붙여넣기';  
-var SHEET_NAME     = 'stats';
-
-/** 관리자 판별 */
-function isAdmin_(){
-  var me = Session.getActiveUser().getEmail();
-  return !!me;
-}
-
-/** 엔트리 */
-function doGet(e){
-  var cmd = (e && e.parameter && e.parameter.cmd) || '';
-  if (cmd === 'map') return jsonActiveMap_();
-  if (cmd === 'go')  return handleRedirect_(e);
-  if (!isAdmin_()) return HtmlService.createHtmlOutput('<h3>Forbidden</h3>');
-  return HtmlService.createHtmlOutputFromFile('admin_dash')
-    .setTitle('Ongs · Partner Console – v11.3')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-}
-
-/** 상태 조회 */
-function getPartnerState(){
-  var props = PropertiesService.getScriptProperties();
-  var out = {};
-  PARTNERS.forEach(function(pid){
-    var url = props.getProperty('url_'+pid) || '';
-    var onProp = props.getProperty('on_'+pid);
-    var on  = (onProp == null) ? true : (onProp === '1');
-    out[pid] = { url:url, on:on };
-  });
-  return out;
-}
-
-/** URL 저장 */
-function setPartnerUrl(pid, url){
-  if (!isAdmin_()) throw new Error('forbidden');
-  if (PARTNERS.indexOf(pid) < 0) throw new Error('unknown pid');
-  var u = (url || '').trim();
-  PropertiesService.getScriptProperties().setProperty('url_'+pid, u);
-  return { ok:true, pid:pid, url:u };
-}
-
-/** ON/OFF 설정 */
-function setPartnerOn(pid, on){
-  if (!isAdmin_()) throw new Error('forbidden');
-  if (PARTNERS.indexOf(pid) < 0) throw new Error('unknown pid');
-  var props = PropertiesService.getScriptProperties();
-  var curUrl = (props.getProperty('url_'+pid) || '').trim();
-  if (on === false && curUrl) {
-    throw new Error('트래킹 링크가 존재합니다. 먼저 URL을 비우고 저장한 뒤 OFF로 전환하세요.');
+<!-- ▼ Footer Partners (v12r3): 초기 회색 도색 제거 / 상태맵으로만 색·클릭 제어 -->
+<style>
+  .partner-wrap{ --btnSize:74px; --arrowSize:88px; --gap:12px; }
+  .partner-wrap .arrow{
+    width:var(--arrowSize);height:var(--arrowSize);border:none;border-radius:9999px;background:#555;color:#fff;
+    cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:42px;box-shadow:0 3px 6px rgba(0,0,0,.25);
   }
-  props.setProperty('on_'+pid, on ? '1' : '0');
-  return { ok:true, pid:pid, on:!!on, state:getPartnerState() };
-}
-
-/** 가젯용 활성 맵(JSON) */
-function jsonActiveMap_(){
-  var state = getPartnerState();
-  var map = {};
-  Object.keys(state).forEach(function(pid){
-    var st  = state[pid] || {};
-    var url = (st.url || '').trim();
-    var on  = !!st.on;
-    map[pid] = { on:on, clickable:(on && !!url), href:url };
-  });
-  return ContentService.createTextOutput(JSON.stringify(map))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-/** 방문자 리디렉션 */
-function handleRedirect_(e){
-  var raw = (e && e.parameter && (e.parameter.pid || e.parameter.partner)) || '';
-  var pid = String(raw || '').trim().toLowerCase();
-  var props = PropertiesService.getScriptProperties();
-  var onProp = pid ? props.getProperty('on_'+pid) : null;
-  var url = pid ? (props.getProperty('url_'+pid) || '') : '';
-  var on = (onProp == null) ? true : (onProp === '1');
-  if (!pid){
-    return HtmlService.createHtmlOutput('<meta name="referrer" content="no-referrer"><h3>Unknown partner.</h3>');
+  .partner-wrap .strip{
+    flex:1 1 auto;display:flex;gap:var(--gap);overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;
+    scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:12px 0;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;
   }
-  if (!on){
-    return HtmlService.createHtmlOutput('<meta name="referrer" content="no-referrer"><h3>Inactive partner button (OFF).</h3>');
+  .partner-wrap .card{
+    flex:0 0 auto;scroll-snap-align:center;width:var(--btnSize);height:var(--btnSize);
+    border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;padding:0;background:none;display:inline-flex;align-items:center;justify-content:center;
   }
-  if (!url){
-    return HtmlService.createHtmlOutput('<meta name="referrer" content="no-referrer"><h3>Partner is ON but link not configured yet.</h3>');
-  }
-  bumpClick_(pid);
-  var html = '<meta name="referrer" content="no-referrer">'
-           + '<script>location.replace(' + JSON.stringify(url) + ');</script>'
-           + '<noscript><a href='+JSON.stringify(url)+'>Continue</a></noscript>';
-  return HtmlService.createHtmlOutput(html);
-}
+  .partner-wrap .card img{ width:100%;height:100%;object-fit:cover;border-radius:12px;display:block;transition:transform .2s ease; }
+  /* 로고 작았던 3개 확대 유지 */
+  .partner-wrap .card img[src*="amazon_india"]{ transform:scale(1.34); }
+  .partner-wrap .card img[src*="allegro"]{       transform:scale(1.32); }
+  .partner-wrap .card img[src*="aliexpress"]{    transform:scale(1.32); }
 
-/* =========================
- * 🟢 클릭 집계 로직
- * ========================= */
-function getMonthlyStatsRPC(){
-  var mk = monthKey_();
-  var counts = {};
-  PARTNERS.forEach(function(pid){ counts[pid]=0; });
-  var sh = getSheet_();
-  if (!sh) return { yyyymm:mk, counts:counts };
-  var data = sh.getDataRange().getValues();
-  for (var i=1; i<data.length; i++){
-    var m=data[i][0], p=data[i][1], c=Number(data[i][2]||0);
-    if (m===mk && counts.hasOwnProperty(p)) counts[p]+=c;
-  }
-  return { yyyymm:mk, counts:counts };
-}
+  /* OFF/비클릭 상태만 회색 처리 */
+  .partner-wrap .partner-btn.state-off,
+  .partner-wrap .partner-btn.state-on-noclick{ filter:grayscale(1) brightness(.85) opacity(.55)!important; cursor:default!important; }
+  .partner-wrap .partner-btn.state-off img,
+  .partner-wrap .partner-btn.state-on-noclick img{ filter:grayscale(1) brightness(.9) opacity(.75)!important; }
 
-function bumpClick_(pid){
-  var sh = getSheet_();
-  if (!sh) return;
-  sh.appendRow([monthKey_(), pid, 1]);
-}
+  /* ON(클릭 가능/불가 공통)일 때 컬러 */
+  .partner-wrap .partner-btn.state-on,
+  .partner-wrap .partner-btn.state-on-noclick{ filter:none!important; }
+</style>
 
-function getSheet_(){
-  try{
-    if (!SPREADSHEET_ID) return null;
-    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    var sh = ss.getSheetByName(SHEET_NAME);
-    if (!sh){
-      sh = ss.insertSheet(SHEET_NAME);
-      sh.getRange(1,1,1,3).setValues([['month','pid','count']]);
+<div class="partner-wrap" style="display:flex;align-items:center;justify-content:center;gap:14px;max-width:100%;margin:14px 0;">
+  <button type="button" class="arrow" aria-label="Scroll left"
+          onclick="this.nextElementSibling.scrollBy({left:-420,behavior:'smooth'})">‹</button>
+
+  <div class="strip">
+    <a class="card partner-btn" data-pid="amazon" aria-label="Amazon">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_amazon.png?raw=1" alt="Amazon" />
+    </a>
+    <a class="card partner-btn" data-pid="ebay" aria-label="eBay">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_ebay.png?raw=1" alt="eBay" />
+    </a>
+    <a class="card partner-btn" data-pid="target" aria-label="Target">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_target.png?raw=1" alt="Target" />
+    </a>
+    <a class="card partner-btn" data-pid="mercadolibre" aria-label="Mercado Libre">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_mercadolibre.png?raw=1" alt="Mercado Libre" />
+    </a>
+    <a class="card partner-btn" data-pid="flipkart" aria-label="Flipkart">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_flipkart.png?raw=1" alt="Flipkart" />
+    </a>
+    <a class="card partner-btn" data-pid="amazon_in" aria-label="Amazon India">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_amazon_india.png?raw=1" alt="Amazon India" />
+    </a>
+    <a class="card partner-btn" data-pid="shopee" aria-label="Shopee">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_shopee.png?raw=1" alt="Shopee" />
+    </a>
+    <a class="card partner-btn" data-pid="lazada" aria-label="Lazada">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_lazada.png?raw=1" alt="Lazada" />
+    </a>
+    <a class="card partner-btn" data-pid="aliexpress" aria-label="AliExpress">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_aliexpress.png?raw=1" alt="AliExpress" />
+    </a>
+    <a class="card partner-btn" data-pid="otto" aria-label="Otto">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_otto.png?raw=1" alt="Otto" />
+    </a>
+    <a class="card partner-btn" data-pid="zalando" aria-label="Zalando">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_zalando.png?raw=1" alt="Zalando" />
+    </a>
+    <a class="card partner-btn" data-pid="allegro" aria-label="Allegro">
+      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_allegro.png?raw=1" alt="Allegro" />
+    </a>
+  </div>
+
+  <button type="button" class="arrow" aria-label="Scroll right"
+          onclick="this.previousElementSibling.scrollBy({left:420,behavior:'smooth'})">›</button>
+</div>
+
+<p style="text-align:center;margin:.6rem 0 0 0;font-size:.8rem;color:#ddd;white-space:normal;">
+  Affiliate use is free. For certain affiliate programs, the operator receives a commission from the affiliate.
+</p>
+
+<script>
+(function(){
+  /* ⬇ 현재 배포 ‘웹 앱 URL’ */
+  const EXEC_BASE = 'https://script.google.com/macros/s/AKfycbyatNoxrAGrPqr9E5leFwhPQAl_wbnm79Or7J4S5AZCBYY9O1yKmQt6eFNbuZTIad1aEQ/exec';
+
+  const withQS = (base, params) => {
+    const u = new URL(base);
+    Object.entries(params).forEach(([k,v]) => u.searchParams.set(k, v));
+    return u.toString();
+  };
+
+  window.addEventListener('load', init, {once:true});
+
+  // 상태 반영
+  function paintState(el, st){
+    // st: {on:boolean, clickable:boolean, href:string}
+    if (!st || !st.on){
+      el.classList.remove('state-on','state-on-noclick');
+      el.classList.add('state-off');
+      el.removeAttribute('href'); el.removeAttribute('target'); el.removeAttribute('rel');
+      el.style.pointerEvents = 'none';
+      return;
     }
-    return sh;
-  }catch(err){
-    return null;
+    if (st.on && !st.clickable){
+      el.classList.remove('state-off','state-on');
+      el.classList.add('state-on-noclick');
+      el.removeAttribute('href'); el.removeAttribute('target'); el.removeAttribute('rel');
+      el.style.pointerEvents = 'none';
+      return;
+    }
+    el.classList.remove('state-off','state-on-noclick');
+    el.classList.add('state-on');
+    el.href   = withQS(EXEC_BASE, {cmd:'go', pid: el.getAttribute('data-pid'), src:'footer'});
+    el.target = '_blank';
+    el.rel    = 'nofollow noopener';
+    el.style.pointerEvents = '';
   }
-}
 
-function monthKey_(){
-  var tz = Session.getScriptTimeZone() || TZ;
-  return Utilities.formatDate(new Date(), tz, 'yyyy-MM');
-}
+  // 서버 응답을 신형/구형 모두 호환되게 정규화
+  function normalizeState(raw){
+    // 신형: 객체형 {on, clickable, href}
+    if (raw && typeof raw === 'object') {
+      return {
+        on: !!raw.on,
+        clickable: !!raw.clickable,
+        href: typeof raw.href === 'string' ? raw.href : ''
+      };
+    }
+    // 구형: 불리언 true/false
+    if (raw === true)  return { on:true,  clickable:false, href:'' };
+    if (raw === false) return { on:false, clickable:false, href:'' };
+    // 없을 때
+    return { on:false, clickable:false, href:'' };
+  }
+
+  function init(){
+    const els = document.querySelectorAll('.partner-btn[data-pid]');
+    if (!els.length) return;
+
+    // OFF/NoLink 상태 클릭 보호
+    document.addEventListener('click', function(e){
+      const a = e.target.closest('.partner-btn');
+      if (!a) return;
+      if (a.classList.contains('state-off') || a.classList.contains('state-on-noclick')){
+        e.preventDefault(); e.stopPropagation();
+      }
+    }, true);
+
+    // 상태맵 로드(캐시버스터)
+    const mapUrl = withQS(EXEC_BASE, {cmd:'map', cb: Date.now()});
+    fetch(mapUrl, {cache:'no-store'})
+      .then(r => { if(!r.ok) throw new Error('map http '+r.status); return r.json(); })
+      .then(map => {
+        els.forEach(el=>{
+          const pid = el.getAttribute('data-pid');
+          const st  = normalizeState(map ? map[pid] : undefined);
+          paintState(el, st);
+        });
+      })
+      .catch(err=>{
+        console.warn('[partners] map fetch failed:', err);
+        // 실패 시 표시 유지
+      });
+  }
+})();
+</script>
