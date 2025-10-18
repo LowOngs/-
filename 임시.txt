@@ -1,56 +1,186 @@
-/* ===== Ongs Admin Quick Button – v1.0 (label: 스크립트 관리) ===== */
+/* ===== Ongs Partner Console – Code.gs (v11.3) ===== */
 
-function doGet(e) {
-  // 쿼리 파라미터 받기
-  const cmd   = (e && e.parameter && e.parameter.cmd)   || '';
-  const delay = (e && e.parameter && e.parameter.delay) || 2000;
-  const key   = (e && e.parameter && e.parameter.key)   || 'A';
+/** 파트너 목록 */
+var PARTNERS = [
+  'amazon','ebay','target','mercadolibre','flipkart',
+  'amazon_in','shopee','lazada','aliexpress','otto','zalando','allegro'
+];
 
-  if (cmd === 'btn') {
-    return makeButton_(delay, key);
-  }
-  return ContentService.createTextOutput('Ongs Script Management Button');
+/** 기본 타임존 */
+var TZ = 'Asia/Seoul';
+
+/** (선택) 집계용 스프레드시트 – 미설정이면 조용히 패스 */
+var SPREADSHEET_ID = 'AKfycbzf7PPzEF6Kbcg6SXvzZKOe5l6U2kvadliRxAA1e-ohULkCP7c_5c5rDx4HpssvKgpsRw';      // 필요시 설정
+var SHEET_NAME     = 'stats';
+
+/** 관리자 판별 (“웹 앱: 나만” 또는 “모든 사용자” 중 로그인된 본인) */
+function isAdmin_(){
+  var me = Session.getActiveUser().getEmail();
+  return !!me;
 }
 
-/** 운영자 콘솔 웹앱 주소 (옹스님 실제 배포 주소로 교체) */
-const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbzdngAqXOjZjd2_50snpGx7TfyZ_iFYABWKrBYRStDDdUjmFxOOmxnUO5xWiUr8YWDrKw/exec';
+/** 엔트리 포인트 */
+function doGet(e){
+  var cmd = (e && e.parameter && e.parameter.cmd) || '';
 
-/** 버튼용 JS 코드 생성 */
-function makeButton_(delay, key) {
-  const js = `
-(function(){
-  // 버튼 생성
-  const wrap = document.createElement('div');
-  wrap.id = 'ogxScriptBtnWrap';
-  wrap.style.cssText = 'position:fixed;right:16px;bottom:76px;z-index:9999;display:none;';
-  wrap.innerHTML = '<a id="ogxScriptBtn" href="#" style="display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:10px;background:#111;color:#fff;text-decoration:none;font:600 14px/1.2 system-ui;box-shadow:0 4px 10px rgba(0,0,0,.2)">⚙️ 스크립트 관리</a>';
-  document.body.appendChild(wrap);
+  // 가젯/클라이언트용 JSON 맵
+  if (cmd === 'map') return jsonActiveMap_();
 
-  const btn = document.getElementById('ogxScriptBtn');
-  const url = '${ADMIN_URL}?cb=' + Date.now();
+  // 방문자 리디렉션
+  if (cmd === 'go')  return handleRedirect_(e);
 
-  let openUntil = 0;
-  // Shift + 지정키 → 표시
-  document.addEventListener('keydown', function(e){
-    if(e.shiftKey && (e.key === '${key}' || e.key === '${key.toLowerCase()}')){
-      wrap.style.display = 'block';
-      wrap.style.opacity = '1';
-      openUntil = Date.now() + ${delay};
-      setTimeout(()=>{ wrap.style.display='none'; }, ${delay});
-    }
+  // 관리자 UI
+  if (!isAdmin_()) return HtmlService.createHtmlOutput('<h3>Forbidden</h3>');
+  return HtmlService.createHtmlOutputFromFile('admin_dash')
+    .setTitle('Ongs · Partner Console – v11.3')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+/* =========================
+ * 상태/설정
+ * ========================= */
+
+/** 전체 상태 조회(관리자/가젯 공용) */
+function getPartnerState(){
+  var props = PropertiesService.getScriptProperties();
+  var out = {};
+  PARTNERS.forEach(function(pid){
+    var url = props.getProperty('url_'+pid) || '';
+    var onProp = props.getProperty('on_'+pid);
+    // 기본값: ON (저장 없으면 true)
+    var on  = (onProp == null) ? true : (onProp === '1');
+    out[pid] = { url:url, on:on };
   });
+  return out;
+}
 
-  // 버튼 클릭
-  btn.addEventListener('click', function(ev){
-    ev.preventDefault();
-    if(Date.now() <= openUntil){
-      window.open(url, '_blank', 'noopener');
-    }
+/** URL 저장 – 형식 제한 제거(빈 값/임의 문자열도 허용) */
+function setPartnerUrl(pid, url){
+  if (!isAdmin_()) throw new Error('forbidden');
+  if (PARTNERS.indexOf(pid) < 0) throw new Error('unknown pid');
+
+  var u = (url || '').trim();
+  // URL 정규식 검증은 의도적으로 제거 (빈 값 저장 가능)
+  PropertiesService.getScriptProperties().setProperty('url_'+pid, u);
+  return { ok:true, pid:pid, url:u };
+}
+
+/** ON/OFF 설정
+ *  - OFF로 내릴 때는 “저장된 URL이 비어 있어야” 가능
+ *  - ON으로 올리는 것은 URL 없어도 허용(푸터: 컬러지만 비클릭)
+ *  - URL 자체는 이 함수에서 절대 변경하지 않음
+ */
+function setPartnerOn(pid, on){
+  if (!isAdmin_()) throw new Error('forbidden');
+  if (PARTNERS.indexOf(pid) < 0) throw new Error('unknown pid');
+
+  var props = PropertiesService.getScriptProperties();
+  var curUrl = (props.getProperty('url_'+pid) || '').trim();
+
+  if (on === false && curUrl) {
+    throw new Error('트래킹 링크가 존재합니다. 먼저 URL을 비우고 저장한 뒤 OFF로 전환하세요.');
+  }
+
+  props.setProperty('on_'+pid, on ? '1' : '0');
+  return { ok:true, pid:pid, on:!!on, state:getPartnerState() };
+}
+
+/** 가젯용 활성 맵(JSON) */
+function jsonActiveMap_(){
+  var state = getPartnerState();
+  var map = {};
+  Object.keys(state).forEach(function(pid){
+    var st  = state[pid] || {};
+    var url = (st.url || '').trim();
+    var on  = !!st.on;
+    map[pid] = {
+      on: on,
+      clickable: (on && !!url),
+      href: url
+    };
   });
-})();
-`;
-
   return ContentService
-    .createTextOutput(js)
-    .setMimeType(ContentService.MimeType.JAVASCRIPT);
+    .createTextOutput(JSON.stringify(map))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/* =========================
+ * 리디렉션 & 집계
+ * ========================= */
+
+/** 방문자 리디렉션 */
+function handleRedirect_(e){
+  var raw = (e && e.parameter && (e.parameter.pid || e.parameter.partner)) || '';
+  var pid = String(raw || '').trim().toLowerCase();
+
+  var props = PropertiesService.getScriptProperties();
+  var onProp = pid ? props.getProperty('on_'+pid) : null;
+  var url = pid ? (props.getProperty('url_'+pid) || '') : '';
+  // on 기본 true 규칙
+  var on = (onProp == null) ? true : (onProp === '1');
+
+  if (!pid){
+    return HtmlService.createHtmlOutput('<meta name="referrer" content="no-referrer"><h3>Unknown partner.</h3>');
+  }
+  if (!on){
+    return HtmlService.createHtmlOutput('<meta name="referrer" content="no-referrer"><h3>Inactive partner button (OFF).</h3>');
+  }
+  if (!url){
+    // 컬러지만 비클릭이어야 하나, 직접 접근 시 안내
+    return HtmlService.createHtmlOutput('<meta name="referrer" content="no-referrer"><h3>Partner is ON but link not configured yet.</h3>');
+  }
+
+  bumpClick_(pid); // 시트 미설정이면 내부에서 조용히 패스
+
+  var html = ''
+    + '<meta name="referrer" content="no-referrer">'
+    + '<script>location.replace(' + JSON.stringify(url) + ');</script>'
+    + '<noscript><a href=' + JSON.stringify(url) + '>Continue</a></noscript>';
+  return HtmlService.createHtmlOutput(html);
+}
+
+/* =========================
+ * 집계(선택)
+ * ========================= */
+
+function getMonthlyStatsRPC(){
+  var mk = monthKey_();
+  var counts = {};
+  PARTNERS.forEach(function(pid){ counts[pid]=0; });
+
+  var sh = getSheet_();
+  if (!sh) return { yyyymm:mk, counts:counts };
+
+  var data = sh.getDataRange().getValues();
+  for (var i=1; i<data.length; i++){
+    var m=data[i][0], p=data[i][1], c=Number(data[i][2]||0);
+    if (m===mk && counts.hasOwnProperty(p)) counts[p]+=c;
+  }
+  return { yyyymm:mk, counts:counts };
+}
+
+function bumpClick_(pid){
+  var sh = getSheet_();
+  if (!sh) return;
+  sh.appendRow([monthKey_(), pid, 1]);
+}
+
+function getSheet_(){
+  try{
+    if (!SPREADSHEET_ID) return null;
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sh = ss.getSheetByName(SHEET_NAME);
+    if (!sh){
+      sh = ss.insertSheet(SHEET_NAME);
+      sh.getRange(1,1,1,3).setValues([['month','pid','count']]);
+    }
+    return sh;
+  }catch(err){
+    return null; // 시트 접근 실패는 조용히 패스
+  }
+}
+
+function monthKey_(){
+  var tz = Session.getScriptTimeZone() || TZ;
+  return Utilities.formatDate(new Date(), tz, 'yyyy-MM');
 }
