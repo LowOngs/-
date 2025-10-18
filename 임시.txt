@@ -1,78 +1,56 @@
-/** Button Gadget Web App (Shift+A → 2초 노출) **/
-const ADMIN_URL = '<<여기에 운영자 콘솔 웹앱 URL을 넣으세요>>'; // 예: https://script.google.com/macros/s/AKfyc.../exec
+/* ===== Ongs Admin Quick Button – v1.0 (label: 스크립트 관리) ===== */
 
 function doGet(e) {
-  const cmd = (e && e.parameter && e.parameter.cmd) || 'btn';
-  if (cmd !== 'btn') return HtmlService.createHtmlOutput('OK');
+  // 쿼리 파라미터 받기
+  const cmd   = (e && e.parameter && e.parameter.cmd)   || '';
+  const delay = (e && e.parameter && e.parameter.delay) || 2000;
+  const key   = (e && e.parameter && e.parameter.key)   || 'A';
 
-  // 노출 시간(ms) & 단축키(기본 A) 쿼리로 커스터마이즈 가능
-  const delay = Math.max(500, Math.min(10000, parseInt((e.parameter && e.parameter.delay) || '2000', 10) || 2000));
-  const key   = ((e.parameter && e.parameter.key) || 'A').toUpperCase();
+  if (cmd === 'btn') {
+    return makeButton_(delay, key);
+  }
+  return ContentService.createTextOutput('Ongs Script Management Button');
+}
 
+/** 운영자 콘솔 웹앱 주소 (옹스님 실제 배포 주소로 교체) */
+const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbzdngAqXOjZjd2_50snpGx7TfyZ_iFYABWKrBYRStDDdUjmFxOOmxnUO5xWiUr8YWDrKw/exec';
+
+/** 버튼용 JS 코드 생성 */
+function makeButton_(delay, key) {
   const js = `
 (function(){
-  try {
-    if (document.getElementById('ongs-ops-gadget')) return;
+  // 버튼 생성
+  const wrap = document.createElement('div');
+  wrap.id = 'ogxScriptBtnWrap';
+  wrap.style.cssText = 'position:fixed;right:16px;bottom:76px;z-index:9999;display:none;';
+  wrap.innerHTML = '<a id="ogxScriptBtn" href="#" style="display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:10px;background:#111;color:#fff;text-decoration:none;font:600 14px/1.2 system-ui;box-shadow:0 4px 10px rgba(0,0,0,.2)">⚙️ 스크립트 관리</a>';
+  document.body.appendChild(wrap);
 
-    // 래퍼
-    var wrap = document.createElement('div');
-    wrap.id  = 'ongs-ops-gadget';
-    wrap.setAttribute('aria-hidden','true');
-    wrap.style.cssText = 'display:none;position:fixed;right:16px;bottom:76px;z-index:2147483646';
+  const btn = document.getElementById('ogxScriptBtn');
+  const url = '${ADMIN_URL}?cb=' + Date.now();
 
-    // 버튼
-    var a = document.createElement('a');
-    a.href = '#';
-    a.id = 'ongs-ops-gadget-btn';
-    a.setAttribute('rel','nofollow noopener');
-    a.setAttribute('aria-label','운영정보관리');
-    a.title = '운영정보관리';
-    a.style.cssText = [
-      'display:flex','align-items:center','gap:8px','padding:10px 12px',
-      'border-radius:12px','background:#111','color:#fff',
-      'text-decoration:none','font:600 13px/1 system-ui',
-      'box-shadow:0 6px 16px rgba(0,0,0,.18)'
-    ].join(';');
-
-    // 안전한 기어 아이콘
-    a.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">'
-                + '<circle cx="12" cy="12" r="3" fill="#fff"></circle>'
-                + '<g stroke="#fff" stroke-width="2" stroke-linecap="round">'
-                + '<path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.5 4.5l1.4 1.4M18.1 18.1l1.4 1.4M19.5 4.5l-1.4 1.4M6.9 18.1l-1.4 1.4"></path>'
-                + '</g></svg><span>운영정보관리</span>';
-
-    a.addEventListener('click', function(ev){
-      ev.preventDefault();
-      // 서버(운영자 콘솔)에서 isAdmin_으로 최종 권한 체크 → 비관리자는 Forbidden
-      var u = '${ADMIN_URL}';
-      // 캐시버스터
-      u += (u.indexOf('?')>-1 ? '&' : '?') + 'cb=' + Date.now();
-      window.open(u, '_blank', 'noopener');
-    });
-
-    wrap.appendChild(a);
-    document.body.appendChild(wrap);
-
-    // Shift+${key} → ${delay/1000}초 노출
-    var closeTimer = null;
-    function revealOnce(){
-      clearTimeout(closeTimer);
+  let openUntil = 0;
+  // Shift + 지정키 → 표시
+  document.addEventListener('keydown', function(e){
+    if(e.shiftKey && (e.key === '${key}' || e.key === '${key.toLowerCase()}')){
       wrap.style.display = 'block';
-      closeTimer = setTimeout(function(){ wrap.style.display='none'; }, ${delay});
+      wrap.style.opacity = '1';
+      openUntil = Date.now() + ${delay};
+      setTimeout(()=>{ wrap.style.display='none'; }, ${delay});
     }
-    document.addEventListener('keydown', function(e){
-      if (e.shiftKey && String(e.key || '').toUpperCase() === '${key}') {
-        revealOnce();
-      }
-    }, true);
+  });
 
-    // 페이지 최초 1회 살짝 준비(즉시 노출 X)
-    // (원하면 여기서 revealOnce()를 호출해 첫 방문에 표시할 수도 있음)
-  } catch(e) {
-    // 조용히 실패
-  }
-})();`;
+  // 버튼 클릭
+  btn.addEventListener('click', function(ev){
+    ev.preventDefault();
+    if(Date.now() <= openUntil){
+      window.open(url, '_blank', 'noopener');
+    }
+  });
+})();
+`;
 
-  return ContentService.createTextOutput(js)
+  return ContentService
+    .createTextOutput(js)
     .setMimeType(ContentService.MimeType.JAVASCRIPT);
 }
