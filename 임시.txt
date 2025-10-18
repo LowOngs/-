@@ -1,91 +1,7 @@
-<!-- ▼ Footer Partners (v12r3): 초기 회색 도색 제거 / 상태맵으로만 색·클릭 제어 -->
-<style>
-  .partner-wrap{ --btnSize:74px; --arrowSize:88px; --gap:12px; }
-  .partner-wrap .arrow{
-    width:var(--arrowSize);height:var(--arrowSize);border:none;border-radius:9999px;background:#555;color:#fff;
-    cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:42px;box-shadow:0 3px 6px rgba(0,0,0,.25);
-  }
-  .partner-wrap .strip{
-    flex:1 1 auto;display:flex;gap:var(--gap);overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;
-    scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:12px 0;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;
-  }
-  .partner-wrap .card{
-    flex:0 0 auto;scroll-snap-align:center;width:var(--btnSize);height:var(--btnSize);
-    border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;padding:0;background:none;display:inline-flex;align-items:center;justify-content:center;
-  }
-  .partner-wrap .card img{ width:100%;height:100%;object-fit:cover;border-radius:12px;display:block;transition:transform .2s ease; }
-  /* 로고 작았던 3개 확대 유지 */
-  .partner-wrap .card img[src*="amazon_india"]{ transform:scale(1.34); }
-  .partner-wrap .card img[src*="allegro"]{       transform:scale(1.32); }
-  .partner-wrap .card img[src*="aliexpress"]{    transform:scale(1.32); }
-
-  /* OFF/비클릭 상태만 회색 처리 */
-  .partner-wrap .partner-btn.state-off,
-  .partner-wrap .partner-btn.state-on-noclick{ filter:grayscale(1) brightness(.85) opacity(.55)!important; cursor:default!important; }
-  .partner-wrap .partner-btn.state-off img,
-  .partner-wrap .partner-btn.state-on-noclick img{ filter:grayscale(1) brightness(.9) opacity(.75)!important; }
-
-  /* ON(클릭 가능/불가 공통)일 때 컬러 */
-  .partner-wrap .partner-btn.state-on,
-  .partner-wrap .partner-btn.state-on-noclick{ filter:none!important; }
-</style>
-
-<div class="partner-wrap" style="display:flex;align-items:center;justify-content:center;gap:14px;max-width:100%;margin:14px 0;">
-  <button type="button" class="arrow" aria-label="Scroll left"
-          onclick="this.nextElementSibling.scrollBy({left:-420,behavior:'smooth'})">‹</button>
-
-  <div class="strip">
-    <a class="card partner-btn" data-pid="amazon" aria-label="Amazon">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_amazon.png?raw=1" alt="Amazon" />
-    </a>
-    <a class="card partner-btn" data-pid="ebay" aria-label="eBay">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_ebay.png?raw=1" alt="eBay" />
-    </a>
-    <a class="card partner-btn" data-pid="target" aria-label="Target">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_target.png?raw=1" alt="Target" />
-    </a>
-    <a class="card partner-btn" data-pid="mercadolibre" aria-label="Mercado Libre">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_mercadolibre.png?raw=1" alt="Mercado Libre" />
-    </a>
-    <a class="card partner-btn" data-pid="flipkart" aria-label="Flipkart">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_flipkart.png?raw=1" alt="Flipkart" />
-    </a>
-    <a class="card partner-btn" data-pid="amazon_in" aria-label="Amazon India">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_amazon_india.png?raw=1" alt="Amazon India" />
-    </a>
-    <a class="card partner-btn" data-pid="shopee" aria-label="Shopee">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_shopee.png?raw=1" alt="Shopee" />
-    </a>
-    <a class="card partner-btn" data-pid="lazada" aria-label="Lazada">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_lazada.png?raw=1" alt="Lazada" />
-    </a>
-    <a class="card partner-btn" data-pid="aliexpress" aria-label="AliExpress">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_aliexpress.png?raw=1" alt="AliExpress" />
-    </a>
-    <a class="card partner-btn" data-pid="otto" aria-label="Otto">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_otto.png?raw=1" alt="Otto" />
-    </a>
-    <a class="card partner-btn" data-pid="zalando" aria-label="Zalando">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_zalando.png?raw=1" alt="Zalando" />
-    </a>
-    <a class="card partner-btn" data-pid="allegro" aria-label="Allegro">
-      <img src="https://github.com/LowOngs/-/blob/google-blog/Sys_blog_imgs/btn_square_allegro.png?raw=1" alt="Allegro" />
-    </a>
-  </div>
-
-  <button type="button" class="arrow" aria-label="Scroll right"
-          onclick="this.previousElementSibling.scrollBy({left:420,behavior:'smooth'})">›</button>
-</div>
-
-<p style="text-align:center;margin:.6rem 0 0 0;font-size:.8rem;color:#ddd;white-space:normal;">
-  Affiliate use is free. For certain affiliate programs, the operator receives a commission from the affiliate.
-</p>
-
 <script>
 (function(){
-  /* ⬇ 현재 배포 ‘웹 앱 URL’ */
-  const EXEC_BASE = 'https://script.google.com/macros/s/AKfycbycWpb0FzgIcbs-WuIjcSGEVk8ITvNX1P99INi1US4Q2TLXrexBzPOMNPnClRosPUsl-w/exec
-';
+  // ⬇ 정확한 '웹 앱 URL' (줄바꿈/공백 없이)
+  const EXEC_BASE = 'https://script.google.com/macros/s/AKfycbycWpb0FzgIcbs-WuIjcSGEVk8ITvNX1P99INi1US4Q2TLXrexBzPOMNPnClRosPUsl-w/exec';
 
   const withQS = (base, params) => {
     const u = new URL(base);
@@ -95,9 +11,8 @@
 
   window.addEventListener('load', init, {once:true});
 
-  // 상태 반영
   function paintState(el, st){
-    // st: {on:boolean, clickable:boolean, href:string}
+    // st: { on:boolean, clickable:boolean, href:string }
     if (!st || !st.on){
       el.classList.remove('state-on','state-on-noclick');
       el.classList.add('state-off');
@@ -120,26 +35,26 @@
     el.style.pointerEvents = '';
   }
 
-  // 서버 응답을 신형/구형 모두 호환되게 정규화
   function normalizeState(raw){
-    // 신형: 객체형 {on, clickable, href}
     if (raw && typeof raw === 'object') {
-      return {
-        on: !!raw.on,
-        clickable: !!raw.clickable,
-        href: typeof raw.href === 'string' ? raw.href : ''
-      };
+      return { on: !!raw.on, clickable: !!raw.clickable, href: typeof raw.href === 'string' ? raw.href : '' };
     }
-    // 구형: 불리언 true/false
     if (raw === true)  return { on:true,  clickable:false, href:'' };
     if (raw === false) return { on:false, clickable:false, href:'' };
-    // 없을 때
     return { on:false, clickable:false, href:'' };
   }
 
   function init(){
     const els = document.querySelectorAll('.partner-btn[data-pid]');
     if (!els.length) return;
+
+    // ✅ 초기엔 모두 회색/비클릭으로 도색(맵 로드 실패 대비)
+    els.forEach(el=>{
+      el.classList.remove('state-on','state-on-noclick');
+      el.classList.add('state-off');
+      el.removeAttribute('href'); el.removeAttribute('target'); el.removeAttribute('rel');
+      el.style.pointerEvents = 'none';
+    });
 
     // OFF/NoLink 상태 클릭 보호
     document.addEventListener('click', function(e){
@@ -163,7 +78,7 @@
       })
       .catch(err=>{
         console.warn('[partners] map fetch failed:', err);
-        // 실패 시 표시 유지
+        // 실패 시 초기 state-off 유지
       });
   }
 })();
