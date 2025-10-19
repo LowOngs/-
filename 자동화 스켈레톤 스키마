@@ -1,0 +1,145 @@
+# =========================================================
+# 글 발행 자동화 '뼈대' 실행 순서 런북 (SEO·보안·웹앱 고려)
+# =========================================================
+# 목적: 콘텐츠(본문) 레이어와 에셋(가젯/JS/CSS) 레이어를 분리하고
+#       "부분 빌드 → 검증 → HTML만 배포 → 롤백" 뼈대를 만든다.
+# 사용: 각 STEP을 순서대로 진행. 명령/파일명은 환경에 맞게 치환.
+# =========================================================
+
+STEP 0) 초기 준비
+- Git 리포지토리: main, staging 브랜치
+- 실행환경: Staging(미리보기), Prod(본 서비스)
+- CDN/호스팅: HTML만 캐시 무효화(에셋 캐시는 유지) 가능 여부 확인
+
+STEP 1) 프로젝트 뼈대 디렉터리
+- /
+  /content/               # 포스트 JSON(블록 단위)
+    posts/
+  /templates/
+    post.html             # SEO 필드 바인딩 템플릿
+  /builder/
+    build_content.mjs     # 부분 빌드 스크립트(변경 블록만 렌더)
+  /validator/
+    validate_post.mjs     # 스키마/링크/텍스트 길이 검증
+    bot_render_check.mjs  # Googlebot 유사 렌더 체크(헤드리스)
+  /deploy/
+    deploy.mjs            # HTML만 업로드/캐시 무효화
+    invalidate.mjs        # CDN 무효화(필요 시)
+  /profiles/
+    gadget.footer.json    # 가젯별 보안/렌더 프로필(자리만)
+    gadget.admin.json
+    gadget.saved.json
+  /security/
+    csp.config.json       # 최소 CSP(‘self’) 정의(자리)
+    sri.inject.mjs        # 에셋 변경시에만 SRI 주입기(자리)
+    hotlink.apache.conf   # 핫링크 차단 샘플(자리)
+    hotlink.nginx.conf
+  /releases/              # 아카이브/로그 저장
+    .keep
+  /dist/                  # 산출 HTML (slug 별 폴더)
+
+STEP 2) 포스트 스키마 최소본(샘플) — /content/posts/hello.json
+{
+  "post_id": "hello-world",
+  "slug": "hello-world",
+  "version": 1,
+  "lang_primary": "en",
+  "langs": ["en","ko"],
+  "blocks": [
+    {"block_id":"p1","lang":"en","html":"<p>Hello world.</p>","hash":"", "updated_at":""},
+    {"block_id":"p1","lang":"ko","status":"review","suggest":"안녕하세요 세계.","ref_hash":""}
+  ],
+  "meta": {
+    "title":"Hello World",
+    "h1":"Hello World",
+    "schema": {},
+    "links": {"internal": [], "external": []},
+    "canonical": "https://example.com/hello-world",
+    "hreflang": [
+      {"lang":"en","url":"https://example.com/hello-world"},
+      {"lang":"ko","url":"https://example.com/ko/hello-world"}
+    ]
+  }
+}
+# 규칙: post_id/slug는 잠금(변경 금지). 본문은 blocks[]로만 교체.
+
+STEP 3) 템플릿(SEO 고정 필드 주입) — /templates/post.html (개요)
+<!doctype html>
+<html lang="{{lang}}">
+<head>
+  <meta charset="utf-8" />
+  <title>{{meta.title}}</title>
+  <link rel="canonical" href="{{meta.canonical}}" />
+  <!-- hreflang 반복 주입 -->
+  {{#each meta.hreflang}}<link rel="alternate" hreflang="{{lang}}" href="{{url}}" />{{/each}}
+  <!-- (선택) JSON-LD schema 주입 -->
+</head>
+<body>
+  <main>
+    <h1>{{meta.h1}}</h1>
+    <!-- 블록 HTML 삽입 지점 -->
+    {{#each blocks}}{{{html}}}{{/each}}
+    <!-- 내부/외부 링크 블록은 템플릿에서만 관리(편집기 금지) -->
+  </main>
+</body>
+</html>
+
+STEP 4) 부분 빌더(핵심) — /builder/build_content.mjs (개요 의사코드)
+- 입력: 포스트 JSON, 직전 빌드 메타(해시)
+- 절차:
+  1) blocks[].html → sha256 해시 산출
+  2) 직전 해시와 비교하여 변경된 block_id 목록 생성
+  3) 변경 블록만 템플릿에 주입하여 /dist/{slug}/index.html 생성
+  4) 산출 메타(각 block_id 해시, 빌드시간) 저장
+- 주의: 에셋(JS/CSS) 파이프라인과 분리. 문단 교체만으로 에셋 갱신 금지.
+
+STEP 5) 검증 훅 — /validator/validate_post.mjs (체크리스트)
+- 스키마 유효성: 필수 필드 누락/유형 오류 실패
+- 금지 변경: slug/canonical/hreflang 변경 시 실패
+- 링크 카운트 델타: 내부/외부 링크 수 급변 시 실패
+- 텍스트 길이: 본문 길이 급감(예: -40%↓) 시 실패(캔버스/쉐도우 과용 방지)
+
+STEP 5-1) 봇 렌더 미리보기 — /validator/bot_render_check.mjs
+- 헤드리스 렌더로 <h1>, 본문 텍스트, 주요 링크 존재 확인
+- 차단 리소스/콘솔 에러 수집(Report-Only 용)
+
+STEP 6) 배포 — /deploy/deploy.mjs
+- /dist/{slug}/index.html 만 업로드
+- CDN 무효화: HTML 경로만(or ETag/Last-Modified 갱신)
+- /releases/{YYYYMMDD-HHMMSS}.json 로 릴리즈 로그 기록
+  { post_id, version, changed_blocks[], sha256_summary, dist_path, author }
+
+STEP 7) 롤백 — /deploy/rollback.mjs (개요)
+- 인자: post_id, version, block_id(옵션)
+- /releases/ 로그 참조 → 대상 HTML 재생성 → 업로드
+- 부분 롤백 지원: 특정 block_id만 이전 html로 교체
+
+STEP 8) 편집/승인 루프(한글 검토 → 영문 반영)
+- 리뷰어: blocks[].suggest(ko) 작성
+- 에디터: 승인 시 해당 block_id의 en/html 교체, version++, hash 갱신
+- 부분 빌드 → 검증(스키마/링크/길이/봇 렌더) → 배포
+- ko의 ref_hash 동기화, 다른 언어는 outdated 플래그 큐에 적재
+
+STEP 9) 전역 보안 베이스(자리만 잡기: 실행은 Phase 2)
+- /security/csp.config.json : default-src 'self'; script/style/img-src 'self' data:
+- /security/sri.inject.mjs   : 에셋 변경시에만 해시 계산·주입(콘텐츠 교체 시 미동작)
+- /security/hotlink.*.conf   : 이미지 핫링크 차단, 프리뷰/워커 화이트리스트
+- 운영 소스맵 차단, 스테이징만 허용
+
+STEP 10) 가젯 보안(Phase 3에 적용)
+- footer/admin: 난독화·클래스 난수화(빌드 산출 class-map.json), 런타임 스크램블(선택)
+- saved-posts: SEO 최우선 → 난수화 최소, 텍스트 DOM 보존
+
+STEP 11) 카나리 & 모니터링
+- Staging → Report-Only CSP 로그 무오류 확인 → Prod 소량 트래픽 카나리
+- JS 에러 로깅(릴리즈 ID 태깅), CLS/차단 리소스 모니터
+- 문제 발생 시 rollback.mjs로 신속 복귀
+
+STEP 12) 운영 수칙(데이터 무결성)
+- URL/slug 영구 잠금(템플릿/빌더 레벨)
+- 에디터는 blocks[].html만 수정 가능(meta/링크/스키마는 읽기 전용)
+- 배포 전 sha256 재검증(예상 해시 ≟ 실제 해시) 불일치 시 실패
+- 모든 변경은 post_id/version/block_id 단위로 기록·복구 가능
+
+# 끝. 이 런북을 기준으로 각 mjs/템플릿 파일을 채워 넣으면
+# "부분 빌드 → 검증 → HTML만 배포 → 롤백" 뼈대가 즉시 동작합니다.
