@@ -1,6 +1,11 @@
 <!-- google-blog/System_files/.github/pull_request_template.md -->
 
 ### 🔧 수정 요청
+- 아래의 내용을 수정해서 블로그에 등록 합니다.
+- 수정요청 내용이 한글일 경우, 영문으로 번역하여 업데이트 합니다.
+
+
+□ 수정 글 번호 : page
 
 □ 수정 대상 글 / 문장 :
 
