@@ -1,1 +1,0 @@
-/* affiliate_admin.js */
