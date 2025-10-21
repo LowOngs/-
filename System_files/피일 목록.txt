@@ -1,3 +1,0 @@
-blogger_validator.py
-구글 블로그 기준에 맞는지 xml 검사하는 스크립트.
-xml완성후 gpt에게 제공하여 검사를 실시한다.
