@@ -1,5 +1,10 @@
-<!-- Saved Posts (client-side, localStorage) — compact layout -->
+<!-- Saved Posts (client-side, localStorage) — fixed 3x4 grid, no outer frame -->
 <style>
+  :root{
+    --sp-row-h: 40px;   /* 1 row height (includes text + padding) */
+    --sp-gap:   6px;    /* gap between items */
+  }
+
   .sp-wrap{font:14px/1.5 system-ui,Segoe UI,Helvetica,Arial;color:#111}
   .sp-field{position:relative;margin:8px 0}
   .sp-input{width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;box-sizing:border-box}
@@ -12,20 +17,43 @@
   .sp-btn.clear{background:#ef4444;color:#fff}
   .sp-tip{margin:6px 0 8px 0;color:#6b7280;font-size:12px}
   .sp-err{color:#ef4444;font-size:12px;margin:4px 0 0 0;display:none}
-  .sp-list{display:flex;flex-direction:column;gap:6px;margin:10px 0 0}
-  .sp-item{display:flex;align-items:center;justify-content:space-between;
-           border:1px solid #e5e7eb;border-radius:8px;padding:8px 10px;background:#fff}
-  .sp-id{font-weight:700}
+
+  /* ▼ Fixed 3 columns × 4 rows grid. No outer border/frame. */
+  .sp-list{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-gap);
+    /* 4 rows fixed height (no outer border) */
+    height: calc(4 * var(--sp-row-h) + 3 * var(--sp-gap));
+    overflow: hidden;              /* prevent layout shift */
+    padding: 0;                    /* no frame look */
+    border: none;                  /* no outer outline */
+    box-sizing: content-box;
+    margin: 10px 0 0;
+  }
+
+  .sp-item{
+    display:flex;align-items:center;justify-content:space-between;
+    border:1px solid #e5e7eb;border-radius:8px;padding:8px 10px;background:#fff;
+    min-height: var(--sp-row-h);  /* unify row height */
+    box-sizing: border-box;
+  }
+  .sp-id{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:75%}
   .sp-del{background:none;border:0;color:#ef4444;font-weight:800;cursor:pointer;font-size:16px;line-height:1}
   .sp-del:focus{outline:2px solid #ef4444;outline-offset:2px}
+
+  /* (Optional) compact on very narrow sidebars */
+  @media (max-width: 360px){
+    :root{ --sp-row-h: 38px; --sp-gap: 6px; }
+  }
 </style>
 
 <div class="sp-wrap" id="spRoot">
   <!-- 제목은 가젯 타이틀에서 별도 설정 -->
   <div class="sp-field">
     <!-- placeholder는 영어, 내부 주석은 한글 -->
-    <input id="spInput" class="sp-input" type="text" maxlength="30" 
- placeholder="Enter page id (e.g., page123)" aria-label="Enter page id" />
+    <input id="spInput" class="sp-input" type="text" maxlength="30"
+      placeholder="Enter page id (e.g., page123)" aria-label="Enter page id" />
     <span id="spCount" class="sp-count">0/10</span>
   </div>
 
@@ -44,7 +72,7 @@
   'use strict';
   // ===== 설정 =====
   var LS_KEY = 'ongs_saved_posts';   // 로컬스토리지 키
-  var ID_RE  = /^page\d+$/i;         // page+숫자 패턴
+  var ID_RE  = /^page\d+$/i;         // page+숫자 패턴, 예: page123
 
   // ===== 엘리먼트 =====
   var $ = function(s){ return document.querySelector(s); };
