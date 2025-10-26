@@ -1,4 +1,4 @@
-<!-- 📌Total Pageviews – Right-anchored Flip Plates + Divider + Fallback -->
+<!-- 📌Total Pageviews – Right-anchored Flip Plates + Divider + Optimistic +1 -->
 <div id="statsBoard" style="margin:0;padding:0;text-align:left;">
   <!-- 상단: 월간(30일) -->
   <div id="monthly_wrap" aria-label="Last 30 days" style="margin:0;padding:0;text-align:right;">
@@ -24,17 +24,18 @@
 
 <script>
 (function(){
-  // ✅ 옹스님 실제 Web App URL
+  // ✅ 옹스님 Web App URL
   var API_URL = 'https://script.google.com/macros/s/AKfycbw0goSuOmV0P6N7sl5Wn8yrcA1Cz9ia58HdzjSYoIQXv7lApHc8SYa4Dkuf7VKo9VIX/exec';
+  const OPTIMISTIC = true; // 화면용 +1 적용 여부
 
   function tokensUS(n){
     n = (isFinite(n) && n>0) ? Math.floor(n) : 0;
-    if(n < 1000000){ return addCommas(String(n)).split(''); }
-    if(n < 1000000000){
-      var M=Math.floor(n/1000000), K=Math.floor((n%1000000)/1000);
+    if(n < 1e6){ return addCommas(String(n)).split(''); }
+    if(n < 1e9){
+      var M=Math.floor(n/1e6),K=Math.floor((n%1e6)/1e3);
       var out=String(M)+'M'+(K>0?' '+String(K)+'K':''); return out.split('');
     }
-    var B=Math.floor(n/1000000000), M2=Math.floor((n%1000000000)/1000000);
+    var B=Math.floor(n/1e9),M2=Math.floor((n%1e9)/1e6);
     var out2=String(B)+'B'+(M2>0?' '+String(M2)+'M':''); return out2.split('');
   }
   function addCommas(s){ return s.replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
@@ -64,13 +65,23 @@
     fetch(API_URL,{cache:'no-store'})
       .then(r=>r.json())
       .then(data=>{
-        // ✅ 월간(30D)이 0 또는 없음이면 전체(total)값으로 대체
+        // ✅ 월간(30D) 없으면 전체(total)로 대체
         var monthly = (data && isFinite(data.monthly) && data.monthly>0)
                       ? Math.floor(data.monthly)
                       : (isFinite(data.total) ? Math.floor(data.total) : 0);
         var total   = (data && (isFinite(data.total)?Math.floor(data.total)
                         :isFinite(data.yearly)?Math.floor(data.yearly)
                         :isFinite(data.all)?Math.floor(data.all):0))||0;
+
+        // ✅ 시각적 +1 처리 (탭당 1회)
+        if (OPTIMISTIC) {
+          const bumped = sessionStorage.getItem('pv_bumped') === '1';
+          if (!bumped) {
+            monthly += 1; total += 1;
+            sessionStorage.setItem('pv_bumped','1');
+          }
+        }
+
         renderRow('monthly_wrap',monthly,true);
         renderRow('total_wrap',total,false);
       })
