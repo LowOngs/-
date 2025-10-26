@@ -1,18 +1,18 @@
-<!-- 📌Total Pageviews – Flip Plates (Monthly + Total) -->
-<div id="statsBoard" style="margin:0;padding:0;text-align:left;display:flex;flex-direction:column;gap:0;">
-  <!-- 상단: 월간(30일) 플레이트 – 기본 0(초록) -->
-  <div id="monthly_plate" aria-label="Last 30 days" style="display:flex;align-items:center;gap:6px;line-height:1;">
+<!-- 📌Total Pageviews – Right-anchored Flip Plates (static fallback + JS replace) -->
+<div id="statsBoard" style="margin:0;padding:0;text-align:left;">
+  <!-- 상단: 월간(30일) — JS가 없어도 바로 보이는 정적 0 플레이트 -->
+  <div id="monthly_wrap" aria-label="Last 30 days" style="margin:0;padding:0;text-align:right;">
     <span
-      style="display:inline-block;min-width:20px;padding:6px 8px;background:#000;
+      style="display:inline-block;min-width:20px;margin-left:6px;padding:6px 8px;background:#000;
              color:#22bb33;font-weight:700;font-size:22px;border-radius:3px;
              box-shadow:0 2px 0 rgba(0,0,0,.35), inset 0 -2px 0 rgba(255,255,255,.08);
              text-align:center;letter-spacing:.5px;white-space:nowrap;user-select:none;">0</span>
   </div>
 
-  <!-- 하단: 총계 플레이트 – 기본 0(흰색) -->
-  <div id="total_plate" aria-label="All time total" style="display:flex;align-items:center;gap:6px;line-height:1;">
+  <!-- 하단: 총계 — JS가 없어도 바로 보이는 정적 0 플레이트 -->
+  <div id="total_wrap" aria-label="All time total" style="margin:0;padding:0;text-align:right;">
     <span
-      style="display:inline-block;min-width:20px;padding:6px 8px;background:#000;
+      style="display:inline-block;min-width:20px;margin-left:6px;padding:6px 8px;background:#000;
              color:#ffffff;font-weight:700;font-size:22px;border-radius:3px;
              box-shadow:0 2px 0 rgba(0,0,0,.35), inset 0 -2px 0 rgba(255,255,255,.08);
              text-align:center;letter-spacing:.5px;white-space:nowrap;user-select:none;">0</span>
@@ -21,82 +21,69 @@
 
 <script>
 (function(){
-  // ✅ 옹스님 Web App(exec) URL로 교체. 응답 예: { "monthly": 1234567, "total": 987654321 }
+  // ✅ Web App(exec) URL로 교체. 응답 예: { "monthly": 1234567, "total": 987654321 }
   var API_URL = 'REPLACE_WITH_WEB_APP_URL';
 
-  // === 표기 정책 ===
-  // < 1,000,000 : 3자리 콤마 풀숫자
-  // 1,000,000 ~ < 1,000,000,000 : XM  YK (소수점 없음)
-  // ≥ 1,000,000,000 : XB  YM (소수점 없음)
+  // <1M: 3자리 콤마, 1M~<1B: XM  YK, >=1B: XB  YM (소수점 없음, 미국식)
   function tokensUS(n){
     n = (isFinite(n) && n>0) ? Math.floor(n) : 0;
 
-    if(n < 1e6){
-      return addCommas(String(n)).split('').map(function(ch){
-        return {t: ch, kind: (ch === ',' ? 'comma' : 'digit')};
-      });
+    if(n < 1000000){
+      return addCommas(String(n)).split('');
     }
-
-    if(n < 1e9){
-      var M = Math.floor(n/1e6);
-      var K = Math.floor((n%1e6)/1e3);
-      var arr = [];
-      String(M).split('').forEach(function(d){ arr.push({t:d, kind:'digit'}); });
-      arr.push({t:'M', kind:'unit'});
-      if(K>0){
-        arr.push({t:' ', kind:'space'});
-        String(K).split('').forEach(function(d){ arr.push({t:d, kind:'digit'}); });
-        arr.push({t:'K', kind:'unit'});
-      }
-      return arr;
+    if(n < 1000000000){
+      var M = Math.floor(n/1000000);
+      var K = Math.floor((n%1000000)/1000);
+      var out = String(M) + 'M' + (K>0 ? (' ' + String(K) + 'K') : '');
+      return out.split('');
     }
-
-    var B = Math.floor(n/1e9);
-    var M2 = Math.floor((n%1e9)/1e6);
-    var arr2 = [];
-    String(B).split('').forEach(function(d){ arr2.push({t:d, kind:'digit'}); });
-    arr2.push({t:'B', kind:'unit'});
-    if(M2>0){
-      arr2.push({t:' ', kind:'space'});
-      String(M2).split('').forEach(function(d){ arr2.push({t:d, kind:'digit'}); });
-      arr2.push({t:'M', kind:'unit'});
-    }
-    return arr2;
+    var B = Math.floor(n/1000000000);
+    var M2= Math.floor((n%1000000000)/1000000);
+    var out2 = String(B) + 'B' + (M2>0 ? (' ' + String(M2) + 'M') : '');
+    return out2.split('');
   }
 
   function addCommas(s){ return s.replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
 
-  // 인라인 스타일 사각 플레이트를 생성 (월간은 초록, 총계는 흰색)
-  function makePlateSpan(text, kind, isMonthly){
+  // 인라인 스타일 플레이트 생성(월간=초록, 총계=흰색), 문자 종류에 따른 미세 스타일
+  function makePlate(ch, isMonthly){
     var span = document.createElement('span');
-    var base = 'display:inline-block;min-width:20px;padding:6px 8px;background:#000;'+
+    var base = 'display:inline-block;min-width:20px;margin-left:6px;padding:6px 8px;background:#000;'+
                'font-weight:700;font-size:22px;border-radius:3px;'+
                'box-shadow:0 2px 0 rgba(0,0,0,.35), inset 0 -2px 0 rgba(255,255,255,.08);'+
                'text-align:center;letter-spacing:.5px;white-space:nowrap;user-select:none;';
     var color = isMonthly ? '#22bb33' : '#ffffff';
-    if(kind==='comma'){ base += 'min-width:12px;padding:6px 4px;opacity:.9;'; }
-    if(kind==='unit'){  base += 'background:#111;opacity:.95;'; }
+    // 콤마는 좁게
+    if(ch === ','){ base = base.replace('min-width:20px','min-width:12px').replace('padding:6px 8px','padding:6px 4px'); }
+    // 단위(K/M/B)는 약간 더 어둡게
+    if(ch === 'K' || ch === 'M' || ch === 'B'){
+      base = base.replace('background:#000','background:#111');
+    }
+    // 공백은 작은 간격으로 대체
+    if(ch === ' '){
+      var sp = document.createElement('span');
+      sp.setAttribute('style','display:inline-block;width:4px;');
+      return sp;
+    }
     span.setAttribute('style', base + 'color:'+color+';');
-    span.textContent = text;
+    span.textContent = ch;
     return span;
   }
 
-  function renderPlates(el, val, isMonthly){
-    if(!el) return;
-    el.innerHTML = '';  // 정적 0을 교체
-    var toks = tokensUS(val);
-    if(!toks || !toks.length){ toks = [{t:'0', kind:'digit'}]; }
-    for(var i=0;i<toks.length;i++){
-      var tk = toks[i];
-      if(tk.kind==='space'){
-        var s=document.createElement('span'); s.setAttribute('style','width:4px;display:inline-block;');
-        el.appendChild(s); continue;
-      }
-      el.appendChild(makePlateSpan(tk.t, tk.kind, isMonthly));
+  // 오른쪽(뒤)부터 채우기: 컨테이너는 text-align:right, 토큰은 왼→오 순으로 append
+  function renderRow(wrapperId, value, isMonthly){
+    var wrap = document.getElementById(wrapperId);
+    if(!wrap) return;
+    // 기본 0 플레이트를 교체
+    while(wrap.firstChild){ wrap.removeChild(wrap.firstChild); }
+    var tks = tokensUS(value);
+    if(!tks || !tks.length){ tks = ['0']; }
+    for(var i=0;i<tks.length;i++){
+      wrap.appendChild(makePlate(tks[i], isMonthly));
     }
   }
 
-  // 웹앱 값 반영(없으면 정적 0 유지)
+  // JS가 전혀 안 도는 환경에서도 이미 0이 보이므로, 여기서 실패해도 화면은 유지됨.
   try{
     fetch(API_URL, {cache:'no-store'})
       .then(function(r){ return r.json(); })
@@ -105,10 +92,10 @@
         var total   = (data && (isFinite(data.total) ? Math.floor(data.total)
                          : isFinite(data.yearly) ? Math.floor(data.yearly)
                          : isFinite(data.all) ? Math.floor(data.all) : 0)) : 0;
-        renderPlates(document.getElementById('monthly_plate'), monthly, true);
-        renderPlates(document.getElementById('total_plate'),   total,   false);
+        renderRow('monthly_wrap', monthly, true);
+        renderRow('total_wrap',   total,   false);
       })
-      .catch(function(){});
-  }catch(e){}
+      .catch(function(){ /* 실패 시 정적 0 유지 */ });
+  }catch(e){ /* 무시 */ }
 })();
 </script>
