@@ -1,55 +1,130 @@
-<!-- 📌Total Pageviews (Monthly on top, Total below) -->
-<div class="widget-content StatsBoard" style="margin:0; padding:0; text-align:left; display:flex; flex-direction:column; gap:0;">
-  <!-- 상단: 월간(30일) 플레이트 — 제목 좌측정렬, 숫자 초록색, 기본값 0 -->
-  <div class="StatsMonth" style="margin:0; padding:0;">
-    <h3 style="margin:0 0 6px 0; font-weight:600; text-align:left;">📌Total Pageviews</h3>
-    <span id="monthly_counter"
-          style="display:inline-block; font-size:28px; font-weight:700; color:#22bb33; line-height:1; white-space:nowrap;">
-      0
-    </span>
+<!-- 📌Total Pageviews – Flip Plates (Monthly + Total) -->
+<style>
+  /* 제목은 다른 가젯과 동일하게 테마 색을 상속 */
+  .stats-board h3 { margin:0 0 6px 0; font-weight:600; color:inherit; text-align:left; }
+
+  .stats-board{ margin:0; padding:0; text-align:left; display:flex; flex-direction:column; gap:0; }
+
+  /* 플립형 사각 플레이트 */
+  .plate-row{ display:flex; align-items:center; gap:6px; line-height:1; }
+  .digit-plate{
+    display:inline-block; min-width:20px; padding:6px 8px;
+    background:#000; color:#fff; font-weight:700; font-size:22px;
+    border-radius:3px; box-shadow:0 2px 0 rgba(0,0,0,.35), inset 0 -2px 0 rgba(255,255,255,.08);
+    text-align:center; letter-spacing:.5px; white-space:nowrap; user-select:none;
+  }
+  .digit-plate.comma{ min-width:12px; padding:6px 4px; opacity:.9; }
+  .digit-plate.unit{ min-width:auto; padding:6px 6px; background:#111; opacity:.95; }
+
+  /* 월간(30일) 숫자만 초록색 */
+  .row-month .digit-plate{ color:#22bb33; }
+  /* 총계는 기본 흰색 유지 */
+</style>
+
+<div class="widget-content stats-board">
+  <!-- 상단: 월간(30일) -->
+  <div class="row-month">
+    <h3>📌Total Pageviews</h3>
+    <div id="monthly_plate" class="plate-row" aria-label="Last 30 days"></div>
   </div>
 
-  <!-- 하단: 총계 플레이트 — 제목/보조문구 제거, 숫자만 표시, 기본값 0 -->
-  <div class="StatsTotal" style="margin:0; padding:0;">
-    <span id="custom_total_counter"
-          style="display:inline-block; font-size:28px; font-weight:700; color:#ffffff; line-height:1; white-space:nowrap;">
-      0
-    </span>
+  <!-- 하단: 총계(누적/연간) – 제목/보조문구 제거, 여백 0 -->
+  <div class="row-total">
+    <div id="total_plate" class="plate-row" aria-label="All time total"></div>
   </div>
 </div>
 
 <script>
 (function(){
-  // ✅ 옹스님 웹앱 URL (exec)로 교체하세요. 응답 예: { "monthly": 12345, "yearly": 67890, "total": 67890 }
+  // ✅ 옹스님 Web App(exec) URL로 교체. 응답 예: { "monthly": 1234567, "total": 987654321 }
   const API_URL = 'REPLACE_WITH_WEB_APP_URL';
 
-  function fmtUS(n){
-    const v = (typeof n === 'number' && isFinite(n)) ? n : 0;
-    try { return new Intl.NumberFormat('en-US').format(v); }
-    catch(e){ return String(v); }
+  // === 표기 정책 ===
+  // < 1M  : 풀숫자(3자리 콤마)
+  // 1M~1B : XM YK (소수점 없음)
+  // ≥1B   : XB YM (소수점 없음)
+  function blockFormatUS(n){
+    n = (typeof n==='number' && isFinite(n) && n>0) ? Math.floor(n) : 0;
+
+    // 1) 1M 미만: 콤마 포함 풀숫자
+    if(n < 1_000_000){
+      return addCommas(n.toString()).split('').map(tok => ({t:tok, kind: tok===','?'comma':'digit'}));
+    }
+
+    // 2) 1M ~ 1B 미만: XM YK
+    if(n < 1_000_000_000){
+      const M = Math.floor(n / 1_000_000);
+      const K = Math.floor((n % 1_000_000) / 1_000);
+      const arr = [];
+      (M.toString()).split('').forEach(d=>arr.push({t:d, kind:'digit'}));
+      arr.push({t:'M', kind:'unit'});
+      if(K>0){
+        arr.push({t:' ', kind:'space'});
+        (K.toString()).split('').forEach(d=>arr.push({t:d, kind:'digit'}));
+        arr.push({t:'K', kind:'unit'});
+      }
+      return arr;
+    }
+
+    // 3) 1B 이상: XB YM
+    const B = Math.floor(n / 1_000_000_000);
+    const M = Math.floor((n % 1_000_000_000) / 1_000_000);
+    const arr = [];
+    (B.toString()).split('').forEach(d=>arr.push({t:d, kind:'digit'}));
+    arr.push({t:'B', kind:'unit'});
+    if(M>0){
+      arr.push({t:' ', kind:'space'});
+      (M.toString()).split('').forEach(d=>arr.push({t:d, kind:'digit'}));
+      arr.push({t:'M', kind:'unit'});
+    }
+    return arr;
   }
 
-  // 기본 0 유지 + 데이터 있으면 덮어쓰기
-  function setText(id, val){
-    var el = document.getElementById(id);
-    if (el) el.textContent = fmtUS(val);
+  function addCommas(str){
+    return str.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
-  // 웹앱에서 monthly/total이 오면 반영, 없으면 0 그대로 유지
-  try {
-    fetch(API_URL, { cache: 'no-store' })
-      .then(function(res){ return res.json(); })
-      .then(function(data){
-        if (data) {
-          if ('monthly' in data) setText('monthly_counter', data.monthly);
-          // total 우선, 없으면 yearly/all 키도 허용
-          var total = ('total' in data) ? data.total :
-                      ('yearly' in data) ? data.yearly :
-                      ('all' in data) ? data.all : 0;
-          setText('custom_total_counter', total);
-        }
+  function renderPlates(el, value){
+    if(!el) return;
+    const tokens = blockFormatUS(value);
+    el.innerHTML = ''; // 0부터 시작하되 즉시 렌더
+    tokens.forEach(({t,kind})=>{
+      if(kind==='space'){ // 간격은 작은 공백
+        const s = document.createElement('span');
+        s.style.width = '4px';
+        el.appendChild(s);
+        return;
+      }
+      const span = document.createElement('span');
+      span.className = 'digit-plate' + (kind==='comma'?' comma': (kind==='unit'?' unit':'' ));
+      span.textContent = t;
+      el.appendChild(span);
+    });
+    if(tokens.length===0){ // 안전장치: 값 없으면 0
+      const z = document.createElement('span');
+      z.className = 'digit-plate';
+      z.textContent = '0';
+      el.appendChild(z);
+    }
+  }
+
+  // 초기 0 렌더(요청 전)
+  renderPlates(document.getElementById('monthly_plate'), 0);
+  renderPlates(document.getElementById('total_plate'), 0);
+
+  // 웹앱 값 반영 (없으면 0 유지)
+  try{
+    fetch(API_URL, {cache:'no-store'})
+      .then(r=>r.json())
+      .then(data=>{
+        const monthly = (data && Number.isFinite(data.monthly)) ? data.monthly : 0;
+        const total   = (data && (Number.isFinite(data.total) ? data.total
+                          : Number.isFinite(data.yearly) ? data.yearly
+                          : Number.isFinite(data.all) ? data.all : 0)) : 0;
+        renderPlates(document.getElementById('monthly_plate'), monthly);
+        renderPlates(document.getElementById('total_plate'), total);
       })
-      .catch(function(){ /* 실패 시 0 유지 */ });
-  } catch(e){ /* 실패 시 0 유지 */ }
+      .catch(()=>{ /* 실패해도 0 유지 */ });
+  }catch(e){ /* 무시 */ }
 })();
 </script>
