@@ -1,189 +1,45 @@
-<!-- Saved Posts (client-side, localStorage) — fixed 3x4 grid, no outer frame -->
-<style>
-  :root{
-    --sp-row-h: 40px;   /* 1 row height (includes text + padding) */
-    --sp-gap:   6px;    /* gap between items */
-  }
-
-  .sp-wrap{font:14px/1.5 system-ui,Segoe UI,Helvetica,Arial;color:#111}
-  .sp-field{position:relative;margin:8px 0}
-  .sp-input{width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;box-sizing:border-box}
-  .sp-count{position:absolute;right:10px;top:50%;transform:translateY(-50%);
-            font-size:12px;color:#6b7280;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:999px;
-            padding:2px 6px;pointer-events:none}
-  .sp-actions{display:flex;gap:8px;margin-top:8px}
-  .sp-btn{appearance:none;border:0;border-radius:8px;padding:10px 12px;font-weight:700;cursor:pointer;flex:1}
-  .sp-btn.save{background:#2563eb;color:#fff}
-  .sp-btn.clear{background:#ef4444;color:#fff}
-  .sp-tip{margin:6px 0 8px 0;color:#6b7280;font-size:12px}
-  .sp-err{color:#ef4444;font-size:12px;margin:4px 0 0 0;display:none}
-
-  /* ▼ Fixed 3 columns × 4 rows grid. No outer border/frame. */
-  .sp-list{
-    display:grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--sp-gap);
-    /* 4 rows fixed height (no outer border) */
-    height: calc(4 * var(--sp-row-h) + 3 * var(--sp-gap));
-    overflow: hidden;              /* prevent layout shift */
-    padding: 0;                    /* no frame look */
-    border: none;                  /* no outer outline */
-    box-sizing: content-box;
-    margin: 10px 0 0;
-  }
-
-  .sp-item{
-    display:flex;align-items:center;justify-content:space-between;
-    border:1px solid #e5e7eb;border-radius:8px;padding:8px 10px;background:#fff;
-    min-height: var(--sp-row-h);  /* unify row height */
-    box-sizing: border-box;
-  }
-  .sp-id{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:75%}
-  .sp-del{background:none;border:0;color:#ef4444;font-weight:800;cursor:pointer;font-size:16px;line-height:1}
-  .sp-del:focus{outline:2px solid #ef4444;outline-offset:2px}
-
-  /* (Optional) compact on very narrow sidebars */
-  @media (max-width: 360px){
-    :root{ --sp-row-h: 38px; --sp-gap: 6px; }
-  }
-</style>
-
-<div class="sp-wrap" id="spRoot">
-  <!-- 제목은 가젯 타이틀에서 별도 설정 -->
-  <div class="sp-field">
-    <!-- placeholder는 영어, 내부 주석은 한글 -->
-    <input id="spInput" class="sp-input" type="text" maxlength="30"
-      placeholder="Enter page id (e.g., page123)" aria-label="Enter page id" />
-    <span id="spCount" class="sp-count">0/10</span>
+<!-- 📌Total Pageviews (Monthly + Total Combined) -->
+<div class="widget-content StatsBoard" style="text-align:center; margin:16px 0;">
+  <!-- 월간 통계 (공식 Blogger 30일 기준) -->
+  <div class="StatsMonth" style="margin-bottom:12px;">
+    <h3 style="margin:0 0 8px 0; font-weight:600;">📌Total Pageviews</h3>
+    <span id="monthly_counter"
+          style="display:inline-block; font-size:28px; font-weight:700; color:#22bb33;">
+      <!-- 월간 통계는 Blogger 공식 위젯 값을 자동으로 가져오지 않으므로 필요 시 수동으로 입력하거나, 추후 JS 연동 가능 -->
+      Loading...
+    </span>
+    <div style="font-size:13px; color:#888;">Last 30 days</div>
   </div>
 
-  <div class="sp-actions">
-    <button class="sp-btn save"  id="spSaveBtn"  type="button">Save</button>
-    <button class="sp-btn clear" id="spClearBtn" type="button">Clear All</button>
+  <!-- 총합 통계 (연간/누적 웹앱 데이터) -->
+  <div class="StatsTotal">
+    <h3 style="margin:0 0 8px 0; font-weight:600;">📌Total Pageviews</h3>
+    <span id="custom_total_counter"
+          style="display:inline-block; font-size:28px; font-weight:700; color:#fff;">
+      0
+    </span>
+    <div style="font-size:13px; color:#888;">All time total</div>
   </div>
-
-  <div class="sp-tip" id="spTip">Tip: Enter only the page id (e.g., page123). Max 10 saved.</div>
-  <div class="sp-err" id="spErr"></div>
-  <div class="sp-list" id="spList" role="list"></div>
 </div>
 
+<!-- 웹앱 데이터 호출 -->
 <script>
 (function(){
-  'use strict';
-  // ===== 설정 =====
-  var LS_KEY = 'ongs_saved_posts';   // 로컬스토리지 키
-  var ID_RE  = /^page\d+$/i;         // page+숫자 패턴, 예: page123
+  // ✅ 이 부분을 옹스님이 만든 Web App URL로 교체
+  const API_URL = 'REPLACE_WITH_WEB_APP_URL';
 
-  // ===== 엘리먼트 =====
-  var $ = function(s){ return document.querySelector(s); };
-  var inp     = $('#spInput');
-  var errBox  = $('#spErr');
-  var listEl  = $('#spList');
-  var saveBtn = $('#spSaveBtn');
-  var clrBtn  = $('#spClearBtn');
-  var countEl = $('#spCount');
-
-  // ===== 저장/불러오기 =====
-  function loadList(){
-    try{
-      var raw = localStorage.getItem(LS_KEY);
-      var arr = raw ? JSON.parse(raw) : [];
-      return Array.isArray(arr) ? arr : [];
-    }catch(e){ return []; }
-  }
-  function saveList(arr){
-    try{ localStorage.setItem(LS_KEY, JSON.stringify(arr)); }catch(e){}
+  function formatNumber(num){
+    try { return new Intl.NumberFormat('en-US').format(num); }
+    catch(e){ return num.toString(); }
   }
 
-  // ===== 렌더 & 카운터 =====
-  function updateCount(){
-    var n = loadList().length;
-    countEl.textContent = n + '/10';
-  }
-  function render(){
-    var items = loadList();
-    listEl.innerHTML = '';
-    items.forEach(function(id, idx){
-      var row = document.createElement('div');
-      row.className = 'sp-item';
-      row.setAttribute('role','listitem');
-
-      var left = document.createElement('div');
-      left.className = 'sp-id';
-      left.textContent = id;
-
-      var del = document.createElement('button');
-      del.className = 'sp-del';
-      del.type = 'button';
-      del.setAttribute('aria-label','Delete '+id);
-      del.textContent = '×';
-      del.addEventListener('click', function(){ removeAt(idx); });
-
-      row.appendChild(left);
-      row.appendChild(del);
-      listEl.appendChild(row);
-    });
-    updateCount();
-  }
-
-  // ===== 에러 표시 =====
-  function showError(msg){
-    errBox.textContent = msg || '';
-    errBox.style.display = msg ? 'block' : 'none';
-  }
-
-  // ===== 추가/삭제 로직 =====
-  function addId(id){
-    var v = String(id || '').trim();
-    if (!ID_RE.test(v)){
-      showError('Use format: page123 (letters "page" + digits).');
-      return;
-    }
-    var list = loadList();
-    // 중복이면 앞으로 이동
-    var lower = v.toLowerCase();
-    var pos = list.findIndex(function(x){ return String(x).toLowerCase() === lower; });
-    if (pos >= 0){
-      list.splice(pos,1);
-      list.unshift(v);
-      saveList(list);
-      showError('');
-      inp.value = '';
-      render();
-      return;
-    }
-    // 새 추가 — 최대 10 제한
-    if (list.length >= 10){
-      showError('You can save up to 10 items. Delete some or clear all first.');
-      return;
-    }
-    list.unshift(v);
-    saveList(list);
-    showError('');
-    inp.value = '';
-    render();
-  }
-  function removeAt(index){
-    var list = loadList();
-    if (index<0 || index>=list.length) return;
-    list.splice(index,1);
-    saveList(list);
-    render();
-  }
-  function clearAll(){
-    saveList([]);
-    render();
-  }
-
-  // ===== 이벤트 =====
-  saveBtn.addEventListener('click', function(){ addId(inp.value); });
-  inp.addEventListener('keydown', function(e){ if (e.key==='Enter') addId(inp.value); });
-  clrBtn.addEventListener('click', function(){
-    if (confirm('Clear all saved items?')) clearAll();
-  });
-  inp.addEventListener('input', function(){ showError(''); });
-
-  // 초기 렌더
-  render();
+  fetch(API_URL, { cache: 'no-store' })
+    .then(res => res.json())
+    .then(data => {
+      const total = data.yearly || data.total || data.all || 0;
+      const el = document.getElementById('custom_total_counter');
+      if(el) el.textContent = formatNumber(total);
+    })
+    .catch(err => console.error('Stats load error:', err));
 })();
 </script>
