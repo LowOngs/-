@@ -1,80 +1,62 @@
-<!-- 📌Total Pageviews – Right-anchored Flip Plates + Divider -->
-<div id="statsBoard" style="margin:0;padding:0;text-align:left;">
-  <!-- 상단: 월간(30일) -->
-  <div id="monthly_wrap" aria-label="Last 30 days" style="margin:0;padding:0;text-align:right;">
-    <span
-      style="display:inline-block;min-width:20px;margin-left:6px;padding:6px 8px;background:#000;
-             color:#22bb33;font-weight:700;font-size:22px;border-radius:3px;
-             box-shadow:0 2px 0 rgba(0,0,0,.35), inset 0 -2px 0 rgba(255,255,255,.08);
-             text-align:center;letter-spacing:.5px;white-space:nowrap;user-select:none;">0</span>
-  </div>
+/** ——— CONFIG ——— */
+const BLOG_ID = 'YOUR_BLOG_ID';      // ← 블로그 ID로 교체
+const API_KEY = 'YOUR_API_KEY';      // ← Blogger API Key로 교체
 
-  <!-- 🌙 반투명 구분선 -->
-  <hr style="border:none;height:1px;background:rgba(255,255,255,0.2);margin:4px 0;">
+/** 캐시(분) */
+const CACHE_MIN = 10;
 
-  <!-- 하단: 총계 -->
-  <div id="total_wrap" aria-label="All time total" style="margin:0;padding:0;text-align:right;">
-    <span
-      style="display:inline-block;min-width:20px;margin-left:6px;padding:6px 8px;background:#000;
-             color:#ffffff;font-weight:700;font-size:22px;border-radius:3px;
-             box-shadow:0 2px 0 rgba(0,0,0,.35), inset 0 -2px 0 rgba(255,255,255,.08);
-             text-align:center;letter-spacing:.5px;white-space:nowrap;user-select:none;">0</span>
-  </div>
-</div>
+const JSON_TYPE = ContentService.MimeType.JSON;
 
-<script>
-(function(){
-  // ✅ Web App(exec) URL로 교체 (예: { "monthly": 1234567, "total": 987654321 })
-  var API_URL = 'REPLACE_WITH_WEB_APP_URL';
+function doGet(e) {
+  try {
+    const blogId = (e && e.parameter && e.parameter.blogId) || BLOG_ID;
+    const key    = (e && e.parameter && e.parameter.key)    || API_KEY;
 
-  // <1M: 3자리 콤마 / 1M~<1B: XM YK / ≥1B: XB YM
-  function tokensUS(n){
-    n = (isFinite(n) && n>0) ? Math.floor(n) : 0;
-    if(n < 1000000){ return addCommas(String(n)).split(''); }
-    if(n < 1000000000){
-      var M = Math.floor(n/1000000), K = Math.floor((n%1000000)/1000);
-      var out = String(M)+'M'+(K>0?' '+String(K)+'K':'');
-      return out.split('');
+    const cache = CacheService.getScriptCache();
+    const ck = `pv:${blogId}`;
+    const cached = cache.get(ck);
+    if (cached) return _json(cached);
+
+    const base = `https://www.googleapis.com/blogger/v3/blogs/${encodeURIComponent(blogId)}/pageviews`;
+    const q30  = `${base}?range=30D&key=${encodeURIComponent(key)}`;
+    const qall = `${base}?range=ALL_TIME&key=${encodeURIComponent(key)}`;
+
+    const last30 = _sumValues(_safeFetchJSON(q30));
+    const all    = _sumValues(_safeFetchJSON(qall));
+
+    const payload = JSON.stringify({
+      monthly: last30 || 0,
+      total:   all    || 0
+    });
+
+    cache.put(ck, payload, CACHE_MIN * 60); // 초 단위
+    return _json(payload);
+
+  } catch (err) {
+    return _json(JSON.stringify({ monthly: 0, total: 0, error: String(err) }));
+  }
+}
+
+function _safeFetchJSON(url) {
+  try {
+    const res = UrlFetchApp.fetch(url, {
+      method: 'get',
+      muteHttpExceptions: true,
+      headers: { 'Accept': 'application/json' }
+    });
+    if (res.getResponseCode() >= 200 && res.getResponseCode() < 300) {
+      return JSON.parse(res.getContentText());
     }
-    var B = Math.floor(n/1000000000), M2 = Math.floor((n%1000000000)/1000000);
-    var out2 = String(B)+'B'+(M2>0?' '+String(M2)+'M':'');
-    return out2.split('');
-  }
-  function addCommas(s){ return s.replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+  } catch (_) {}
+  return null;
+}
 
-  function makePlate(ch, isMonthly){
-    var span=document.createElement('span');
-    var base='display:inline-block;min-width:20px;margin-left:6px;padding:6px 8px;background:#000;'+
-             'font-weight:700;font-size:22px;border-radius:3px;'+
-             'box-shadow:0 2px 0 rgba(0,0,0,.35), inset 0 -2px 0 rgba(255,255,255,.08);'+
-             'text-align:center;letter-spacing:.5px;white-space:nowrap;user-select:none;';
-    var color=isMonthly?'#22bb33':'#ffffff';
-    if(ch===','){base=base.replace('min-width:20px','min-width:12px').replace('padding:6px 8px','padding:6px 4px');}
-    if(ch==='K'||ch==='M'||ch==='B'){base=base.replace('background:#000','background:#111');}
-    if(ch===' '){var sp=document.createElement('span');sp.setAttribute('style','display:inline-block;width:4px;');return sp;}
-    span.setAttribute('style',base+'color:'+color+';'); span.textContent=ch; return span;
-  }
+function _sumValues(obj) {
+  // 응답 예: { "counts": [ { "timeRange":"30D","count":123 }, ... ] }
+  if (!obj || !obj.counts) return 0;
+  return obj.counts.reduce((acc, it) => acc + (Number(it.count) || 0), 0);
+}
 
-  function renderRow(wrapperId,val,isMonthly){
-    var wrap=document.getElementById(wrapperId);
-    if(!wrap)return;
-    while(wrap.firstChild){wrap.removeChild(wrap.firstChild);}
-    var tks=tokensUS(val); if(!tks||!tks.length){tks=['0'];}
-    for(var i=0;i<tks.length;i++){wrap.appendChild(makePlate(tks[i],isMonthly));}
-  }
-
-  try{
-    fetch(API_URL,{cache:'no-store'})
-      .then(r=>r.json())
-      .then(data=>{
-        var monthly=(data&&isFinite(data.monthly))?Math.floor(data.monthly):0;
-        var total=(data&&(isFinite(data.total)?Math.floor(data.total)
-                      :isFinite(data.yearly)?Math.floor(data.yearly)
-                      :isFinite(data.all)?Math.floor(data.all):0))||0;
-        renderRow('monthly_wrap',monthly,true);
-        renderRow('total_wrap',total,false);
-      })
-      .catch(()=>{});
-  }catch(e){}
-})();
-</script>
+function _json(str) {
+  return ContentService.createTextOutput(str).setMimeType(JSON_TYPE);
+}
