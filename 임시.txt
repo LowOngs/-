@@ -1,45 +1,55 @@
-<!-- 📌Total Pageviews (Monthly + Total Combined) -->
-<div class="widget-content StatsBoard" style="text-align:center; margin:16px 0;">
-  <!-- 월간 통계 (공식 Blogger 30일 기준) -->
-  <div class="StatsMonth" style="margin-bottom:12px;">
-    <h3 style="margin:0 0 8px 0; font-weight:600;">📌Total Pageviews</h3>
+<!-- 📌Total Pageviews (Monthly on top, Total below) -->
+<div class="widget-content StatsBoard" style="margin:0; padding:0; text-align:left; display:flex; flex-direction:column; gap:0;">
+  <!-- 상단: 월간(30일) 플레이트 — 제목 좌측정렬, 숫자 초록색, 기본값 0 -->
+  <div class="StatsMonth" style="margin:0; padding:0;">
+    <h3 style="margin:0 0 6px 0; font-weight:600; text-align:left;">📌Total Pageviews</h3>
     <span id="monthly_counter"
-          style="display:inline-block; font-size:28px; font-weight:700; color:#22bb33;">
-      <!-- 월간 통계는 Blogger 공식 위젯 값을 자동으로 가져오지 않으므로 필요 시 수동으로 입력하거나, 추후 JS 연동 가능 -->
-      Loading...
-    </span>
-    <div style="font-size:13px; color:#888;">Last 30 days</div>
-  </div>
-
-  <!-- 총합 통계 (연간/누적 웹앱 데이터) -->
-  <div class="StatsTotal">
-    <h3 style="margin:0 0 8px 0; font-weight:600;">📌Total Pageviews</h3>
-    <span id="custom_total_counter"
-          style="display:inline-block; font-size:28px; font-weight:700; color:#fff;">
+          style="display:inline-block; font-size:28px; font-weight:700; color:#22bb33; line-height:1; white-space:nowrap;">
       0
     </span>
-    <div style="font-size:13px; color:#888;">All time total</div>
+  </div>
+
+  <!-- 하단: 총계 플레이트 — 제목/보조문구 제거, 숫자만 표시, 기본값 0 -->
+  <div class="StatsTotal" style="margin:0; padding:0;">
+    <span id="custom_total_counter"
+          style="display:inline-block; font-size:28px; font-weight:700; color:#ffffff; line-height:1; white-space:nowrap;">
+      0
+    </span>
   </div>
 </div>
 
-<!-- 웹앱 데이터 호출 -->
 <script>
 (function(){
-  // ✅ 이 부분을 옹스님이 만든 Web App URL로 교체
+  // ✅ 옹스님 웹앱 URL (exec)로 교체하세요. 응답 예: { "monthly": 12345, "yearly": 67890, "total": 67890 }
   const API_URL = 'REPLACE_WITH_WEB_APP_URL';
 
-  function formatNumber(num){
-    try { return new Intl.NumberFormat('en-US').format(num); }
-    catch(e){ return num.toString(); }
+  function fmtUS(n){
+    const v = (typeof n === 'number' && isFinite(n)) ? n : 0;
+    try { return new Intl.NumberFormat('en-US').format(v); }
+    catch(e){ return String(v); }
   }
 
-  fetch(API_URL, { cache: 'no-store' })
-    .then(res => res.json())
-    .then(data => {
-      const total = data.yearly || data.total || data.all || 0;
-      const el = document.getElementById('custom_total_counter');
-      if(el) el.textContent = formatNumber(total);
-    })
-    .catch(err => console.error('Stats load error:', err));
+  // 기본 0 유지 + 데이터 있으면 덮어쓰기
+  function setText(id, val){
+    var el = document.getElementById(id);
+    if (el) el.textContent = fmtUS(val);
+  }
+
+  // 웹앱에서 monthly/total이 오면 반영, 없으면 0 그대로 유지
+  try {
+    fetch(API_URL, { cache: 'no-store' })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if (data) {
+          if ('monthly' in data) setText('monthly_counter', data.monthly);
+          // total 우선, 없으면 yearly/all 키도 허용
+          var total = ('total' in data) ? data.total :
+                      ('yearly' in data) ? data.yearly :
+                      ('all' in data) ? data.all : 0;
+          setText('custom_total_counter', total);
+        }
+      })
+      .catch(function(){ /* 실패 시 0 유지 */ });
+  } catch(e){ /* 실패 시 0 유지 */ }
 })();
 </script>
