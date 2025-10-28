@@ -1,91 +1,147 @@
-<!-- 📌Total Pageviews – Right-anchored Flip Plates + Divider + Optimistic +1 -->
-<div id="statsBoard" style="margin:0;padding:0;text-align:left;">
-  <!-- 상단: 월간(30일) -->
-  <div id="monthly_wrap" aria-label="Last 30 days" style="margin:0;padding:0;text-align:right;">
-    <span
-      style="display:inline-block;min-width:20px;margin-left:6px;padding:6px 8px;background:#000;
-             color:#22bb33;font-weight:700;font-size:22px;border-radius:3px;
-             box-shadow:0 2px 0 rgba(0,0,0,.35), inset 0 -2px 0 rgba(255,255,255,.08);
-             text-align:center;letter-spacing:.5px;white-space:nowrap;user-select:none;">0</span>
-  </div>
+// scripts/build/rewrite-images.js
+import { promises as fs } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-  <!-- 🌙 반투명 구분선 -->
-  <hr style="border:none;height:1px;background:rgba(255,255,255,0.2);margin:4px 0;">
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-  <!-- 하단: 총계 -->
-  <div id="total_wrap" aria-label="All time total" style="margin:0;padding:0;text-align:right;">
-    <span
-      style="display:inline-block;min-width:20px;margin-left:6px;padding:6px 8px;background:#000;
-             color:#ffffff;font-weight:700;font-size:22px;border-radius:3px;
-             box-shadow:0 2px 0 rgba(0,0,0,.35), inset 0 -2px 0 rgba(255,255,255,.08);
-             text-align:center;letter-spacing:.5px;white-space:nowrap;user-select:none;">0</span>
-  </div>
-</div>
+// .env 로드 (강제 경로)
+const dotenvPath = path.resolve(process.cwd(), '.env');
+const dotenvRaw = await fs.readFile(dotenvPath, 'utf-8').catch(() => null);
+if (!dotenvRaw) {
+  console.error('(.env) 파일을 찾지 못했습니다. System_files 폴더에 .env가 있어야 합니다.');
+  process.exit(1);
+}
+for (const line of dotenvRaw.split('\n')) {
+  const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.+?)\s*$/);
+  if (m) process.env[m[1]] = m[2];
+}
 
-<script>
-(function(){
-  // ✅ 옹스님 Web App URL
-  var API_URL = 'https://script.google.com/macros/s/AKfycbw0goSuOmV0P6N7sl5Wn8yrcA1Cz9ia58HdzjSYoIQXv7lApHc8SYa4Dkuf7VKo9VIX/exec';
-  const OPTIMISTIC = true; // 화면용 +1 적용 여부
+const CDN_BASE = process.env.CDN_BASE;
+if (!CDN_BASE) {
+  console.error('CDN_BASE 환경변수가 없습니다. .env의 CDN_BASE를 확인하세요.');
+  process.exit(1);
+}
 
-  function tokensUS(n){
-    n = (isFinite(n) && n>0) ? Math.floor(n) : 0;
-    if(n < 1e6){ return addCommas(String(n)).split(''); }
-    if(n < 1e9){
-      var M=Math.floor(n/1e6),K=Math.floor((n%1e6)/1e3);
-      var out=String(M)+'M'+(K>0?' '+String(K)+'K':''); return out.split('');
-    }
-    var B=Math.floor(n/1e9),M2=Math.floor((n%1e9)/1e6);
-    var out2=String(B)+'B'+(M2>0?' '+String(M2)+'M':''); return out2.split('');
-  }
-  function addCommas(s){ return s.replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+// 업로더 로직과 맞추기: images/YYYY/MM/filename 으로 구성
+const now = new Date();
+const yyyy = String(now.getFullYear());
+const mm = String(now.getMonth() + 1).padStart(2, '0');
+const CDN_PREFIX = `${CDN_BASE.replace(/\/+$/, '')}/images/${yyyy}/${mm}`;
 
-  function makePlate(ch,isMonthly){
-    var span=document.createElement('span');
-    var base='display:inline-block;min-width:20px;margin-left:6px;padding:6px 8px;background:#000;'+
-             'font-weight:700;font-size:22px;border-radius:3px;'+
-             'box-shadow:0 2px 0 rgba(0,0,0,.35), inset 0 -2px 0 rgba(255,255,255,.08);'+
-             'text-align:center;letter-spacing:.5px;white-space:nowrap;user-select:none;';
-    var color=isMonthly?'#22bb33':'#ffffff';
-    if(ch===','){base=base.replace('min-width:20px','min-width:12px').replace('padding:6px 8px','padding:6px 4px');}
-    if(ch==='K'||ch==='M'||ch==='B'){base=base.replace('background:#000','background:#111');}
-    if(ch===' '){var sp=document.createElement('span');sp.setAttribute('style','display:inline-block;width:4px;');return sp;}
-    span.setAttribute('style',base+'color:'+color+';'); span.textContent=ch; return span;
-  }
+const POSTS_DIR = path.resolve(process.cwd(), 'content', 'posts');
 
-  function renderRow(wrapperId,val,isMonthly){
-    var wrap=document.getElementById(wrapperId);
-    if(!wrap)return;
-    while(wrap.firstChild){wrap.removeChild(wrap.firstChild);}
-    var tks=tokensUS(val); if(!tks||!tks.length){tks=['0'];}
-    for(var i=0;i<tks.length;i++){wrap.appendChild(makePlate(tks[i],isMonthly));}
-  }
+function ensureDirExistsSync(p) {
+  // 폴더 없으면 에러 대신 changed=0 나오는 걸 방지
+  return fs.stat(p).then(()=>true).catch(()=>false);
+}
 
-  try{
-    fetch(API_URL,{cache:'no-store'})
-      .then(r=>r.json())
-      .then(data=>{
-        // ✅ 월간(30D) 없으면 전체(total)로 대체
-        var monthly = (data && isFinite(data.monthly) && data.monthly>0)
-                      ? Math.floor(data.monthly)
-                      : (isFinite(data.total) ? Math.floor(data.total) : 0);
-        var total   = (data && (isFinite(data.total)?Math.floor(data.total)
-                        :isFinite(data.yearly)?Math.floor(data.yearly)
-                        :isFinite(data.all)?Math.floor(data.all):0))||0;
+function replaceInText(content) {
+  let changed = 0;
 
-        // ✅ 시각적 +1 처리 (탭당 1회)
-        if (OPTIMISTIC) {
-          const bumped = sessionStorage.getItem('pv_bumped') === '1';
-          if (!bumped) {
-            monthly += 1; total += 1;
-            sessionStorage.setItem('pv_bumped','1');
-          }
+  // 1) HTML <img src="./assets/images/xxx">
+  const htmlImg = /(<img\b[^>]*?\s src\s*=\s*["'])(\.\/)?assets\/images\/([^"']+)(["'][^>]*>)/gi;
+  content = content.replace(htmlImg, (m, p1, _dot, file, p4) => {
+    changed++;
+    return `${p1}${CDN_PREFIX}/${file}${p4}`;
+  });
+
+  // 2) Markdown 이미지 ![alt](./assets/images/xxx)
+  const mdImg = /(!\[[^\]]*]\()\s*(\.\/)?assets\/images\/([^)]+)\s*(\))/gi;
+  content = content.replace(mdImg, (m, p1, _dot, file, p4) => {
+    changed++;
+    return `${p1}${CDN_PREFIX}/${file}${p4}`;
+  });
+
+  return { content, changed };
+}
+
+function replaceInJsonObject(obj) {
+  let changed = 0;
+
+  const transformString = (s) => {
+    if (typeof s !== 'string') return s;
+    // 문자열 내부에 ./assets/images/ 가 있으면 치환
+    const before = s;
+    const re = /(\.\/)?assets\/images\/([^\s"')]+)\b/gi;
+    const after = s.replace(re, (_m, _dot, file) => `${CDN_PREFIX}/${file}`);
+    if (after !== before) changed++;
+    return after;
+  };
+
+  const walk = (node) => {
+    if (Array.isArray(node)) {
+      return node.map(walk);
+    } else if (node && typeof node === 'object') {
+      const out = {};
+      for (const [k, v] of Object.entries(node)) {
+        if (typeof v === 'string') {
+          out[k] = transformString(v);
+        } else {
+          out[k] = walk(v);
         }
+      }
+      return out;
+    } else if (typeof node === 'string') {
+      return transformString(node);
+    }
+    return node;
+  };
 
-        renderRow('monthly_wrap',monthly,true);
-        renderRow('total_wrap',total,false);
-      })
-      .catch(()=>{});
-  }catch(e){}
-})();
-</script>
+  const newObj = walk(obj);
+  return { obj: newObj, changed };
+}
+
+async function processFile(filePath) {
+  const ext = path.extname(filePath).toLowerCase();
+  let changed = 0;
+
+  const raw = await fs.readFile(filePath, 'utf-8');
+
+  if (ext === '.json') {
+    try {
+      const data = JSON.parse(raw);
+      const { obj, changed: c1 } = replaceInJsonObject(data);
+      changed += c1;
+      if (changed > 0) {
+        await fs.writeFile(filePath, JSON.stringify(obj, null, 2), 'utf-8');
+      }
+    } catch (e) {
+      console.error(`JSON 파싱 오류: ${path.basename(filePath)} — ${e.message}`);
+    }
+  } else if (ext === '.md' || ext === '.html' || ext === '.htm') {
+    const { content, changed: c2 } = replaceInText(raw);
+    changed += c2;
+    if (changed > 0) {
+      await fs.writeFile(filePath, content, 'utf-8');
+    }
+  }
+  return changed;
+}
+
+async function main() {
+  if (!(await ensureDirExistsSync(POSTS_DIR))) {
+    console.log('posts 폴더 없음: changed=0');
+    return;
+  }
+  const files = (await fs.readdir(POSTS_DIR)).filter(f =>
+    /\.(json|md|html?)$/i.test(f)
+  );
+
+  let total = 0;
+  for (const f of files) {
+    const full = path.join(POSTS_DIR, f);
+    const c = await processFile(full);
+    if (c > 0) {
+      console.log(`✔ ${f} — ${c}개 치환`);
+    }
+    total += c;
+  }
+  console.log(`이미지 경로 치환 완료: changed=${total}`);
+}
+
+main().catch(err => {
+  console.error(err);
+  process.exit(1);
+});
