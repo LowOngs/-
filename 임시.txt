@@ -1,147 +1,66 @@
-// scripts/build/rewrite-images.js
-import { promises as fs } from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+name: Publish Blog (Blogger)
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+on:
+  workflow_dispatch:          # 수동 실행 버튼
+  push:                       # 지정 브랜치에 푸시되면 자동 실행
+    branches: [ google-blog ] # ← 기본 브랜치가 main이면 main으로 바꾸세요
+    paths:
+      - "content/posts/**"
+      - "assets/images/**"
+      - "templates/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
 
-// .env 로드 (강제 경로)
-const dotenvPath = path.resolve(process.cwd(), '.env');
-const dotenvRaw = await fs.readFile(dotenvPath, 'utf-8').catch(() => null);
-if (!dotenvRaw) {
-  console.error('(.env) 파일을 찾지 못했습니다. System_files 폴더에 .env가 있어야 합니다.');
-  process.exit(1);
-}
-for (const line of dotenvRaw.split('\n')) {
-  const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.+?)\s*$/);
-  if (m) process.env[m[1]] = m[2];
-}
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
 
-const CDN_BASE = process.env.CDN_BASE;
-if (!CDN_BASE) {
-  console.error('CDN_BASE 환경변수가 없습니다. .env의 CDN_BASE를 확인하세요.');
-  process.exit(1);
-}
+    # GitHub Secrets 주입 (옹스님이 등록한 11개 + 3개)
+    env:
+      # R2 / CDN
+      R2_ACCOUNT_ID:           ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID:        ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY:    ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET:               ${{ secrets.R2_BUCKET }}
+      R2_ENDPOINT:             ${{ secrets.R2_ENDPOINT }}
+      CDN_BASE:                ${{ secrets.CDN_BASE }}
+      IMAGES_DIR:              assets/images
+      POSTS_DIR:               content/posts
+      # Blogger (자동 갱신까지)
+      BLOGGER_BLOG_ID:         ${{ secrets.BLOGGER_BLOG_ID }}
+      GOOGLE_OAUTH_TOKEN:      ${{ secrets.GOOGLE_OAUTH_TOKEN }}
+      GOOGLE_CLIENT_ID:        ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET:    ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      GOOGLE_REFRESH_TOKEN:    ${{ secrets.GOOGLE_REFRESH_TOKEN }}
 
-// 업로더 로직과 맞추기: images/YYYY/MM/filename 으로 구성
-const now = new Date();
-const yyyy = String(now.getFullYear());
-const mm = String(now.getMonth() + 1).padStart(2, '0');
-const CDN_PREFIX = `${CDN_BASE.replace(/\/+$/, '')}/images/${yyyy}/${mm}`;
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-const POSTS_DIR = path.resolve(process.cwd(), 'content', 'posts');
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
-function ensureDirExistsSync(p) {
-  // 폴더 없으면 에러 대신 changed=0 나오는 걸 방지
-  return fs.stat(p).then(()=>true).catch(()=>false);
-}
+      - name: Install deps
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
-function replaceInText(content) {
-  let changed = 0;
+      - name: Upload images to R2
+        run: npm run images:upload
 
-  // 1) HTML <img src="./assets/images/xxx">
-  const htmlImg = /(<img\b[^>]*?\s src\s*=\s*["'])(\.\/)?assets\/images\/([^"']+)(["'][^>]*>)/gi;
-  content = content.replace(htmlImg, (m, p1, _dot, file, p4) => {
-    changed++;
-    return `${p1}${CDN_PREFIX}/${file}${p4}`;
-  });
+      - name: Rewrite image URLs in posts
+        run: npm run images:rewrite
 
-  // 2) Markdown 이미지 ![alt](./assets/images/xxx)
-  const mdImg = /(!\[[^\]]*]\()\s*(\.\/)?assets\/images\/([^)]+)\s*(\))/gi;
-  content = content.replace(mdImg, (m, p1, _dot, file, p4) => {
-    changed++;
-    return `${p1}${CDN_PREFIX}/${file}${p4}`;
-  });
+      - name: Render posts
+        run: npm run posts:render
 
-  return { content, changed };
-}
-
-function replaceInJsonObject(obj) {
-  let changed = 0;
-
-  const transformString = (s) => {
-    if (typeof s !== 'string') return s;
-    // 문자열 내부에 ./assets/images/ 가 있으면 치환
-    const before = s;
-    const re = /(\.\/)?assets\/images\/([^\s"')]+)\b/gi;
-    const after = s.replace(re, (_m, _dot, file) => `${CDN_PREFIX}/${file}`);
-    if (after !== before) changed++;
-    return after;
-  };
-
-  const walk = (node) => {
-    if (Array.isArray(node)) {
-      return node.map(walk);
-    } else if (node && typeof node === 'object') {
-      const out = {};
-      for (const [k, v] of Object.entries(node)) {
-        if (typeof v === 'string') {
-          out[k] = transformString(v);
-        } else {
-          out[k] = walk(v);
-        }
-      }
-      return out;
-    } else if (typeof node === 'string') {
-      return transformString(node);
-    }
-    return node;
-  };
-
-  const newObj = walk(obj);
-  return { obj: newObj, changed };
-}
-
-async function processFile(filePath) {
-  const ext = path.extname(filePath).toLowerCase();
-  let changed = 0;
-
-  const raw = await fs.readFile(filePath, 'utf-8');
-
-  if (ext === '.json') {
-    try {
-      const data = JSON.parse(raw);
-      const { obj, changed: c1 } = replaceInJsonObject(data);
-      changed += c1;
-      if (changed > 0) {
-        await fs.writeFile(filePath, JSON.stringify(obj, null, 2), 'utf-8');
-      }
-    } catch (e) {
-      console.error(`JSON 파싱 오류: ${path.basename(filePath)} — ${e.message}`);
-    }
-  } else if (ext === '.md' || ext === '.html' || ext === '.htm') {
-    const { content, changed: c2 } = replaceInText(raw);
-    changed += c2;
-    if (changed > 0) {
-      await fs.writeFile(filePath, content, 'utf-8');
-    }
-  }
-  return changed;
-}
-
-async function main() {
-  if (!(await ensureDirExistsSync(POSTS_DIR))) {
-    console.log('posts 폴더 없음: changed=0');
-    return;
-  }
-  const files = (await fs.readdir(POSTS_DIR)).filter(f =>
-    /\.(json|md|html?)$/i.test(f)
-  );
-
-  let total = 0;
-  for (const f of files) {
-    const full = path.join(POSTS_DIR, f);
-    const c = await processFile(full);
-    if (c > 0) {
-      console.log(`✔ ${f} — ${c}개 치환`);
-    }
-    total += c;
-  }
-  console.log(`이미지 경로 치환 완료: changed=${total}`);
-}
-
-main().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+      - name: Publish to Blogger
+        if: env.BLOGGER_BLOG_ID != ''
+        run: npm run publish:blogger
