@@ -1,13 +1,66 @@
-name: Smoke
+name: Publish Blog (Blogger)
 
 "on":
-  workflow_dispatch:
-  push:
-    branches:
-      - google-blog
+  workflow_dispatch:          # 수동 실행 버튼
+  push:                       # 지정 브랜치에 푸시되면 자동 실행
+    branches: [ google-blog ] # ← 기본 브랜치가 main이면 main으로 바꾸세요
+    paths:
+      - "content/posts/**"
+      - "assets/images/**"
+      - "templates/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
 
 jobs:
-  ok:
+  build-and-publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    # GitHub Secrets 주입 (옹스님이 등록한 11개 + 3개)
+    env:
+      # R2 / CDN
+      R2_ACCOUNT_ID:           ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID:        ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY:    ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET:               ${{ secrets.R2_BUCKET }}
+      R2_ENDPOINT:             ${{ secrets.R2_ENDPOINT }}
+      CDN_BASE:                ${{ secrets.CDN_BASE }}
+      IMAGES_DIR:              assets/images
+      POSTS_DIR:               content/posts
+      # Blogger (자동 갱신까지)
+      BLOGGER_BLOG_ID:         ${{ secrets.BLOGGER_BLOG_ID }}
+      GOOGLE_OAUTH_TOKEN:      ${{ secrets.GOOGLE_OAUTH_TOKEN }}
+      GOOGLE_CLIENT_ID:        ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET:    ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      GOOGLE_REFRESH_TOKEN:    ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+
     steps:
-      - run: echo "trigger ok"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Upload images to R2
+        run: npm run images:upload
+
+      - name: Rewrite image URLs in posts
+        run: npm run images:rewrite
+
+      - name: Render posts
+        run: npm run posts:render
+
+      - name: Publish to Blogger
+        if: env.BLOGGER_BLOG_ID != ''
+        run: npm run publish:blogger
