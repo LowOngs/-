@@ -4,19 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build:ai": "node scripts/build/ai-meta.js",
-    "build:schema": "node scripts/build/inject-schema.js",
-    "build:anchors": "node scripts/build/anchors.js",
-    "build:badge": "node scripts/build/updated-badge.js",
-    "build:feed": "node scripts/build/generate-feed.js",
-    "validate": "node scripts/build/validate.js",
-
-    "images:upload": "node scripts/build/r2-upload.js",
-    "images:rewrite": "node scripts/build/rewrite-images.js",
-
-    "build": "npm run build:ai && npm run build:schema && npm run build:anchors && npm run build:badge && npm run build:feed && npm run validate",
-    "deploy": "npm run images:upload && npm run images:rewrite && npm run build"
-  },
+  "images:upload": "node System_files/scripts/build/r2-upload.js",
+  "images:rewrite": "node System_files/scripts/build/rewrite-images.js",
+  "posts:render": "node System_files/scripts/build/render-posts.js",
+  "publish:blogger": "node System_files/scripts/publish/blogger.js",
+  "build": "npm run build:ai && npm run build:schema && npm run build:anchors && npm run build:badge && npm run build:feed && npm run validate",
+  "deploy": "npm run images:upload && npm run images:rewrite && npm run build"
+},
   "dependencies": {
     "@aws-sdk/client-s3": "^3.654.0",
     "dotenv": "^16.4.5",
