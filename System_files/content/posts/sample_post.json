@@ -1,0 +1,10 @@
+{
+  "title": "R2 이미지 치환 테스트",
+  "images": [
+    {
+      "alt": "샘플",
+      "src": "https://pub-85d77eb10bb04de783c71b525c7768a6.r2.dev/ongs-blog-images/images/2025/10/test_photo.jpg"
+    }
+  ],
+  "body": "<p>본문 안 이미지 <img src=\"https://pub-85d77eb10bb04de783c71b525c7768a6.r2.dev/ongs-blog-images/images/2025/10/test_photo.jpg\" alt=\"샘플\"></p>"
+}
