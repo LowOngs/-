@@ -1,26 +1,51 @@
-{
-  "name": "ongs-google-blog",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build:ai": "node scripts/build/ai-meta.js",
-    "build:schema": "node scripts/build/inject-schema.js",
-    "build:anchors": "node scripts/build/anchors.js",
-    "build:badge": "node scripts/build/updated-badge.js",
-    "build:feed": "node scripts/build/generate-feed.js",
-    "validate": "node scripts/build/validate.js",
+// scripts/build/render-posts.js
+import fs from "fs";
+import path from "path";
+import fg from "fast-glob";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
 
-    "images:upload": "node scripts/build/r2-upload.js",
-    "images:rewrite": "node scripts/build/rewrite-images.js",
-    "posts:render": "node scripts/build/render-posts.js",
-    "publish:blogger": "node scripts/publish/blogger.js",
+dotenv.config();
 
-    "build": "npm run build:ai && npm run build:schema && npm run build:anchors && npm run build:badge && npm run build:feed && npm run validate",
-    "deploy": "npm run images:upload && npm run images:rewrite && npm run build"
-  },
-  "dependencies": {
-    "@aws-sdk/client-s3": "^3.654.0",
-    "dotenv": "^16.4.5",
-    "fast-glob": "^3.3.2"
-  }
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const POSTS_DIR = process.env.POSTS_DIR || "content/posts";
+const TEMPLATE_PATH = path.resolve(__dirname, "../../templates/post.html");
+const OUTPUT_DIR = path.resolve(__dirname, "../../dist/posts");
+
+// HTML 템플릿 불러오기
+const template = fs.readFileSync(TEMPLATE_PATH, "utf8");
+
+// dist/posts 폴더 생성 (없으면)
+fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+
+// 포스트 목록 불러오기
+const files = fg.sync(`${POSTS_DIR}/*.json`, { cwd: path.resolve(__dirname, "../../") });
+
+if (files.length === 0) {
+  console.warn("⚠️  렌더링할 포스트(JSON)가 없습니다. content/posts 폴더를 확인하세요.");
+  process.exit(0);
 }
+
+for (const file of files) {
+  const fullPath = path.resolve(__dirname, "../../", file);
+  const raw = fs.readFileSync(fullPath, "utf8");
+  const data = JSON.parse(raw);
+
+  const html = template
+    .replace("<!--TITLE-->", data.title || "")
+    .replace("<!--SUMMARY-->", data.summary || "")
+    .replace("<!--UPDATED-->", `<meta property="article:modified_time" content="${data.updated_at || ""}">`)
+    .replace("<!--SCHEMA-->", "")
+    .replace("<!--TLDR-->", data.tldr ? `<section class="tldr"><ul>${Array.isArray(data.tldr) ? data.tldr.map(line => `<li>${line}</li>`).join("") : data.tldr}</ul></section>` : "")
+    .replace("<!--BODY-->", data.body_html || data.body || "")
+    .replace("<!--FAQ-->", data.faq ? `<section class="faq"><h3>FAQ</h3>${data.faq.map(f => `<p><b>${f.q}</b><br>${f.a}</p>`).join("")}</section>` : "")
+    .replace("<!--SOURCES-->", data.sources ? `<section class="sources"><h3>Sources</h3><ul>${data.sources.map(s => `<li><a href="${s.url}" target="_blank">${s.name}</a></li>`).join("")}</ul></section>` : "");
+
+  const outFile = path.resolve(OUTPUT_DIR, `${data.slug || path.basename(file, ".json")}.html`);
+  fs.writeFileSync(outFile, html, "utf8");
+  console.log(`✔ Rendered: ${path.basename(outFile)}`);
+}
+
+console.log("✅ 모든 포스트 렌더링 완료!");
