@@ -1,10 +1,13 @@
 {
-  "title": "R2 이미지 치환 테스트",
-  "images": [
-    {
-      "alt": "샘플",
-      "src": "https://pub-85d77eb10bb04de783c71b525c7768a6.r2.dev/ongs-blog-images/images/2025/10/test_photo.jpg"
-    }
+  "title": "샘플 포스트",
+  "slug": "sample-post",
+  "summary": "요약 문장 한 줄",
+  "tldr": ["핵심1", "핵심2", "핵심3"],
+  "body_html": "<p>본문 예시입니다. 이미지가 있다면 자동으로 CDN 경로로 치환됩니다.</p>",
+  "faq": [{"q":"자주 묻는 질문?","a":"이렇게 답합니다."}],
+  "sources": [
+    {"name":"공식 문서","url":"https://example.com/docs"},
+    {"name":"지원 페이지","url":"https://example.com/support"}
   ],
-  "body": "<p>본문 안 이미지 <img src=\"https://pub-85d77eb10bb04de783c71b525c7768a6.r2.dev/ongs-blog-images/images/2025/10/test_photo.jpg\" alt=\"샘플\"></p>"
+  "updated_at": "2025-10-30T12:00:00+09:00"
 }
