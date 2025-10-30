@@ -1,9 +1,9 @@
 name: Publish Blog (Blogger)
 
 "on":
-  workflow_dispatch:          # 수동 실행 버튼
-  push:                       # 지정 브랜치에 푸시되면 자동 실행
-    branches: [ google-blog ] # ← 기본 브랜치가 main이면 main으로 바꾸세요
+  workflow_dispatch:
+  push:
+    branches: [ google-blog ]
     paths:
       - "content/posts/**"
       - "assets/images/**"
@@ -16,24 +16,22 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-
-    # GitHub Secrets 주입 (옹스님이 등록한 11개 + 3개)
     env:
       # R2 / CDN
-      R2_ACCOUNT_ID:           ${{ secrets.R2_ACCOUNT_ID }}
-      R2_ACCESS_KEY_ID:        ${{ secrets.R2_ACCESS_KEY_ID }}
-      R2_SECRET_ACCESS_KEY:    ${{ secrets.R2_SECRET_ACCESS_KEY }}
-      R2_BUCKET:               ${{ secrets.R2_BUCKET }}
-      R2_ENDPOINT:             ${{ secrets.R2_ENDPOINT }}
-      CDN_BASE:                ${{ secrets.CDN_BASE }}
-      IMAGES_DIR:              assets/images
-      POSTS_DIR:               content/posts
-      # Blogger (자동 갱신까지)
-      BLOGGER_BLOG_ID:         ${{ secrets.BLOGGER_BLOG_ID }}
-      GOOGLE_OAUTH_TOKEN:      ${{ secrets.GOOGLE_OAUTH_TOKEN }}
-      GOOGLE_CLIENT_ID:        ${{ secrets.GOOGLE_CLIENT_ID }}
-      GOOGLE_CLIENT_SECRET:    ${{ secrets.GOOGLE_CLIENT_SECRET }}
-      GOOGLE_REFRESH_TOKEN:    ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+      R2_ACCOUNT_ID:         ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID:      ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY:  ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET:             ${{ secrets.R2_BUCKET }}
+      R2_ENDPOINT:           ${{ secrets.R2_ENDPOINT }}
+      CDN_BASE:              ${{ secrets.CDN_BASE }}
+      IMAGES_DIR:            assets/images
+      POSTS_DIR:             content/posts
+      # Blogger / Google
+      BLOGGER_BLOG_ID:       ${{ secrets.BLOGGER_BLOG_ID }}
+      GOOGLE_OAUTH_TOKEN:    ${{ secrets.GOOGLE_OAUTH_TOKEN }}   # 없어도 됨
+      GOOGLE_CLIENT_ID:      ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET:  ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      GOOGLE_REFRESH_TOKEN:  ${{ secrets.GOOGLE_REFRESH_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -58,12 +56,38 @@ jobs:
       - name: Rewrite image URLs in posts
         run: npm run images:rewrite
 
+      # ⬇ 렌더 단계 필수
+      - name: Render posts
+        run: npm run posts:render
+
       - name: List rendered outputs
         run: ls -la System_files/dist/posts || true
 
-      - name: Publish to Blogger
-        if: env.BLOGGER_BLOG_ID != ''
-        run: npm run publish:blogger
+      # ⬇ 토큰/블로그 접근 진단(문제시 실패 지점이 명확해집니다)
+      - name: Token refresh check
+        env:
+          C_ID:     ${{ secrets.GOOGLE_CLIENT_ID }}
+          C_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          R_TOKEN:  ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+        run: |
+          echo "Refreshing access token…"
+          RESP=$(curl -s -X POST https://oauth2.googleapis.com/token \
+            -d client_id="$C_ID" \
+            -d client_secret="$C_SECRET" \
+            -d refresh_token="$R_TOKEN" \
+            -d grant_type=refresh_token)
+          echo "$RESP" | grep -q access_token && echo "✅ access_token issued" || (echo "❌ token refresh failed"; echo "$RESP"; exit 1)
+          ACCESS_TOKEN=$(echo "$RESP" | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
+          echo "ACCESS_TOKEN_LEN=$(printf "%s" "$ACCESS_TOKEN" | wc -c)"
+          echo "Listing blogs…"
+          curl -s "https://www.googleapis.com/blogger/v3/users/self/blogs?access_token=$ACCESS_TOKEN" | head -c 1200; echo
+
+      - name: Check BLOGGER_BLOG_ID matches
+        env:
+          BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
+        run: |
+          test -n "$BLOG_ID" || (echo "❌ BLOGGER_BLOG_ID is empty"; exit 1)
+          echo "BLOGGER_BLOG_ID set (masked)."
 
       - name: Publish to Blogger
         if: env.BLOGGER_BLOG_ID != ''
