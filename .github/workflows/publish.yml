@@ -58,8 +58,12 @@ jobs:
       - name: Rewrite image URLs in posts
         run: npm run images:rewrite
 
-      - name: Render posts
-        run: npm run posts:render
+      - name: List rendered outputs
+        run: ls -la System_files/dist/posts || true
+
+      - name: Publish to Blogger
+        if: env.BLOGGER_BLOG_ID != ''
+        run: npm run publish:blogger
 
       - name: Publish to Blogger
         if: env.BLOGGER_BLOG_ID != ''
