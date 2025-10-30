@@ -1,127 +1,103 @@
-// scripts/publish/blogger.js
-import 'dotenv/config';
-import fs from 'fs/promises';
+// System_files/scripts/publish/blogger.js
+// 최소 동작: dist/posts/*.html 중 1개를 Blogger API로 "게시"합니다.
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const BLOG_ID = process.env.BLOGGER_BLOG_ID;
+const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN;
 
-// ===== 설정값 읽기 =====
-const ROOT = path.resolve(__dirname, '../../');
-const DIST_DIR = path.join(ROOT, 'dist', 'posts');
-
-function fail(msg) {
-  console.error(`❌ ${msg}`);
+// 안전 체크
+if (!BLOG_ID || !CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN) {
+  console.error('❌ 환경변수 누락(BLOGGER_BLOG_ID / GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET / GOOGLE_REFRESH_TOKEN)');
   process.exit(1);
 }
 
-function apiError(json, res) {
-  const msg = (json && (json.error?.message || json.error)) || `HTTP ${res.status}`;
-  return new Error(`Blogger API error: ${msg}`);
+// 런타임 경로
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// 렌더 결과 폴더
+const DIST_DIR = path.resolve(__dirname, '../../dist/posts');
+
+function pickTitle(html) {
+  // <h1>제목</h1> → 제목 추출, 없으면 파일명 사용
+  const m = html.match(/<h1[^>]*>(.*?)<\/h1>/i);
+  if (m) return m[1].replace(/<[^>]+>/g, '').trim();
+  return 'Untitled';
 }
 
-// ===== Access Token 갱신(Refresh) =====
-async function refreshAccessToken() {
-  const {
-    GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET,
-    GOOGLE_REFRESH_TOKEN
-  } = process.env;
-
-  if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET || !GOOGLE_REFRESH_TOKEN) {
-    throw new Error('GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET/GOOGLE_REFRESH_TOKEN 누락');
-  }
-
-  const body = new URLSearchParams({
-    client_id: GOOGLE_CLIENT_ID,
-    client_secret: GOOGLE_CLIENT_SECRET,
-    refresh_token: GOOGLE_REFRESH_TOKEN,
-    grant_type: 'refresh_token'
-  });
-
+async function getAccessToken() {
+  // Refresh Token → Access Token 발급
   const res = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body
+    body: new URLSearchParams({
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      refresh_token: REFRESH_TOKEN,
+      grant_type: 'refresh_token'
+    })
   });
-
-  const json = await res.json();
-  if (!res.ok || !json.access_token) throw apiError(json, res);
-  return json.access_token; // ya29...
-}
-
-async function ensureAccessToken() {
-  let { GOOGLE_OAUTH_TOKEN } = process.env;
-  if (GOOGLE_OAUTH_TOKEN && GOOGLE_OAUTH_TOKEN.trim()) {
-    return GOOGLE_OAUTH_TOKEN.trim();
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Token error ${res.status}: ${text}`);
   }
-  // access_token이 없으면 refresh 토큰으로 신규 발급
-  return await refreshAccessToken();
+  const data = await res.json();
+  return data.access_token;
 }
 
-// ===== 단일 포스트 발행 =====
-async function publishOne(file, token, blogId) {
-  const html = await fs.readFile(path.join(DIST_DIR, file), 'utf-8');
-  const title = file.replace(/\.html$/i, '');
-  const url = `https://www.googleapis.com/blogger/v3/blogs/${blogId}/posts/`;
-
-  const payload = { title, content: html, labels: [] };
-
-  let res = await fetch(url, {
+async function publishOne({ title, content }) {
+  const token = await getAccessToken();
+  const url = `https://www.googleapis.com/blogger/v3/blogs/${BLOG_ID}/posts/`;
+  const res = await fetch(url, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      kind: 'blogger#post',
+      title,
+      content,
+      // labels: ['Auto', 'AIO'],   // 필요시 라벨
+      // isDraft: true             // 초안으로만 올리고 싶다면 주석 해제
+    })
   });
-
-  if (res.status === 401) {
-    // 만료 → 1회 자동 갱신 후 재시도
-    const newToken = await refreshAccessToken();
-    res = await fetch(url, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${newToken}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Publish error ${res.status}: ${text}`);
   }
-
-  const json = await res.json();
-  if (!res.ok) throw apiError(json, res);
-  return json;
+  const data = await res.json();
+  return data; // {id, url, ...}
 }
 
-// ===== 엔트리포인트 =====
-(async () => {
-  const { BLOGGER_BLOG_ID } = process.env;
-  if (!BLOGGER_BLOG_ID) fail('BLOGGER_BLOG_ID 누락');
-
-  // dist/posts 존재/파일 확인
-  const exists = await fs.stat(DIST_DIR).then(() => true).catch(() => false);
-  if (!exists) {
-    console.log('⚠️ 발행할 HTML 없음(dist/posts 미존재)');
-    process.exit(0);
+async function main() {
+  if (!fs.existsSync(DIST_DIR)) {
+    console.error('❌ 렌더 결과 폴더(dist/posts)가 없습니다. 먼저 렌더가 되어야 합니다.');
+    process.exit(1);
   }
-  const files = (await fs.readdir(DIST_DIR)).filter(f => f.toLowerCase().endsWith('.html'));
-  if (!files.length) {
-    console.log('⚠️ 발행할 HTML 없음(dist/posts/*.html 없음)');
-    process.exit(0);
+  const files = fs.readdirSync(DIST_DIR).filter(f => f.endsWith('.html'));
+  if (files.length === 0) {
+    console.error('❌ 발행할 HTML이 없습니다. dist/posts/*.html 확인.');
+    process.exit(1);
   }
 
-  // 토큰 확보
-  let token;
-  try {
-    token = await ensureAccessToken();
-  } catch (e) {
-    fail(`토큰 준비 실패: ${e.message}`);
-  }
+  // 일단 1개만 발행 (원하면 순회 발행 가능)
+  const first = files[0];
+  const full = path.join(DIST_DIR, first);
+  const html = fs.readFileSync(full, 'utf8');
+  const title = pickTitle(html);
 
-  // 순차 발행
-  for (const f of files) {
-    try {
-      const result = await publishOne(f, token, BLOGGER_BLOG_ID);
-      const link = result.url || (result.selfLink ?? '') || '';
-      console.log(`✅ 발행 완료: ${f} ${link}`);
-    } catch (e) {
-      console.error(`❌ 발행 실패: ${f} — ${e.message}`);
-    }
-  }
-})();
+  console.log(`📰 Publish: ${first} → "${title}"`);
+  const post = await publishOne({ title, content: html });
+
+  console.log(`✅ 발행 완료: ${post.id}  ${post.url || post.selfLink || ''}`);
+}
+
+main().catch(err => {
+  console.error('❌ 실패:', err.message);
+  process.exit(1);
+});
