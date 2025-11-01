@@ -8,7 +8,7 @@
     "posts:render": "node System_files/scripts/build/render-posts.js",
     "publish:blogger": "node System_files/scripts/publish/blogger.js",
 
-    "build:ai": "node System_files/scripts/build/ai-meta.js",   ← 이 줄 추가
+    "build:ai": "node System_files/scripts/build/ai-meta.js",   
     "build": "npm run build:ai && npm run build:schema && npm run build:anchors && npm run build:badge && npm run build:feed && npm run validate",
     "deploy": "npm run images:upload && npm run images:rewrite && npm run build"
   },
