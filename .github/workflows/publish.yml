@@ -56,6 +56,9 @@ jobs:
       - name: Rewrite image URLs in posts
         run: npm run images:rewrite
 
+      - name: Insert AIO + SEO meta
+        run: npm run build:ai
+
       # ⬇ 렌더 단계 필수
       - name: Render posts
         run: npm run posts:render
