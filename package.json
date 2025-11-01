@@ -1,20 +1,20 @@
-
 {
   "name": "ongs-google-blog",
   "private": true,
   "type": "module",
   "scripts": {
-  "images:upload": "node System_files/scripts/build/r2-upload.js",
-  "images:rewrite": "node System_files/scripts/build/rewrite-images.js",
-  "posts:render": "node System_files/scripts/build/render-posts.js",
-  "publish:blogger": "node System_files/scripts/publish/blogger.js",
-  "build": "npm run build:ai && npm run build:schema && npm run build:anchors && npm run build:badge && npm run build:feed && npm run validate",
-  "deploy": "npm run images:upload && npm run images:rewrite && npm run build"
-},
+    "images:upload": "node System_files/scripts/build/r2-upload.js",
+    "images:rewrite": "node System_files/scripts/build/rewrite-images.js",
+    "posts:render": "node System_files/scripts/build/render-posts.js",
+    "publish:blogger": "node System_files/scripts/publish/blogger.js",
+
+    "build:ai": "node System_files/scripts/build/ai-meta.js",   ← 이 줄 추가
+    "build": "npm run build:ai && npm run build:schema && npm run build:anchors && npm run build:badge && npm run build:feed && npm run validate",
+    "deploy": "npm run images:upload && npm run images:rewrite && npm run build"
+  },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.654.0",
     "dotenv": "^16.4.5",
     "fast-glob": "^3.3.2"
   }
 }
-
